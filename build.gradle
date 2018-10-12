@@ -1,0 +1,113 @@
+import org.gradle.internal.os.OperatingSystem
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+group "loryruta.hgame"
+version "1.0-SNAPSHOT"
+
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "distribution"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "application"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+shadowJar {
+    baseName = project.name
+    classifier = null
+    version = null
+}
+project.tasks.assemble.dependsOn project.tasks.shadowJar
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    jcenter()
+    google()
+}
+
+ext {
+    appName = "my-gdx-game"
+    gdxVersion = '1.9.8'
+    roboVMVersion = '2.3.3'
+    box2DLightsVersion = '1.4'
+    ashleyVersion = '1.7.0'
+    aiVersion = '1.8.0'
+}
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+}
+
+dependencies {
+    testCompile group: "junit", name: "junit", version: "4.12"
+
+    compileOnly "org.projectlombok:lombok:1.18.2"
+
+    compile "com.google.code.gson:gson:2.8.5"
+
+    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+}
+
+distributions {
+    game {
+        baseName = "game"
+        contents {
+            from {
+                project.tasks.shadowJar
+            }
+            from {
+                project.uri("src/main/dist")
+            }
+            into("resources") {
+                from {
+                    project.uri("src/main/resources")
+                }
+            }
+        }
+    }
+}
+
+task setup {
+    dependsOn "installGameDist"
+}
+
+mainClassName = "tk.loryruta.hgame.HGame"
+
+// The application plugin sets up some tasks not relevant to us (we don't want to run the jar directly)
+tasks.remove(tasks.run)
+tasks.remove(tasks.runShadow)
+
+task start(type: Exec, overwrite: true) {
+    dependsOn "setup"
+
+    commandLine "java", "-jar", "h-game.jar"
+}
+start.workingDir = installGameDist.destinationDir

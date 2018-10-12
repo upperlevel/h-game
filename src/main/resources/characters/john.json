@@ -1,0 +1,17 @@
+{
+  "name": "John",
+  "x": 0,
+  "y": 0,
+  "head": "images/head.png",
+  "body": "images/body.png",
+  "conversation": [
+    {
+      "text": "Ciao.",
+      "audio": "audio/ciao.mp3"
+    },
+    {
+      "text": "Prova 1, 2, 3...",
+      "audio": "audio/prova123.mp3"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Ruta",
+  "x": 10,
+  "y": 0,
+  "head": "images/ruta.png",
+  "body": "images/body.png",
+  "conversation": [
+    {
+      "text": "I. Hello y'all guys I know you'll not read that shit.",
+      "audio": "audio/i.mp3"
+    },
+    {
+      "text": "Ti!",
+      "audio": "audio/ti.mp3"
+    },
+    {
+      "text": "Gn...",
+      "audio": "audio/gn.mp3"
+    }
+  ]
+}

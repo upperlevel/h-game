@@ -45,17 +45,13 @@ public class ConversationRenderer {
         table.setFillParent(true);
         table.top().left();
 
-        headImage = new Image();
-        table.add(headImage).size(128f);
-
-
         Table rightTable = new Table();
 
         nameLabel = new Label("", new Label.LabelStyle(font, Color.RED));
         nameLabel.setWrap(true);
-        rightTable.add(nameLabel);
+        rightTable.add(nameLabel).align(Align.left);
 
-        rightTable.row();
+        rightTable.row().width(500f);
 
         textLabel = new Label("", new Label.LabelStyle(font, Color.YELLOW));
         textLabel.setWrap(true);
@@ -72,10 +68,12 @@ public class ConversationRenderer {
 
     public void setSentence(Character speaker, Conversation.Sentence sentence) {
         this.speaker = speaker;
-        headImage.setDrawable(new TextureRegionDrawable(speaker.getHead().getSprite()));
 
-        nameLabel.setText(speaker.getName() + ":");
-        textLabel.setText(sentence.getText());
+        // TODO: no more head
+        // headImage.setDrawable(new TextureRegionDrawable(speaker.getHead().getSprite()));
+
+        nameLabel.setText(sentence != null ? speaker.getName() + ":" : "");
+        textLabel.setText(sentence != null ? sentence.getText() : "");
     }
 
     public void render() {

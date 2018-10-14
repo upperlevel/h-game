@@ -1,19 +1,21 @@
 package tk.loryruta.hgame.scenario.character;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
+import tk.loryruta.hgame.HGame;
 import tk.loryruta.hgame.scenario.Conversation;
-import tk.loryruta.hgame.scenario.Scenario;
+import tk.loryruta.hgame.scenario.DystopianScenario;
+import tk.loryruta.hgame.scenario.animation.Sequence;
 import tk.loryruta.hgame.scenario.scheduler.Scheduler;
 
 public class Character {
-    public static final float WIDTH = Body.WIDTH;
-    public static final float HEIGHT = Body.HEIGHT + 1.0f; // Head.HEIGHT
-
-    @Getter
-    private final Scenario scenario;
+    public static final float WIDTH = 1.0f;
+    public static final float HEIGHT = 1.5f; // Head.HEIGHT
 
     @Getter
     @Setter
@@ -23,30 +25,37 @@ public class Character {
     private float x, y;
 
     @Getter
-    private Head head;
-
-    @Getter
-    private Body body;
-
-    @Getter
+    @Setter
     private boolean left;
 
     @Getter
     private Vector2 velocity = new Vector2();
 
-    private Conversation conversation;
+    private Sprite sprite;
+    private TextureRegion[][] regions;
 
-    private int speakingAnimationTask = -1;
+    private int walkToTask = -1;
+    private int walkTask = -1;
+    private int backToIdle = -1;
 
-    public Character(Scenario scenario, JsonObject json) {
-        this.scenario = scenario;
+    private int sayTask = -1;
 
-        name = json.getAsJsonPrimitive("name").getAsString();
-        x = json.getAsJsonPrimitive("x").getAsFloat();
-        y = json.getAsJsonPrimitive("y").getAsFloat();
-        head = new Head(this, json.getAsJsonPrimitive("head").getAsString());
-        body = new Body(this, json.getAsJsonPrimitive("body").getAsString());
-        conversation = new Conversation(this, json.getAsJsonArray("conversation"));
+    @Setter
+    private Sequence onTalk;
+
+    public Character(String name, String imagePath) {
+        this.name = name;
+
+        Texture texture = new Texture(Gdx.files.internal(imagePath));
+        sprite = new Sprite(texture);
+        sprite.setSize(WIDTH, HEIGHT);
+
+        regions = SpriteExtractor.grid(texture, 5, 2);
+        setFrame(0, 0);
+    }
+
+    public void setFrame(int x, int y) {
+        sprite.setRegion(regions[x][y]);
     }
 
     public void setPosition(float x, float y) {
@@ -54,70 +63,86 @@ public class Character {
         this.y = y;
     }
 
+    public void walkTo(float x, float speed, Runnable reach) {
+        if (this.x == x) {
+            reach.run();
+            return;
+        }
+        float absSpeed = Math.abs(speed);
+        boolean left = this.x < x;
+        walkToTask = Scheduler.start(() -> {
+            move(left ? absSpeed : -absSpeed, 0);
+            if ((left && this.x >= x) || (!left && this.x <= x)) {
+                reach.run();
+                Scheduler.cancel(walkToTask);
+            }
+        }, 1, true);
+    }
+
+    public void walkTo(Character who, float distance, float speed, Runnable reach) {
+        if (who.x < x) {
+            walkTo(who.x + WIDTH / 2.0f + distance, speed, reach);
+        } else {
+            walkTo(who.x - WIDTH / 2.0f - distance, speed, reach);
+        }
+    }
+
+    public void say(String text, String audioPath, long duration) {
+        if (sayTask != -1) {
+            Scheduler.cancel(sayTask);
+            sayTask = -1;
+        }
+        if (duration > 0) {
+            sayTask = Scheduler.start(() -> {
+                HGame.instance.getScenario().setRenderingSentence(this, null);
+            }, duration);
+        }
+        Conversation.Sentence s = new Conversation.Sentence(text, audioPath);
+        HGame.instance.getScenario().setRenderingSentence(this, s);
+        if (s.getAudio() != null) {
+            s.getAudio().play(1.0f);
+        }
+    }
+
+    public void say(String text, String audioPath) {
+        say(text, audioPath, -1);
+    }
+
     public void setVelocity(float velocityX, float velocityY) {
         velocity.set(velocityX, velocityY);
     }
 
-    public float getMinX() {
-        return x;
-    }
-
-    public float getMinY() {
-        return y;
-    }
-
-    public float getMaxX() {
-        return x + WIDTH;
-    }
-
-    public float getMaxY() {
-        return y + HEIGHT;
-    }
-
-    /**
-     * Checks if the given human is in this human bounding box with at least one point.
-     */
     public boolean intersect(Character other) {
-        return (getMinX() >= other.getMinX() && getMinX() <= other.getMaxX()) ||
-                (getMinY() >= other.getMinY() && getMinY() <= other.getMaxY()) ||
-                (getMaxX() >= other.getMinX() && getMaxX() <= other.getMaxX()) ||
-                (getMaxY() >= other.getMinY() && getMaxY() <= other.getMaxY());
+        return (x >= other.x && x <= other.x + WIDTH) || (x + WIDTH >= other.x && x + WIDTH <= other.x + WIDTH);
     }
 
-    public void speak(Character with) {
-        if (speakingAnimationTask == -1) {
-            Conversation.Sentence sentence = conversation.next();
-            scenario.setRenderingSentence(this, sentence);
-            sentence.getAudio().play(1.0f);
-
-            left = with.x - x < 0;
-            getBody().setPunching(1);
-            speakingAnimationTask = Scheduler.start(() -> {
-                getBody().setIdle();
-                speakingAnimationTask = -1;
-            }, 1000);
+    public void talk(Character other) {
+        left = other.x - x < 0;
+        if (onTalk != null) {
+            onTalk.play();
         }
     }
 
     public void move(float offsetX, float offsetY) {
-        if (offsetX != 0 || offsetY != 0) {
-            left = offsetX < 0;
-            x += offsetX;
-            y += offsetY;
+        left = offsetX < 0;
+        if (walkTask == -1) {
+            walkTask = Scheduler.start(new Walking(), 100, true);
         }
-        head.onMove(offsetX, offsetY);
-        body.onMove(offsetX, offsetY);
+        if (backToIdle != -1) {
+            Scheduler.cancel(backToIdle);
+        }
+        backToIdle = Scheduler.start(() -> {
+            Scheduler.cancel(walkTask);
+            walkTask = -1;
+            setFrame(0, 0);
+            backToIdle = -1;
+        }, 100);
+        x += offsetX;
+        y += offsetY;
     }
 
-    public void punch() {
-        body.onPunch();
-    }
-
-    public void update(Scenario scenario, float delta) {
+    public void update(DystopianScenario scenario, float delta) {
         velocity.y -= scenario.getGravity() * delta;
-
-        /*
-        // gravity
         x += velocity.x * delta;
         y += velocity.y * delta;
 
@@ -126,11 +151,35 @@ public class Character {
             y = ground;
             velocity.y = 0;
         }
-        */
     }
 
     public void render() {
-        body.onRender();
-        head.onRender();
+        if (left != sprite.isFlipX()) {
+            sprite.flip(true, false);
+        }
+        sprite.setPosition(x, y);
+        sprite.draw(HGame.instance.getBatch());
+    }
+
+    public class Walking implements Runnable {
+        private int frame;
+        private boolean backward;
+
+        @Override
+        public void run() {
+            setFrame(frame, 1);
+            if (backward) {
+                frame--;
+            } else {
+                frame++;
+            }
+            if (frame < 0) {
+                frame = 0;
+                backward = false;
+            } else if (frame == 3) {
+                frame = 2;
+                backward = true;
+            }
+        }
     }
 }

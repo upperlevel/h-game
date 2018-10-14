@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.Getter;
-import tk.loryruta.hgame.scenario.Scenario;
+import tk.loryruta.hgame.scenario.DystopianScenario;
+import tk.loryruta.hgame.scenario.animation.Sequence;
 import tk.loryruta.hgame.scenario.scheduler.Scheduler;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public class HGame extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
 
     @Getter
-    private Scenario scenario;
+    private DystopianScenario scenario;
     private long lastUpdateTime;
 
     @Override
@@ -73,7 +74,8 @@ public class HGame extends ApplicationAdapter {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        scenario = Scenario.from("resources/scenario.json");
+        scenario = DystopianScenario.from("resources/scenario.json");
+        scenario.onJoin();
 
         camera = new OrthographicCamera();
     }
@@ -101,7 +103,9 @@ public class HGame extends ApplicationAdapter {
         lastUpdateTime = currTime;
 
         scenario.update(delta);
-        Scheduler.update();
+
+        Scheduler.update(); // Scheduler API update
+        Sequence.update(); // Sequence API update
 
         // Render
         scenario.render();

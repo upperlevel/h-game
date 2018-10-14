@@ -23,8 +23,8 @@ public class Task {
         this.callAt = System.currentTimeMillis() + delay;
     }
 
-    public boolean isReady() {
-        return System.currentTimeMillis() >= callAt;
+    public boolean isReady(long time) {
+        return time >= callAt;
     }
 
     public void run() {

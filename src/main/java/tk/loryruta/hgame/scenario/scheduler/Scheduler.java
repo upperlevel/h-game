@@ -32,18 +32,16 @@ public class Scheduler {
     }
 
     public static void update() {
-        List<Task> useless = new ArrayList<>();
-        // executes tasks
-        for (Task task : tasksById.values()) {
-            if (task.isReady()) {
+        long currentTime = System.currentTimeMillis();
+        Map<Integer, Task> tasksByIdCopy = new HashMap<>(tasksById);
+        for (Task task : tasksByIdCopy.values()) {
+            if (task.isReady(currentTime)) {
                 task.run();
-                if (!task.isRepeating()) { // if the task does not repeat can be removed
-                    useless.add(task);
+                if (!task.isRepeating()) {
+                    tasksById.remove(task.getId());
                 }
             }
         }
-        // removes useless tasks
-        useless.forEach(task -> cancel(task.getId()));
     }
 
     public static void cancel(int taskId) {

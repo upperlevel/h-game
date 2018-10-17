@@ -1,14 +1,13 @@
 package tk.loryruta.hgame.scenario.animation;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 public class Sequence {
-    private static List<Entry<Waiter, Step>> incoming = new ArrayList<>();
+    private static List<Entry<Trigger, Step>> incoming = new ArrayList<>();
 
     private List<Step> steps = new ArrayList<>();
 
@@ -32,9 +31,9 @@ public class Sequence {
     }
 
     public static void update() {
-        List<Entry<Waiter, Step>> incomingCopy = new ArrayList<>(incoming);
-        for (Entry<Waiter, Step> entry : incomingCopy) {
-            if (entry.getKey().test()) {
+        List<Entry<Trigger, Step>> incomingCopy = new ArrayList<>(incoming);
+        for (Entry<Trigger, Step> entry : incomingCopy) {
+            if (entry.getKey().get()) {
                 entry.getValue().start();
                 incoming.remove(entry);
             }
@@ -52,30 +51,18 @@ public class Sequence {
             this.position = position;
         }
 
-        public void next(Waiter waiter) {
+        public void next(Trigger trigger) {
             if (position >= steps.size() - 1) {
                 return;
             }
             Step next = steps.get(position + 1);
-            incoming.add(new AbstractMap.SimpleEntry<>(waiter, next));
+            incoming.add(new AbstractMap.SimpleEntry<>(trigger, next));
         }
 
         public void next() {
-            next(Waiter.NONE);
+            next(Trigger.NONE);
         }
 
         protected abstract void start();
-    }
-
-    public interface Waiter {
-        Waiter NONE = () -> true;
-        Waiter ENTER_KEY = () -> Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
-
-        boolean test();
-
-        static Waiter sleep(long duration) {
-            long now = System.currentTimeMillis();
-            return () -> System.currentTimeMillis() >= (now + duration);
-        }
     }
 }

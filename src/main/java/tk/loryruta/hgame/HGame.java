@@ -9,40 +9,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import lombok.Getter;
-import tk.loryruta.hgame.scenario.DystopianScenario;
+import lombok.Setter;
+import tk.loryruta.hgame.scenario.*;
 import tk.loryruta.hgame.scenario.animation.Sequence;
 import tk.loryruta.hgame.scenario.scheduler.Scheduler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.logging.*;
-
 public class HGame extends ApplicationAdapter {
-    public static Logger logger;
-
     public static Gson gson = new Gson();
 
-    private static void initLogger() {
-        logger = Logger.getLogger("hgame");
-        logger.setLevel(Level.ALL); // todo just to debug
-        logger.setUseParentHandlers(false);
-
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                return "[" + record.getLevel() + "] " + record.getMessage() + "\n";
-            }
-        });
-        logger.addHandler(handler);
-    }
-
     public static void main(String[] args) {
-        initLogger();
-
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
         config.title = "H-Game";
@@ -64,8 +40,8 @@ public class HGame extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
 
     @Getter
-    private DystopianScenario scenario;
-    private long lastUpdateTime;
+    @Setter
+    private Storyline storyline;
 
     @Override
     public void create() {
@@ -74,53 +50,33 @@ public class HGame extends ApplicationAdapter {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        scenario = DystopianScenario.from("resources/scenario.json");
-        scenario.onJoin();
-
         camera = new OrthographicCamera();
+
+        storyline = new Storyline();
     }
 
     @Override
-    public void resize(int w, int h) {
-        scenario.getConversationRenderer().resize(w, h);
+    public void resize(int width, int height) {
+        Conversation.resize(width, height);
     }
 
     @Override
     public void render() {
-        int width = Gdx.graphics.getWidth();
-        int height = Gdx.graphics.getHeight();
-
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Update
-        long currTime = System.currentTimeMillis();
-        if (lastUpdateTime < 0) {
-            lastUpdateTime = currTime; // default init
-        }
-
-        float delta = (currTime - lastUpdateTime) / 1000.0f;
-        lastUpdateTime = currTime;
-
-        scenario.update(delta);
-
+        storyline.update();
         Scheduler.update(); // Scheduler API update
         Sequence.update(); // Sequence API update
+        Event.update();
 
         // Render
-        scenario.render();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        storyline.render();
+        Conversation.render();
     }
 
     @Override
     public void dispose() {
+        Conversation.dispose();
         batch.dispose();
-    }
-
-    public static JsonObject json(String path) {
-        try {
-            return HGame.gson.fromJson(new FileReader(new File("resources", path)), JsonObject.class);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Can't read file at: " + path);
-        }
     }
 }

@@ -9,11 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 import tk.loryruta.hgame.HGame;
 import tk.loryruta.hgame.scenario.Conversation;
-import tk.loryruta.hgame.scenario.DystopianScenario;
+import tk.loryruta.hgame.scenario.Scenario;
 import tk.loryruta.hgame.scenario.animation.Sequence;
+import tk.loryruta.hgame.scenario.animation.Trigger;
 import tk.loryruta.hgame.scenario.scheduler.Scheduler;
 
-public class Character {
+public class Human {
     public static final float WIDTH = 1.0f;
     public static final float HEIGHT = 1.5f; // Head.HEIGHT
 
@@ -34,6 +35,9 @@ public class Character {
     private Sprite sprite;
     private TextureRegion[][] regions;
 
+    public boolean rigidBody = true;
+    public boolean noClip = false;
+
     private int walkToTask = -1;
     private int walkTask = -1;
     private int backToIdle = -1;
@@ -43,7 +47,7 @@ public class Character {
     @Setter
     private Sequence onTalk;
 
-    public Character(String name, String imagePath) {
+    public Human(String name, String imagePath) {
         this.name = name;
 
         Texture texture = new Texture(Gdx.files.internal(imagePath));
@@ -63,45 +67,60 @@ public class Character {
         this.y = y;
     }
 
-    public void walkTo(float x, float speed, Runnable reach) {
+    @Deprecated
+    public Trigger walkTo(float x, float speed, Runnable reach) {
         if (this.x == x) {
             reach.run();
-            return;
+            return Trigger.NONE;
         }
         float absSpeed = Math.abs(speed);
         boolean left = this.x < x;
+        Trigger endWhen = () -> (left && this.x >= x) || (!left && this.x <= x);
         walkToTask = Scheduler.start(() -> {
             move(left ? absSpeed : -absSpeed, 0);
-            if ((left && this.x >= x) || (!left && this.x <= x)) {
-                reach.run();
+            if (endWhen.get()) {
+                if (reach != null) {
+                    reach.run();
+                }
                 Scheduler.cancel(walkToTask);
             }
         }, 1, true);
+        return endWhen;
     }
 
-    public void walkTo(Character who, float distance, float speed, Runnable reach) {
+    public Trigger walkTo(float x, float speed) {
+        return walkTo(x, speed, null);
+    }
+
+    @Deprecated
+    public Trigger walkTo(Human who, float distance, float speed, Runnable reach) {
         if (who.x < x) {
-            walkTo(who.x + WIDTH / 2.0f + distance, speed, reach);
+            return walkTo(who.x + WIDTH / 2.0f + distance, speed, reach);
         } else {
-            walkTo(who.x - WIDTH / 2.0f - distance, speed, reach);
+            return walkTo(who.x - WIDTH / 2.0f - distance, speed, reach);
         }
     }
 
-    public void say(String text, String audioPath, long duration) {
+    @Deprecated
+    public Trigger walkTo(Human who, float speed, Runnable reach) {
+        return walkTo(who, 0.5f, speed, reach);
+    }
+
+    public Trigger walkTo(Human who, float speed) {
+        return walkTo(who, speed, null);
+    }
+
+    public void say(String text, String audio, long duration) {
         if (sayTask != -1) {
             Scheduler.cancel(sayTask);
             sayTask = -1;
         }
         if (duration > 0) {
             sayTask = Scheduler.start(() -> {
-                HGame.instance.getScenario().setRenderingSentence(this, null);
+                // HGame.instance.getScenario().setRenderingSentence(this, null);
             }, duration);
         }
-        Conversation.Sentence s = new Conversation.Sentence(text, audioPath);
-        HGame.instance.getScenario().setRenderingSentence(this, s);
-        if (s.getAudio() != null) {
-            s.getAudio().play(1.0f);
-        }
+        Conversation.show(this, text, audio);
     }
 
     public void say(String text, String audioPath) {
@@ -112,12 +131,12 @@ public class Character {
         velocity.set(velocityX, velocityY);
     }
 
-    public boolean intersect(Character other) {
+    public boolean intersect(Human other) {
         return (x >= other.x && x <= other.x + WIDTH) || (x + WIDTH >= other.x && x + WIDTH <= other.x + WIDTH);
     }
 
-    public void talk(Character other) {
-        left = other.x - x < 0;
+    public void talk(Human main) {
+        left = main.x - x < 0;
         if (onTalk != null) {
             onTalk.play();
         }
@@ -141,14 +160,17 @@ public class Character {
         y += offsetY;
     }
 
-    public void update(DystopianScenario scenario, float delta) {
-        velocity.y -= scenario.getGravity() * delta;
+    public void update(Scenario scenario) {
+        float delta = Gdx.graphics.getDeltaTime();
+
+        if (rigidBody) {
+            velocity.y -= scenario.gravity * delta;
+        }
         x += velocity.x * delta;
         y += velocity.y * delta;
 
-        float ground = scenario.getGroundHeight();
-        if ( y < ground) {
-            y = ground;
+        if (!noClip && y < scenario.groundHeight) {
+            y = scenario.groundHeight;
             velocity.y = 0;
         }
     }
@@ -181,5 +203,10 @@ public class Character {
                 backward = true;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

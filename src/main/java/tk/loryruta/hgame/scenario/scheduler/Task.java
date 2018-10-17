@@ -2,35 +2,42 @@ package tk.loryruta.hgame.scenario.scheduler;
 
 import lombok.Getter;
 
-public class Task {
+public abstract class Task implements Runnable {
     @Getter
-    private final int id;
+    private int id;
 
-    @Getter
-    private final Runnable action;
-
-    @Getter
-    private final boolean repeating;
-
-    private long delay, callAt;
-
-    public Task(int id, Runnable action, long delay, boolean repeating) {
-        this.id = id;
-        this.action = action;
-        this.repeating = repeating;
-
-        this.delay = delay;
-        this.callAt = System.currentTimeMillis() + delay;
+    public Task() {
     }
 
-    public boolean isReady(long time) {
-        return time >= callAt;
+    private boolean tryCancel() {
+        if (id != -1) {
+            Scheduler.cancel(id);
+            id = -1;
+            return true;
+        }
+        return false;
     }
 
-    public void run() {
-        action.run();
-        if (repeating) {
-            callAt = System.currentTimeMillis() + delay;
+    public void start(long delay, boolean repeat) {
+        tryCancel();
+        id = Scheduler.start(this, delay, repeat);
+    }
+
+    public void delay(long delay) {
+        start(delay, false);
+    }
+
+    public void repeat(long each) {
+        start(each, true);
+    }
+
+    public boolean isCanceled() {
+        return id == -1;
+    }
+
+    public void cancel() {
+        if (!tryCancel()) {
+            throw new IllegalStateException("This task has already been cancelled.");
         }
     }
 }

@@ -1,12 +1,13 @@
 package tk.loryruta.hgame.scenario.scheduler;
 
-import java.util.ArrayList;
+import tk.loryruta.hgame.KDebug;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Scheduler {
-    private static final Map<Integer, Task> tasksById = new HashMap<>();
+    private static final Map<Integer, TaskHandle> tasksById = new HashMap<>();
+    private static int id = 0;
 
     /**
      * Starts a new task.
@@ -16,9 +17,8 @@ public class Scheduler {
      * @return the id of the created task.
      */
     public static int start(Runnable action, long delay, boolean repeating) {
-        int id = tasksById.size();
-        tasksById.put(id, new Task(id, action, delay, repeating));
-        return id;
+        tasksById.put(id, new TaskHandle(id, action, delay, repeating));
+        return id++;
     }
 
     /**
@@ -33,12 +33,12 @@ public class Scheduler {
 
     public static void update() {
         long currentTime = System.currentTimeMillis();
-        Map<Integer, Task> tasksByIdCopy = new HashMap<>(tasksById);
-        for (Task task : tasksByIdCopy.values()) {
-            if (task.isReady(currentTime)) {
-                task.run();
-                if (!task.isRepeating()) {
-                    tasksById.remove(task.getId());
+        Map<Integer, TaskHandle> tasksByIdCopy = new HashMap<>(tasksById);
+        for (TaskHandle handle : tasksByIdCopy.values()) {
+            if (handle.isReady(currentTime)) {
+                handle.run();
+                if (!handle.isRepeating()) {
+                    tasksById.remove(handle.getId());
                 }
             }
         }

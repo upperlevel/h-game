@@ -25,14 +25,14 @@ public class Scenario {
     public float gravity;
 
     public float groundHeight;
-    public Color groundColor = Color.BLACK;
+    public Color groundColor = Color.DARK_GRAY;
 
     public Scenario() {
         height = 5.0f;
         gravity = 9.8f;
         groundHeight = 1.0f;
 
-        spawn(player = new Human("Player", "images/dystopian_john.png"));
+        spawn(player = new Human("Ruta", "images/ruta.png"));
     }
 
     public void freeze(boolean flag) {

@@ -54,7 +54,7 @@ public class DystopianScene extends Scenario {
                     .append(handle -> {
                         winston.setFrame(3, 0);
                         winston.say(
-                                "How long and how deep our privacy will be threatened?",
+                                "How long and how deep will our privacy be threatened?",
                                 "dystopian_winston_2.mp3"
                         );
                         handle.next(Trigger.ENTER_KEY);
@@ -242,7 +242,8 @@ public class DystopianScene extends Scenario {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Color bg = Color.DARK_GRAY;
+        Gdx.gl.glClearColor(bg.r, bg.g, bg.b, bg.a);
         super.render();
     }
 

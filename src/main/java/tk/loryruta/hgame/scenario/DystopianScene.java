@@ -317,43 +317,35 @@ public class DystopianScene extends Scenario {
                         freeze(true);
                         setFrame(3, 0);
                         say(
-                                "Apple suggests us what to wear daily.",
+                                "Apple suggests us what to wear daily. " +
+                                        "Today they told me I was more likely to get a new job with this yellow shirt on!",
                                 "dystopian_steve_1.mp3"
                         );
                         handle.next(ENTER_KEY);
                     })
                     .append(handle -> {
-                        setFrame(1, 0);
                         say(
-                                "Today they told me I was more likely to get a new job with this yellow shirt on!",
+                                "That can be done thanks to Microsoft that manages the data coming from our phones camera.",
                                 "dystopian_steve_2.mp3"
-                        );
-                        handle.next(ENTER_KEY);
-                    })
-                    .append(handle -> {
-                        setFrame(3, 0);
-                        say(
-                                "This activity can be done thanks to Microsoft that manages the data coming from our phones camera.",
-                                "dystopian_steve_3.mp3"
                         );
                         handle.next(ENTER_KEY);
                     })
                     .append(handle -> {
                         say(
                                 "It's beautiful isn't it?",
-                                "dystopian_steve_4.mp3"
+                                "dystopian_steve_3.mp3"
                         );
                         handle.next(ENTER_KEY);
                     })
                     .append(handle -> {
                         say(
                                 "I can't even remember how to dress on my own!",
-                                "dystopian_steve_5.mp3"
+                                "dystopian_steve_4.mp3"
                         );
                         handle.next(ENTER_KEY);
                     })
                     .append(handle -> {
-                        // todo clear chat
+                        Conversation.hide();
                         setFrame(0, 0);
                         freeze(false);
                     })

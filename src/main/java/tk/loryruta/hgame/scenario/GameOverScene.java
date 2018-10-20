@@ -2,6 +2,8 @@ package tk.loryruta.hgame.scenario;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
+
 
 public class GameOverScene extends Scenario {
     public GameOverScene() {
@@ -16,7 +18,8 @@ public class GameOverScene extends Scenario {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Color bg = Color.DARK_GRAY;
+        Gdx.gl.glClearColor(bg.r, bg.g, bg.b, bg.a);
         Conversation.show(
                 "GAME OVER",
                 "You didn't manage to come back in real life."

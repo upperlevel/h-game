@@ -34,6 +34,11 @@ public class DystopianScene extends Scenario {
         spawn(new Cassandra());
         spawn(winston = new Winston());
 
+        player.say(
+                "WHAT!? Am I in a dystopian world?",
+                "dystopian_player_4.mp3"
+        );
+
         Event.watch(Event.greaterX(player, 60), () -> {
             new Sequence()
                     .append(handle -> {
@@ -440,7 +445,7 @@ public class DystopianScene extends Scenario {
                     })
                     .append(handle -> {
                         say(
-                                "There's no need to say that the guilty has been caught some minute after... " +
+                                "There's no need of saying that the guilty has been caught some minute after... " +
                                         "he was under the eye of 1000 public cameras.",
                                 "dystopian_lara_2.mp3"
                         );

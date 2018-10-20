@@ -137,7 +137,7 @@ public class UtopianScene extends Scenario {
                         mark.setLeft(true);
                         mark.setFrame(3, 0);
                         mark.say(
-                                "Well Facebook, my company finds his main goal in making people interaction with each other more open and true " +
+                                "Well Facebook, my company, finds his main goal in making people interaction with each other more open and true " +
                                         "with a simple motto: \"less prejudices\".",
                                 "utopian_zuckerberg_1.mp3"
                         );
@@ -145,7 +145,7 @@ public class UtopianScene extends Scenario {
                     })
                     .append(handle -> {
                         mark.say(
-                                "We don't even have to concentrate on reducing race or sexual discrimination on our platform.",
+                                "We don't have to concentrate on reducing race or sexual discrimination on our platform.",
                                 "utopian_zuckerberg_2.mp3"
                         );
                         handle.next(Trigger.ENTER_KEY);
@@ -159,8 +159,8 @@ public class UtopianScene extends Scenario {
                     })
                     .append(handle -> {
                         mark.say(
-                                "We also reached a very high level of trust with our users, in fact the code of the application is open-source " +
-                                        "so everyone could know what his info are used for.",
+                                "We also reached a very high level of trust with our users, the code of the application is open-source " +
+                                        "so that everyone could know what his info are used for.",
                                 "utopian_zuckerberg_4.mp3"
                         );
                         handle.next(Trigger.ENTER_KEY);
@@ -179,7 +179,7 @@ public class UtopianScene extends Scenario {
 
                         mark.say(
                                 "Nothing is impossible my dear friend, wait to see Paolo Utopinelli and you will agree with me. " +
-                                        "What he did is spectacular, he...",
+                                        "What he did was magnificent, he...",
                                 "utopian_zuckerberg_5.mp3"
                         );
                         handle.next(Trigger.ENTER_KEY);

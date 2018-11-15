@@ -12,8 +12,8 @@ buildscript {
     }
 }
 
-group "loryruta.hgame"
-version "1.0-SNAPSHOT"
+group "xyz.upperlevel.hgame"
+version "1.0"
 
 apply plugin: "java"
 apply plugin: "idea"
@@ -21,8 +21,8 @@ apply plugin: "distribution"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "application"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 
 shadowJar {
     baseName = project.name
@@ -64,7 +64,7 @@ switch (OperatingSystem.current()) {
 dependencies {
     testCompile group: "junit", name: "junit", version: "4.12"
 
-    compileOnly "org.projectlombok:lombok:1.18.2"
+    compileOnly "org.projectlombok:lombok:1.18.4"
 
     compile "com.google.code.gson:gson:2.8.5"
 
@@ -99,7 +99,7 @@ task setup {
     dependsOn "installGameDist"
 }
 
-mainClassName = "tk.loryruta.hgame.HGame"
+mainClassName = "xyz.upperlevel.hgame.HGame"
 
 // The application plugin sets up some tasks not relevant to us (we don't want to run the jar directly)
 tasks.remove(tasks.run)

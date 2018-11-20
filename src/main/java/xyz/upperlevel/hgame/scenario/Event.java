@@ -1,6 +1,6 @@
 package xyz.upperlevel.hgame.scenario;
 
-import xyz.upperlevel.hgame.scenario.character.Human;
+import xyz.upperlevel.hgame.scenario.character.Actor;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -28,11 +28,11 @@ public class Event {
     private Event() {
     }
 
-    public static Supplier<Boolean> greaterX(Human human, float x) {
-        return () -> human.getX() >= x;
+    public static Supplier<Boolean> greaterX(Actor actor, float x) {
+        return () -> actor.getX() >= x;
     }
 
-    public static Supplier<Boolean> lowerX(Human human, float x) {
-        return () -> human.getX() <= x;
+    public static Supplier<Boolean> lowerX(Actor actor, float x) {
+        return () -> actor.getX() <= x;
     }
 }

@@ -12,10 +12,10 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import xyz.upperlevel.hgame.scenario.Event;
+import xyz.upperlevel.hgame.scenario.Scenario;
 import xyz.upperlevel.hgame.scenario.animation.Sequence;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 import xyz.upperlevel.hgame.scenario.Conversation;
-import xyz.upperlevel.hgame.scenario.Storyline;
 
 public class HGame extends ApplicationAdapter {
     public static Gson gson = new Gson();
@@ -42,8 +42,7 @@ public class HGame extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
 
     @Getter
-    @Setter
-    private Storyline storyline;
+    private Scenario scenario;
 
     @Override
     public void create() {
@@ -54,7 +53,7 @@ public class HGame extends ApplicationAdapter {
 
         camera = new OrthographicCamera();
 
-        storyline = new Storyline();
+        scenario = new Scenario();
     }
 
     @Override
@@ -64,7 +63,7 @@ public class HGame extends ApplicationAdapter {
 
     @Override
     public void render() {
-        storyline.update();
+        scenario.update();
         Scheduler.update(); // Scheduler API update
         Sequence.update(); // Sequence API update
         Event.update();
@@ -72,7 +71,7 @@ public class HGame extends ApplicationAdapter {
         // Render
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        storyline.render();
+        scenario.render();
         Conversation.render();
     }
 

@@ -14,16 +14,15 @@ import xyz.upperlevel.hgame.scenario.animation.Sequence;
 import xyz.upperlevel.hgame.scenario.animation.Trigger;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 
-public class Human {
+public class Actor {
     public static final float WIDTH = 1.0f;
     public static final float HEIGHT = 1.5f; // Head.HEIGHT
 
     @Getter
-    @Setter
-    private String name;
+    private Character character;
 
     @Getter
-    private float x, y;
+    public float x, y;
 
     @Getter
     @Setter
@@ -44,13 +43,16 @@ public class Human {
 
     private int sayTask = -1;
 
+    public int damage = 20;
+
     @Setter
     private Sequence onTalk;
 
-    public Human(String name, String imagePath) {
-        this.name = name;
+    public Actor(Character character) {
+        this.character = character;
 
-        Texture texture = new Texture(Gdx.files.internal(imagePath));
+        Texture texture = new Texture(Gdx.files.internal("images/" + character.getTexturePath()));
+
         sprite = new Sprite(texture);
         sprite.setSize(WIDTH, HEIGHT);
 
@@ -77,7 +79,7 @@ public class Human {
         boolean left = this.x < x;
         Trigger endWhen = () -> (left && this.x >= x) || (!left && this.x <= x);
         walkToTask = Scheduler.start(() -> {
-            move(left ? absSpeed : -absSpeed, 0);
+            move(left ? absSpeed : -absSpeed);
             if (endWhen.get()) {
                 if (reach != null) {
                     reach.run();
@@ -93,7 +95,7 @@ public class Human {
     }
 
     @Deprecated
-    public Trigger walkTo(Human who, float distance, float speed, Runnable reach) {
+    public Trigger walkTo(Actor who, float distance, float speed, Runnable reach) {
         if (who.x < x) {
             return walkTo(who.x + WIDTH / 2.0f + distance, speed, reach);
         } else {
@@ -102,11 +104,11 @@ public class Human {
     }
 
     @Deprecated
-    public Trigger walkTo(Human who, float speed, Runnable reach) {
+    public Trigger walkTo(Actor who, float speed, Runnable reach) {
         return walkTo(who, 0.5f, speed, reach);
     }
 
-    public Trigger walkTo(Human who, float speed) {
+    public Trigger walkTo(Actor who, float speed) {
         return walkTo(who, speed, null);
     }
 
@@ -131,18 +133,18 @@ public class Human {
         velocity.set(velocityX, velocityY);
     }
 
-    public boolean intersect(Human other) {
+    public boolean intersect(Actor other) {
         return (x >= other.x && x <= other.x + WIDTH) || (x + WIDTH >= other.x && x + WIDTH <= other.x + WIDTH);
     }
 
-    public void talk(Human main) {
+    public void talk(Actor main) {
         left = main.x - x < 0;
         if (onTalk != null) {
             onTalk.play();
         }
     }
 
-    public void move(float offsetX, float offsetY) {
+    public void move(float offsetX) {
         left = offsetX < 0;
         if (walkTask == -1) {
             walkTask = Scheduler.start(new Walking(), 100, true);
@@ -157,7 +159,15 @@ public class Human {
             backToIdle = -1;
         }, 100);
         x += offsetX;
-        y += offsetY;
+    }
+
+    public void jump(float velocity) {
+        setVelocity(0, velocity);
+    }
+
+    public void attack() {
+        setFrame(2, 0);
+        // TODO delay to remove
     }
 
     public void update(Scenario scenario) {
@@ -203,10 +213,5 @@ public class Human {
                 backward = true;
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

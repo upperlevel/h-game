@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import xyz.upperlevel.hgame.scenario.character.Human;
+import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.scheduler.Task;
 
 public class Conversation {
@@ -19,7 +19,7 @@ public class Conversation {
     private static final BitmapFont font;
 
     static {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("resources/Lato.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Lato.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 32;
         parameter.borderWidth = 2;
@@ -107,12 +107,12 @@ public class Conversation {
         show(name, text, null);
     }
 
-    public static void show(Human human, String text, String audio) {
-        show(human.getName() + ":", text, audio);
+    public static void show(Actor actor, String text, String audio) {
+        show(actor.getCharacter().getName() + ":", text, audio);
     }
 
-    public static void show(Human human, String text) {
-        show(human, text, null);
+    public static void show(Actor actor, String text) {
+        show(actor, text, null);
     }
 
     public static void resize(int width, int height) {

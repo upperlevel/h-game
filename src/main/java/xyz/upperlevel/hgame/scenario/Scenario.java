@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import xyz.upperlevel.hgame.HGame;
-import xyz.upperlevel.hgame.scenario.character.Human;
+import xyz.upperlevel.hgame.scenario.character.Actor;
+import xyz.upperlevel.hgame.scenario.character.impl.Santinelli;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,8 @@ import java.util.List;
 public class Scenario {
     public static final float ACTOR_SPEED = 0.05f;
 
-    public final Human player;
-    public final List<Human> humans = new ArrayList<>();
+    public final Actor player;
+    public final List<Actor> actors = new ArrayList<>();
 
     private boolean frozen = false;
 
@@ -32,48 +33,34 @@ public class Scenario {
         gravity = 9.8f;
         groundHeight = 1.0f;
 
-        spawn(player = new Human("Ruta", "images/ruta.png"));
+        player = new Santinelli().personify();
+        spawn(player);
     }
 
     public void freeze(boolean flag) {
         frozen = flag;
     }
 
-    public void spawn(Human human) {
-        humans.add(human);
-    }
-
-    public Human getTalkingWith(Human who) {
-        for (Human human : humans) {
-            if (who != human && who.intersect(human)) {
-                return human;
-            }
-        }
-        return null;
+    public void spawn(Actor actor) {
+        actors.add(actor);
     }
 
     public void update() {
         if (!frozen) {
             if (Gdx.input.isKeyPressed(Keys.A)) {
-                player.move(-ACTOR_SPEED, 0);
+                player.move(-ACTOR_SPEED);
             }
             if (Gdx.input.isKeyPressed(Keys.D)) {
-                player.move(ACTOR_SPEED, 0);
+                player.move(ACTOR_SPEED);
             }
-            if (Gdx.input.isKeyPressed(Keys.W)) {
-                player.move(0, ACTOR_SPEED);
+            if (Gdx.input.isKeyJustPressed(Keys.W)) {
+                player.jump(2);
             }
-            if (Gdx.input.isKeyPressed(Keys.S)) {
-                player.move(0, -ACTOR_SPEED);
-            }
-            if (Gdx.input.isKeyJustPressed(Keys.E)) {
-                Human with = getTalkingWith(player);
-                if (with != null) {
-                    with.talk(player);
-                }
+            if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+                player.attack();
             }
         }
-        humans.forEach(human -> human.update(this));
+        actors.forEach(human -> human.update(this));
     }
 
     public void render() {
@@ -83,7 +70,7 @@ public class Scenario {
         ShapeRenderer renderer = HGame.instance.getShapeRenderer();
 
         camera.setToOrtho(false, Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight() * height, height);
-        camera.position.x = player.getX() + Human.WIDTH / 2f;
+        camera.position.x = player.getX() + Actor.WIDTH / 2f;
         camera.position.y = height / 2f + (player.getY() - groundHeight);
         camera.update();
 
@@ -100,8 +87,8 @@ public class Scenario {
         batch.begin();
 
         // the player will be the one over all the other extras
-        for (int i = humans.size() - 1; i >= 0; i--) {
-            humans.get(i).render();
+        for (int i = actors.size() - 1; i >= 0; i--) {
+            actors.get(i).render();
         }
 
         onRender();

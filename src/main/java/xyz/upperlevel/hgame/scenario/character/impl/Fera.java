@@ -29,7 +29,7 @@ public class Fera implements Character {
         return new ActorImpl(this);
     }
 
-    private static class ActorImpl extends Actor {
+    private class ActorImpl extends Actor {
         private ActorImpl(Character character) {
             super(character);
         }
@@ -42,6 +42,12 @@ public class Fera implements Character {
         @Override
         public void jump(float strength) {
             super.jump(strength * 0.5f);
+        }
+
+        @Override
+        public void specialAttack() {
+            // TODO
+            System.out.println(getFormalName() + ": my special attack!");
         }
     }
 }

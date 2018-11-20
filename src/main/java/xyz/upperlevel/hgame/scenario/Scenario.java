@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.scenario.character.Actor;
+import xyz.upperlevel.hgame.scenario.character.Character;
+import xyz.upperlevel.hgame.scenario.character.impl.Fera;
 import xyz.upperlevel.hgame.scenario.character.impl.Santinelli;
 
 import java.util.ArrayList;
@@ -17,8 +19,8 @@ import java.util.List;
 public class Scenario {
     public static final float ACTOR_SPEED = 0.05f;
 
-    public final Actor player;
-    public final List<Actor> actors = new ArrayList<>();
+    public Actor player;
+    public final List<Actor> extras = new ArrayList<>();
 
     private boolean frozen = false;
 
@@ -28,21 +30,35 @@ public class Scenario {
     public float groundHeight;
     public Color groundColor = Color.DARK_GRAY;
 
+    // Only done to allow character swapping.
+    private List<Character> characters = new ArrayList<>();
+    private int currentCharacter = 0;
+
     public Scenario() {
         height = 5.0f;
         gravity = 9.8f;
         groundHeight = 1.0f;
 
-        player = new Santinelli().personify();
-        spawn(player);
+        characters.add(new Santinelli());
+        characters.add(new Fera());
+
+        player = characters.get(currentCharacter++).personify();
+    }
+
+    private void changeCharacter(Character character) {
+        Actor changed = character.personify();
+        changed.x = player.x;
+        changed.y = player.y;
+        changed.setVelocity(player.getVelocity());
+        player = changed;
     }
 
     public void freeze(boolean flag) {
         frozen = flag;
     }
 
-    public void spawn(Actor actor) {
-        actors.add(actor);
+    public void spawnExtra(Actor actor) {
+        extras.add(actor);
     }
 
     public void update() {
@@ -56,11 +72,27 @@ public class Scenario {
             if (Gdx.input.isKeyJustPressed(Keys.W)) {
                 player.jump(2);
             }
+            // Normal attack, just a punch.
             if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
                 player.attack();
             }
+
+            // Special attack, usually long distance.
+            if (Gdx.input.isKeyJustPressed(Keys.J)) {
+                player.specialAttack();
+            }
+
+            if (Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
+                Character current = characters.get(currentCharacter);
+                changeCharacter(current);
+                currentCharacter = (currentCharacter + 1) % characters.size();
+                System.out.println("Character changed to: " + current.getFormalName());
+            }
         }
-        actors.forEach(human -> human.update(this));
+
+        // Updates physics first for extras then for the player.
+        extras.forEach(extra -> extra.update(this));
+        player.update(this);
     }
 
     public void render() {
@@ -86,10 +118,13 @@ public class Scenario {
         // humans
         batch.begin();
 
-        // the player will be the one over all the other extras
-        for (int i = actors.size() - 1; i >= 0; i--) {
-            actors.get(i).render();
+        // Firstly we render the extras that should be behind of the scene.
+        for (Actor actor : extras) {
+            actor.render();
         }
+
+        // The player is not part of the other actors.
+        player.render();
 
         onRender();
         batch.end();

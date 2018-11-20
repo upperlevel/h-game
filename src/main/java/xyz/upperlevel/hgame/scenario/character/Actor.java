@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
+import org.lwjgl.util.vector.Vector2f;
 import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Scenario;
@@ -29,6 +30,7 @@ public class Actor {
     private boolean left;
 
     @Getter
+    @Setter
     private Vector2 velocity = new Vector2();
 
     private Sprite sprite;
@@ -168,6 +170,12 @@ public class Actor {
     public void attack() {
         setFrame(2, 0);
         // TODO delay to remove
+    }
+
+    public void specialAttack() {
+        // By default, special attack is implemented as a normal attack.
+        // The Character should override the Actor class in order to implement its own special attack.
+        attack();
     }
 
     public void update(Scenario scenario) {

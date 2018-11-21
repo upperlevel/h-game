@@ -25,13 +25,13 @@ public class Fera implements Character {
     }
 
     @Override
-    public Actor personify() {
-        return new ActorImpl(this);
+    public Actor personify(int id) {
+        return new ActorImpl(id, this);
     }
 
     private class ActorImpl extends Actor {
-        private ActorImpl(Character character) {
-            super(character);
+        private ActorImpl(int id, Character character) {
+            super(id, character);
         }
 
         @Override

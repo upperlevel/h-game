@@ -36,5 +36,5 @@ public interface Character {
      * Generates an instance of the {@link Character}'s {@link Actor}.
      * The {@link Actor} is the object that will populate the Scenario.
      */
-    Actor personify();
+    Actor personify(int id);
 }

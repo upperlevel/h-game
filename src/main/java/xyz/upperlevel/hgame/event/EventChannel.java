@@ -181,7 +181,6 @@ public class EventChannel {
         if (clazz.getSuperclass() == Object.class) return true;
         for(Class<?> i : clazz.getInterfaces()) {
             if (isBase(i)) {
-                System.out.println("is base: " + clazz + " = true");
                 return true;
             }
         }

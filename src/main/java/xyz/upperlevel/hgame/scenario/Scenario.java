@@ -1,6 +1,7 @@
 package xyz.upperlevel.hgame.scenario;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Scenario {
-    public static final float ACTOR_SPEED = 0.05f;
+    public static final float ACTOR_MOVE_SPEED = 0.05f;
+    public static final float ACTOR_JUMP_SPEED = 2f;
 
     public Actor player;
     public final List<Actor> extras = new ArrayList<>();
@@ -42,11 +44,11 @@ public class Scenario {
         characters.add(new Santinelli());
         characters.add(new Fera());
 
-        player = characters.get(currentCharacter++).personify();
+        player = characters.get(currentCharacter++).personify(-1);
     }
 
     private void changeCharacter(Character character) {
-        Actor changed = character.personify();
+        Actor changed = character.personify(-1);
         changed.x = player.x;
         changed.y = player.y;
         changed.setVelocity(player.getVelocity());
@@ -61,26 +63,17 @@ public class Scenario {
         extras.add(actor);
     }
 
+    public void updatePlayer() {
+        Input input = Gdx.input;
+        for (var action : player.getInput().getActions()) {
+            if (!action.getTrigger().check(player, input)) continue;
+            action.trigger();
+        }
+    }
+
     public void update() {
         if (!frozen) {
-            if (Gdx.input.isKeyPressed(Keys.A)) {
-                player.move(-ACTOR_SPEED);
-            }
-            if (Gdx.input.isKeyPressed(Keys.D)) {
-                player.move(ACTOR_SPEED);
-            }
-            if (Gdx.input.isKeyJustPressed(Keys.W)) {
-                player.jump(2);
-            }
-            // Normal attack, just a punch.
-            if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-                player.attack();
-            }
-
-            // Special attack, usually long distance.
-            if (Gdx.input.isKeyJustPressed(Keys.J)) {
-                player.specialAttack();
-            }
+            updatePlayer();
 
             if (Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
                 Character current = characters.get(currentCharacter);

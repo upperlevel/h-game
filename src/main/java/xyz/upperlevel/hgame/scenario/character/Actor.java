@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-import org.lwjgl.util.vector.Vector2f;
 import xyz.upperlevel.hgame.HGame;
+import xyz.upperlevel.hgame.input.EntityInput;
+import xyz.upperlevel.hgame.input.StandardEntityInput;
 import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Scenario;
 import xyz.upperlevel.hgame.scenario.animation.Sequence;
@@ -18,6 +19,9 @@ import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 public class Actor {
     public static final float WIDTH = 1.0f;
     public static final float HEIGHT = 1.5f; // Head.HEIGHT
+
+    @Getter
+    private final int id;
 
     @Getter
     private Character character;
@@ -32,6 +36,9 @@ public class Actor {
     @Getter
     @Setter
     private Vector2 velocity = new Vector2();
+
+    @Getter
+    private boolean touchingGround = false;
 
     private Sprite sprite;
     private TextureRegion[][] regions;
@@ -50,7 +57,12 @@ public class Actor {
     @Setter
     private Sequence onTalk;
 
-    public Actor(Character character) {
+    @Getter
+    @Setter
+    private EntityInput input = StandardEntityInput.create(this);
+
+    public Actor(int id, Character character) {
+        this.id = id;
         this.character = character;
 
         Texture texture = new Texture(Gdx.files.internal("images/" + character.getTexturePath()));
@@ -190,6 +202,9 @@ public class Actor {
         if (!noClip && y < scenario.groundHeight) {
             y = scenario.groundHeight;
             velocity.y = 0;
+            touchingGround = true;
+        } else {
+            touchingGround = false;
         }
     }
 

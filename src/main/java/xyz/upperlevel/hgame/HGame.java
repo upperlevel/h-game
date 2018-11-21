@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
+import xyz.upperlevel.hgame.network.DisconnectedEndpoint;
+import xyz.upperlevel.hgame.network.Endpoint;
 import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Event;
 import xyz.upperlevel.hgame.scenario.Scenario;
@@ -41,6 +43,9 @@ public class HGame extends ApplicationAdapter {
     @Getter
     private Scenario scenario;
 
+    @Getter
+    private Endpoint endpoint;
+
     @Override
     public void create() {
         instance = this;
@@ -51,6 +56,8 @@ public class HGame extends ApplicationAdapter {
         camera = new OrthographicCamera();
 
         scenario = new Scenario();
+
+        endpoint = new DisconnectedEndpoint(null);
     }
 
     @Override

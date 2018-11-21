@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 @EqualsAndHashCode
 @Data
-public abstract class EventListener<E extends Event>{
+public abstract class EventListener<E extends Event> {
     private final Class<?> clazz;
     private final byte priority;
 

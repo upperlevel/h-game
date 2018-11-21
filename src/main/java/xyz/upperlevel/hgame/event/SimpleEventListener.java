@@ -1,9 +1,6 @@
 package xyz.upperlevel.hgame.event;
 
 import lombok.EqualsAndHashCode;
-import xyz.upperlevel.hgame.event.Event;
-import xyz.upperlevel.hgame.event.EventListener;
-import xyz.upperlevel.hgame.event.EventPriority;
 
 import java.util.function.Consumer;
 

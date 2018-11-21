@@ -8,17 +8,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.google.gson.Gson;
 import lombok.Getter;
-import lombok.Setter;
+import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Event;
 import xyz.upperlevel.hgame.scenario.Scenario;
 import xyz.upperlevel.hgame.scenario.animation.Sequence;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
-import xyz.upperlevel.hgame.scenario.Conversation;
 
 public class HGame extends ApplicationAdapter {
-    public static Gson gson = new Gson();
 
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

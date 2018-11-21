@@ -1,8 +1,8 @@
-package xyz.upperlevel.hgame.networking.events;
+package xyz.upperlevel.hgame.network.events;
 
 import io.netty.channel.Channel;
 import xyz.upperlevel.hgame.event.Event;
 
-public class ConnectionOpenEvent implements Event {
+public class ConnectionCloseEvent implements Event {
     private Channel channel;
 }

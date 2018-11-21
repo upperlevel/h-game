@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.ToString;
 import org.junit.Test;
 import xyz.upperlevel.hgame.event.Event;
 import xyz.upperlevel.hgame.event.EventListener;
-import xyz.upperlevel.hgame.networking.events.ConnectionCloseEvent;
-import xyz.upperlevel.hgame.networking.events.ConnectionOpenEvent;
+import xyz.upperlevel.hgame.network.events.ConnectionCloseEvent;
+import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

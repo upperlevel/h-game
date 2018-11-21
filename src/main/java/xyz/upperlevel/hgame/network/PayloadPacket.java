@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

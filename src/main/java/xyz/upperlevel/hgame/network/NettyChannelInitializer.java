@@ -1,9 +1,7 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

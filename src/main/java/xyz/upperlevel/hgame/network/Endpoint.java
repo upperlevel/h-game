@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -8,8 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import xyz.upperlevel.hgame.event.EventChannel;
-import xyz.upperlevel.hgame.networking.events.ConnectionCloseEvent;
-import xyz.upperlevel.hgame.networking.events.ConnectionOpenEvent;
+import xyz.upperlevel.hgame.network.events.ConnectionCloseEvent;
+import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 
 public class Endpoint {
     @Getter

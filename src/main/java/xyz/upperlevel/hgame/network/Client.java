@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.networking;
+package xyz.upperlevel.hgame.network;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -3,29 +3,9 @@ package xyz.upperlevel.hgame.scenario.character;
 
 public interface Character {
     /**
-     * The {@code Character}'s name.
-     * Lorenzo Rutayisire's name is Lorenzo.
+     * The name of the character.
      */
     String getName();
-
-    /**
-     * The {@code Character}'s surname.
-     * Lorenzo Rossi's surname is Rossi.
-     */
-    String getSurname();
-
-    /**
-     * The {@code Character}'s nickname.
-     * Lorenzo Rutayisire's nickname is Lory or Ruta.
-     */
-    String getNickname();
-
-    /**
-     * The {@code Character}'s formal name.
-     */
-    default String getFormalName() {
-        return getName() + " " + getSurname();
-    }
 
     /**
      * The {@code Character}'s texture path.

@@ -3,25 +3,15 @@ package xyz.upperlevel.hgame.scenario.character.impl;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
 
-public class Fera implements Character {
+public class Sfera implements Character {
     @Override
     public String getName() {
-        return "Marianna";
-    }
-
-    @Override
-    public String getSurname() {
-        return "Fera";
-    }
-
-    @Override
-    public String getNickname() {
-        return "Fera";
+        return "Sfera";
     }
 
     @Override
     public String getTexturePath() {
-        return "prof_marianna_fera.png";
+        return "prof_sfera.png";
     }
 
     @Override
@@ -46,8 +36,7 @@ public class Fera implements Character {
 
         @Override
         public void specialAttack() {
-            // TODO
-            System.out.println(getFormalName() + ": my special attack!");
+            System.out.println(getName() + ": my special attack!");
         }
     }
 }

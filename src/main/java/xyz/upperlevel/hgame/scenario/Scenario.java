@@ -11,8 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
-import xyz.upperlevel.hgame.scenario.character.impl.Fera;
-import xyz.upperlevel.hgame.scenario.character.impl.Santinelli;
+import xyz.upperlevel.hgame.scenario.character.impl.Sfera;
+import xyz.upperlevel.hgame.scenario.character.impl.Santy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,8 @@ public class Scenario {
         gravity = 9.8f;
         groundHeight = 1.0f;
 
-        characters.add(new Santinelli());
-        characters.add(new Fera());
+        characters.add(new Santy());
+        characters.add(new Sfera());
 
         player = characters.get(currentCharacter++).personify(-1);
     }
@@ -79,7 +79,7 @@ public class Scenario {
                 Character current = characters.get(currentCharacter);
                 changeCharacter(current);
                 currentCharacter = (currentCharacter + 1) % characters.size();
-                System.out.println("Character changed to: " + current.getFormalName());
+                System.out.println("Character changed to: " + current.getName());
             }
         }
 

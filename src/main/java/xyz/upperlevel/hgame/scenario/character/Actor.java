@@ -17,8 +17,8 @@ import xyz.upperlevel.hgame.scenario.animation.Trigger;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 
 public class Actor {
-    public static final float WIDTH = 1.0f;
-    public static final float HEIGHT = 1.5f; // Head.HEIGHT
+    public static final float WIDTH = 2.0f;
+    public static final float HEIGHT = 2.0f;
 
     @Getter
     private final int id;
@@ -52,8 +52,6 @@ public class Actor {
 
     private int sayTask = -1;
 
-    public int damage = 20;
-
     @Setter
     private Sequence onTalk;
 
@@ -70,7 +68,7 @@ public class Actor {
         sprite = new Sprite(texture);
         sprite.setSize(WIDTH, HEIGHT);
 
-        regions = SpriteExtractor.grid(texture, 5, 2);
+        regions = SpriteExtractor.grid(texture, 6, 4);
         setFrame(0, 0);
     }
 

@@ -3,6 +3,7 @@ package xyz.upperlevel.hgame.scenario.character.impl;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
+import xyz.upperlevel.hgame.scenario.sequence.Sequence;
 
 public class Santy implements Character {
     @Override
@@ -43,60 +44,25 @@ public class Santy implements Character {
 
         @Override
         public void attack() {
-            if (attackTask >= 0) {
-                Scheduler.cancel(attackTask);
-                attackTask = -1;
-            }
-            setFrame(0, 2);
-            attackTask = Scheduler.start(() -> {
-                setFrame(1, 2);
-                attackTask = Scheduler.start(() -> {
-                    setFrame(0, 0);
-                }, 200);
-            }, 200);
+            animate(
+                    Sequence.create()
+                            .act(() -> setFrame(0, 2))
+                            .delay(200)
+                            .act(() -> setFrame(1, 2))
+                            .delay(200)
+                            .act(() -> setFrame(0, 0))
+            );
         }
 
         @Override
         public void specialAttack() {
-            if (shakingTask < 0) {
-                Scheduler.cancel(shakingTask);
-                shakingTask = -1;
-            }
-
-            if (specialAttackTask >= 0) {
-                Scheduler.cancel(specialAttackTask);
-                specialAttackTask = -1;
-            }
-
-            shakingTask = Scheduler.start(new ShakingTask(), 500, true);
-        }
-
-        private class ShakingTask implements Runnable {
-            private int times = 10;
-
-            @Override
-            public void run() {
-                setFrame(times % 2, 3);
-                if (--times <= 0) {
-                    Scheduler.cancel(shakingTask);
-                    shakingTask = -1;
-
-                    specialAttackTask = Scheduler.start(new SpecialAttackTask(), 500, true);
-                }
-            }
-        }
-
-        private class SpecialAttackTask implements Runnable {
-            private int frame = 2;
-
-            @Override
-            public void run() {
-                setFrame(frame, 3);
-                if (++frame > 5) {
-                    Scheduler.cancel(specialAttackTask);
-                    specialAttackTask = -1;
-                }
-            }
+            animate(
+                    Sequence.create()
+                            .repeat((step, time) -> setFrame(time % 2, 3), 200, 15)
+                            .repeat((step, time) -> setFrame(time + 2, 3), 500, 4)
+                            .delay(2000)
+                            .act(() -> setFrame(0, 0))
+            );
         }
     }
 }

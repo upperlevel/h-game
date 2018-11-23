@@ -12,8 +12,8 @@ import xyz.upperlevel.hgame.input.EntityInput;
 import xyz.upperlevel.hgame.input.StandardEntityInput;
 import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Scenario;
-import xyz.upperlevel.hgame.scenario.animation.Sequence;
-import xyz.upperlevel.hgame.scenario.animation.Trigger;
+import xyz.upperlevel.hgame.scenario.sequence.Sequence;
+import xyz.upperlevel.hgame.scenario.sequence.Trigger;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 
 public class Actor {
@@ -52,12 +52,11 @@ public class Actor {
 
     private int sayTask = -1;
 
-    @Setter
-    private Sequence onTalk;
-
     @Getter
     @Setter
     private EntityInput input = StandardEntityInput.create(this);
+
+    private Sequence animation = null;
 
     public Actor(int id, Character character) {
         this.id = id;
@@ -70,6 +69,20 @@ public class Actor {
 
         regions = SpriteExtractor.grid(texture, 6, 4);
         setFrame(0, 0);
+    }
+
+    /**
+     * Allows to play the given animation with the security that the
+     * previous animation is stopped. An {@link Actor} is supposed
+     * to have one animation running per time.
+     */
+    public void animate(Sequence animation) {
+        Sequence old = this.animation;
+        if (old != null) {
+            old.dismiss();
+        }
+        this.animation = animation;
+        animation.play();
     }
 
     public void setFrame(int x, int y) {
@@ -149,16 +162,10 @@ public class Actor {
         return (x >= other.x && x <= other.x + WIDTH) || (x + WIDTH >= other.x && x + WIDTH <= other.x + WIDTH);
     }
 
-    public void talk(Actor main) {
-        left = main.x - x < 0;
-        if (onTalk != null) {
-            onTalk.play();
-        }
-    }
-
     public void move(float offsetX) {
         left = offsetX < 0;
         if (walkTask == -1) {
+            // The player is moving and the walking task wasn't started.
             walkTask = Scheduler.start(new Walking(), 100, true);
         }
         if (backToIdle != -1) {

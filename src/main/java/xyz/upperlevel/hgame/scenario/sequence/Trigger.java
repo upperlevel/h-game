@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.animation;
+package xyz.upperlevel.hgame.scenario.sequence;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

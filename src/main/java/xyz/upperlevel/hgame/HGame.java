@@ -14,7 +14,7 @@ import xyz.upperlevel.hgame.network.Endpoint;
 import xyz.upperlevel.hgame.scenario.Conversation;
 import xyz.upperlevel.hgame.scenario.Event;
 import xyz.upperlevel.hgame.scenario.Scenario;
-import xyz.upperlevel.hgame.scenario.animation.Sequence;
+import xyz.upperlevel.hgame.scenario.sequence.Sequence;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 
 public class HGame extends ApplicationAdapter {
@@ -69,7 +69,7 @@ public class HGame extends ApplicationAdapter {
     public void render() {
         scenario.update();
         Scheduler.update(); // Scheduler API update
-        Sequence.update(); // Sequence API update
+        Sequence.updateAll(); // Sequence API update
         Event.update();
 
         // Render

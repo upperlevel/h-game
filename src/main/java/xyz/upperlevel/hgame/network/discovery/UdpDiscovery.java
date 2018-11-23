@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class UdpDiscovery {
-    public static int DISCOVERY_SERCVICE_INTERVAL_MILLISECONDS = 500;
+    public static int DISCOVERY_SERVICE_INTERVAL_MILLISECONDS = 500;
     public static final int DISCOVERY_PORT = 23432;
     public static final int MAGIC_ID = 4242;
     private static final InetAddress BROADCAST;
@@ -69,22 +69,15 @@ public class UdpDiscovery {
         out.write(type.toId());
         switch (type) {
             case RESPONSE_HELLO:
-                out.write((byte)nick.length());
-                out.write(nick.getBytes(StandardCharsets.UTF_8));
-                break;
             case RESPONSE_CONFIRM:
             case RESPONSE_DENY:
+                writeString(out, nick);
                 break;
             default:
                 throw new IllegalArgumentException("type");
         }
         var packet = new DatagramPacket(out.toByteArray(), out.size(), target);
         socket.send(packet);
-    }
-
-    private static String readString(ByteBuffer buffer) {
-        byte len = buffer.get();
-        return new String(buffer.array(), buffer.arrayOffset(), len);
     }
 
     private void onPacketRead(DatagramPacket packet) throws IOException {
@@ -98,6 +91,8 @@ public class UdpDiscovery {
 
         var sender = (InetSocketAddress) packet.getSocketAddress();
 
+        String name;
+
         switch (type.get()) {
             case REQUEST_DISCOVERY:
                 if (available) {
@@ -105,19 +100,27 @@ public class UdpDiscovery {
                 }
                 break;
             case REQUEST_PAIR:
-                if (available) {
+                boolean pairSuccess = available;
+
+                if (pairSuccess) {
+                    name = readString(buffer);
+                    pairSuccess = events.call(new DiscoveryPairRequestEvent(packet.getAddress(), name));
+                }
+
+                if (pairSuccess) {
                     reply(sender, PacketType.RESPONSE_CONFIRM);
                 } else {
                     reply(sender, PacketType.RESPONSE_DENY);
                 }
                 break;
             case RESPONSE_HELLO:
-                var name = readString(buffer);
+                name = readString(buffer);
                 events.call(new DiscoveryResponseEvent(sender.getAddress(), name));
                 break;
             case RESPONSE_CONFIRM:
             case RESPONSE_DENY:
-                events.call(new DiscoveryPairResponseEvent(sender.getAddress(), type.get() == PacketType.RESPONSE_CONFIRM));
+                name = readString(buffer);
+                events.call(new DiscoveryPairResponseEvent(sender.getAddress(), name, type.get() == PacketType.RESPONSE_CONFIRM));
                 break;
             default:
                 throw new IllegalStateException();
@@ -145,20 +148,32 @@ public class UdpDiscovery {
                 e.printStackTrace();
             }
             try {
-                Thread.sleep(DISCOVERY_SERCVICE_INTERVAL_MILLISECONDS);
+                Thread.sleep(DISCOVERY_SERVICE_INTERVAL_MILLISECONDS);
             } catch (InterruptedException ignored) {}
         }
     }
 
     public void stopService() {
+        if (!available) return;
         available = false;
         discoverService.interrupt();
+        discoverService = null;
     }
 
     public void startService(String nick) {
         this.nick = nick;
         available = true;
         discoverService = new Thread(this::serviceRunner, "Discovery Client");
+    }
+
+    private static String readString(ByteBuffer buffer) {
+        byte len = buffer.get();
+        return new String(buffer.array(), buffer.arrayOffset(), len);
+    }
+
+    private static void writeString(ByteArrayOutputStream out, String str) throws IOException {
+        out.write((byte)str.length());
+        out.write(str.getBytes(StandardCharsets.UTF_8));
     }
 
     public enum PacketType {

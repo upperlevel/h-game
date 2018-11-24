@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-import xyz.upperlevel.hgame.HGame;
+import xyz.upperlevel.hgame.scenario.GameScreen;
 import xyz.upperlevel.hgame.input.EntityInput;
 import xyz.upperlevel.hgame.input.StandardEntityInput;
 import xyz.upperlevel.hgame.scenario.Conversation;
@@ -144,7 +144,7 @@ public class Actor {
         }
         if (duration > 0) {
             sayTask = Scheduler.start(() -> {
-                // HGame.instance.getScenario().setRenderingSentence(this, null);
+                // GameScreen.instance.getScenario().setRenderingSentence(this, null);
             }, duration);
         }
         Conversation.show(this, text, audio);
@@ -218,7 +218,7 @@ public class Actor {
             sprite.flip(true, false);
         }
         sprite.setPosition(x, y);
-        sprite.draw(HGame.instance.getBatch());
+        sprite.draw(GameScreen.instance.getBatch());
     }
 
     public class Walking implements Runnable {

@@ -1,23 +1,48 @@
 package xyz.upperlevel.hgame;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
-import xyz.upperlevel.hgame.network.DisconnectedEndpoint;
-import xyz.upperlevel.hgame.network.Endpoint;
-import xyz.upperlevel.hgame.scenario.Conversation;
-import xyz.upperlevel.hgame.scenario.Event;
-import xyz.upperlevel.hgame.scenario.Scenario;
-import xyz.upperlevel.hgame.scenario.sequence.Sequence;
-import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
+import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
+import xyz.upperlevel.hgame.scenario.GameScreen;
+import xyz.upperlevel.hgame.scenario.LoginScreen;
+import xyz.upperlevel.hgame.scenario.MatchMakingScreen;
 
-public class HGame extends ApplicationAdapter {
+import java.io.IOException;
+
+public class HGame extends Game {
+    @Getter
+    private UdpDiscovery discovery;
+
+    // Screens
+    private LoginScreen loginScreen;
+    private MatchMakingScreen matchMakingScreen;
+    private GameScreen mainScreen;
+
+    @Override
+    public void create() {
+        discovery = new UdpDiscovery();
+
+        try {
+            discovery.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        matchMakingScreen = new MatchMakingScreen(discovery, (oppIp, oppName) -> {
+            // TODO: start the connection and the game
+        });
+
+        loginScreen = new LoginScreen(name -> {
+            matchMakingScreen.setName(name);
+            setScreen(matchMakingScreen);
+        });
+
+        mainScreen = new GameScreen();
+
+        setScreen(mainScreen);
+    }
 
     public static void main(String[] args) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
@@ -27,61 +52,5 @@ public class HGame extends ApplicationAdapter {
         config.height = 720;
 
         new LwjglApplication(new HGame(), config);
-    }
-
-    public static HGame instance;
-
-    @Getter
-    private OrthographicCamera camera;
-
-    @Getter
-    private SpriteBatch batch;
-
-    @Getter
-    private ShapeRenderer shapeRenderer;
-
-    @Getter
-    private Scenario scenario;
-
-    @Getter
-    private Endpoint endpoint;
-
-    @Override
-    public void create() {
-        instance = this;
-
-        batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
-
-        camera = new OrthographicCamera();
-
-        scenario = new Scenario();
-
-        endpoint = new DisconnectedEndpoint(null);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        Conversation.resize(width, height);
-    }
-
-    @Override
-    public void render() {
-        scenario.update();
-        Scheduler.update(); // Scheduler API update
-        Sequence.updateAll(); // Sequence API update
-        Event.update();
-
-        // Render
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        scenario.render();
-        Conversation.render();
-    }
-
-    @Override
-    public void dispose() {
-        Conversation.dispose();
-        batch.dispose();
     }
 }

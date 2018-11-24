@@ -10,15 +10,18 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Optional;
 
 public class UdpDiscovery {
-    public static int DISCOVERY_SERVICE_INTERVAL_MILLISECONDS = 500;
+    public static int DISCOVERY_SERVICE_INTERVAL_MILLISECONDS = 2000;
     public static final int DISCOVERY_PORT = 23432;
     public static final int MAGIC_ID = 4242;
     private static final InetAddress BROADCAST;
 
     private DatagramSocket socket;
+
     @Getter
     private EventChannel events = new EventChannel();
     private Thread discoverService;
@@ -29,7 +32,6 @@ public class UdpDiscovery {
     private String nick = "ulisse";
 
     @Getter
-    @Setter
     private boolean available = false;
 
 
@@ -42,21 +44,32 @@ public class UdpDiscovery {
     }
 
     public void start() throws IOException {
-        socket = new DatagramSocket();
+        socket = new DatagramSocket(DISCOVERY_PORT);
         socket.setReuseAddress(true);
+        socket.setBroadcast(true);
         var thread = new Thread(this::listen, "Discovery Server");
         thread.setDaemon(true);
         thread.start();
     }
 
+    private static boolean isAddrSelf(InetAddress addr) throws SocketException {
+        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+        for (NetworkInterface netint : Collections.list(nets)) {
+            for (InetAddress inet : Collections.list(netint.getInetAddresses())) {
+                if (addr.equals(inet)) return true;
+            }
+        }
+        return false;
+    }
+
     public void listen() {
         byte[] buffer = new byte[2048];
         try {
-            socket.bind(new InetSocketAddress(DISCOVERY_PORT));
-
             while (true) {
-                DatagramPacket packet = new DatagramPacket(buffer, 0);
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
+
+                if (isAddrSelf(packet.getAddress())) continue;
                 onPacketRead(packet);
             }
         } catch (IOException e) {
@@ -66,6 +79,8 @@ public class UdpDiscovery {
 
     private void reply(SocketAddress target, PacketType type) throws IOException {
         var out = new ByteArrayOutputStream();
+        byte[] magicData = ByteBuffer.allocate(Integer.BYTES).putInt(MAGIC_ID).array();
+        out.write(magicData, 0, magicData.length);
         out.write(type.toId());
         switch (type) {
             case RESPONSE_HELLO:
@@ -83,8 +98,9 @@ public class UdpDiscovery {
     private void onPacketRead(DatagramPacket packet) throws IOException {
         ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), packet.getOffset(), packet.getLength());
 
-        if (buffer.remaining() < Integer.BYTES) return;
-        if (buffer.getInt() != MAGIC_ID) return;
+        if (buffer.remaining() < Integer.BYTES || buffer.getInt() != MAGIC_ID) {
+            return;
+        }
 
         var type = PacketType.fromId(buffer.get());
         if (!type.isPresent()) return;
@@ -96,7 +112,7 @@ public class UdpDiscovery {
         switch (type.get()) {
             case REQUEST_DISCOVERY:
                 if (available) {
-                    reply(sender, PacketType.RESPONSE_CONFIRM);
+                    reply(sender, PacketType.RESPONSE_HELLO);
                 }
                 break;
             case REQUEST_PAIR:
@@ -128,14 +144,12 @@ public class UdpDiscovery {
     }
 
     public void discover() throws IOException {
-        socket.setReuseAddress(true);
-        socket.setBroadcast(true);
+        byte[] data = ByteBuffer.allocate(Integer.BYTES + 1)
+                .putInt(MAGIC_ID)
+                .put(PacketType.REQUEST_DISCOVERY.toId())
+                .array();
 
-        byte[] data = new byte[] {
-            PacketType.REQUEST_DISCOVERY.toId()
-        };
-
-        DatagramPacket packet = new DatagramPacket(data, data.length, new InetSocketAddress(BROADCAST, 9956));
+        DatagramPacket packet = new DatagramPacket(data, data.length, new InetSocketAddress(BROADCAST, DISCOVERY_PORT));
         socket.send(packet);
     }
 
@@ -149,7 +163,9 @@ public class UdpDiscovery {
             }
             try {
                 Thread.sleep(DISCOVERY_SERVICE_INTERVAL_MILLISECONDS);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException e) {
+                break;
+            }
         }
     }
 
@@ -160,18 +176,22 @@ public class UdpDiscovery {
         discoverService = null;
     }
 
-    public void startService(String nick) {
+    public void startService(@NonNull String nick) {
         this.nick = nick;
         available = true;
         discoverService = new Thread(this::serviceRunner, "Discovery Client");
+        discoverService.setDaemon(true);
+        discoverService.start();
     }
 
     private static String readString(ByteBuffer buffer) {
         byte len = buffer.get();
-        return new String(buffer.array(), buffer.arrayOffset(), len);
+        byte[] strData = new byte[len];
+        buffer.get(strData);
+        return new String(strData, StandardCharsets.UTF_8);
     }
 
-    private static void writeString(ByteArrayOutputStream out, String str) throws IOException {
+    private static void writeString(ByteArrayOutputStream out, @NonNull String str) throws IOException {
         out.write((byte)str.length());
         out.write(str.getBytes(StandardCharsets.UTF_8));
     }

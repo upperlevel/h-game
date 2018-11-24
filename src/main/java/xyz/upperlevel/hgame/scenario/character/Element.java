@@ -3,7 +3,7 @@ package xyz.upperlevel.hgame.scenario.character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import xyz.upperlevel.hgame.HGame;
+import xyz.upperlevel.hgame.scenario.GameScreen;
 
 public class Element {
     private float x, y;
@@ -23,7 +23,7 @@ public class Element {
     public void render() {
         sprite.setPosition(x, y);
         sprite.setSize(width, height);
-        sprite.draw(HGame.instance.getBatch());
+        sprite.draw(GameScreen.instance.getBatch());
     }
 
 }

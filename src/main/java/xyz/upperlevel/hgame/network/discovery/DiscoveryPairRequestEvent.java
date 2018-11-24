@@ -9,8 +9,8 @@ import java.net.InetAddress;
 @AllArgsConstructor
 public class DiscoveryPairRequestEvent extends CancellableEvent {
     @Getter
-    private final InetAddress address;
+    private final InetAddress ip;
 
     @Getter
-    private final String name;
+    private final String nickname;
 }

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
 import xyz.upperlevel.hgame.scenario.character.impl.Sfera;
@@ -90,9 +89,9 @@ public class Scenario {
 
     public void render() {
         // camera
-        OrthographicCamera camera = HGame.instance.getCamera();
-        SpriteBatch batch = HGame.instance.getBatch();
-        ShapeRenderer renderer = HGame.instance.getShapeRenderer();
+        OrthographicCamera camera = GameScreen.instance.getCamera();
+        SpriteBatch batch = GameScreen.instance.getBatch();
+        ShapeRenderer renderer = GameScreen.instance.getShapeRenderer();
 
         camera.setToOrtho(false, Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight() * height, height);
         camera.position.x = player.getX() + Actor.WIDTH / 2f;

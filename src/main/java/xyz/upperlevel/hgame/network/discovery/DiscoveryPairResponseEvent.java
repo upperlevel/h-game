@@ -1,10 +1,7 @@
 package xyz.upperlevel.hgame.network.discovery;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import xyz.upperlevel.hgame.event.CancellableEvent;
 import xyz.upperlevel.hgame.event.Event;
 
 import java.net.InetAddress;
@@ -15,7 +12,7 @@ public class DiscoveryPairResponseEvent implements Event {
     private final InetAddress ip;
 
     @Getter
-    private final String name;
+    private final String nickname;
 
     @Getter
     private final boolean success;

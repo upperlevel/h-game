@@ -1,32 +1,21 @@
 package xyz.upperlevel.hgame.scenario;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import xyz.upperlevel.hgame.input.InputAction;
+import xyz.upperlevel.hgame.network.Endpoint;
+import xyz.upperlevel.hgame.network.Server;
 import xyz.upperlevel.hgame.scenario.character.Actor;
-import xyz.upperlevel.hgame.scenario.character.Character;
 import xyz.upperlevel.hgame.scenario.character.impl.Santy;
-import xyz.upperlevel.hgame.scenario.character.impl.Sfera;
-
-import java.util.ArrayList;
-import java.util.List;
+import xyz.upperlevel.hgame.scenario.entity.EntityRegistry;
 
 public class Scenario {
-    public static final Logger logger = LogManager.getLogger();
     public static final float ACTOR_MOVE_SPEED = 0.05f;
     public static final float ACTOR_JUMP_SPEED = 2f;
-
-    public Actor player;
-    public final List<Actor> extras = new ArrayList<>();
-
-    private boolean frozen = false;
 
     public float height;
     public float gravity;
@@ -34,60 +23,32 @@ public class Scenario {
     public float groundHeight;
     public Color groundColor = Color.DARK_GRAY;
 
-    // Only done to allow character swapping.
-    private List<Character> characters = new ArrayList<>();
-    private int currentCharacter = 0;
+    private EntityRegistry entityRegistry = new EntityRegistry();
+    private Actor player;
+
+    private boolean isMaster;
 
     public Scenario() {
         height = 5.0f;
         gravity = 9.8f;
         groundHeight = 1.0f;
-
-        characters.add(new Santy());
-        characters.add(new Sfera());
-
-        player = characters.get(currentCharacter++).personify(-1);
     }
 
-    private void changeCharacter(Character character) {
-        Actor changed = character.personify(-1);
-        changed.x = player.x;
-        changed.y = player.y;
-        changed.setVelocity(player.getVelocity());
-        player = changed;
-    }
-
-    public void freeze(boolean flag) {
-        frozen = flag;
-    }
-
-    public void spawnExtra(Actor actor) {
-        extras.add(actor);
-    }
-
-    public void updatePlayer() {
-        Input input = Gdx.input;
-        for (var action : player.getInput().getActions()) {
-            if (!action.getTrigger().check(player, input)) continue;
-            action.trigger();
-        }
+    public void onGameStart() {
+        player = entityRegistry.spawn(Santy.class, 0, 0, true);
     }
 
     public void update() {
-        if (!frozen) {
-            updatePlayer();
+        // Inputs
+        var input = Gdx.input;
+        player.getInput()
+                .getActions()
+                .stream()
+                .filter(a -> a.getTrigger().check(input))
+                .forEach(InputAction::trigger);
 
-            if (Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-                Character current = characters.get(currentCharacter);
-                changeCharacter(current);
-                currentCharacter = (currentCharacter + 1) % characters.size();
-                logger.info("Character changed to: %s", current.getName());
-            }
-        }
-
-        // Updates physics first for extras then for the player.
-        extras.forEach(extra -> extra.update(this));
-        player.update(this);
+        // Updates
+        entityRegistry.getEntities().forEach(e -> e.update(this));
     }
 
     public void render() {
@@ -114,17 +75,19 @@ public class Scenario {
         batch.begin();
 
         // Firstly we render the extras that should be behind of the scene.
-        for (Actor actor : extras) {
-            actor.render();
-        }
-
-        // The player is not part of the other actors.
-        player.render();
+        entityRegistry.getEntities().forEach(Actor::render);
 
         onRender();
         batch.end();
     }
 
     public void onRender() {
+    }
+
+    public void initEndpoint(Endpoint endpoint) {
+        isMaster = endpoint instanceof Server;
+        entityRegistry.registerType(Santy.class, new Santy()::personify);
+
+        entityRegistry.initEndpoint(endpoint);
     }
 }

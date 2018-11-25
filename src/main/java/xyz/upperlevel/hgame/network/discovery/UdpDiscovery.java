@@ -57,6 +57,10 @@ public class UdpDiscovery {
         thread.start();
     }
 
+    public void askPairing(InetAddress ip) throws IOException {
+        reply(new InetSocketAddress(ip, DISCOVERY_PORT), PacketType.REQUEST_PAIR);
+    }
+
     private static boolean isAddrSelf(InetAddress addr) throws SocketException {
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
         for (NetworkInterface netint : Collections.list(nets)) {

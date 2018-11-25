@@ -7,15 +7,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.Getter;
 
+import java.net.InetAddress;
+
 public class Client extends Endpoint {
     @Getter
     private final NettyChannelInitializer initializer = new NettyChannelInitializer(this);
     @Getter
-    private final String host;
+    private final InetAddress host;
     @Getter
     private final int port;
 
-    public Client(Protocol protocol, String host, int port) {
+    public Client(Protocol protocol, InetAddress host, int port) {
         super(protocol);
         this.host = host;
         this.port = port;

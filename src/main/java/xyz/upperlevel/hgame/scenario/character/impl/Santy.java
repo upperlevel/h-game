@@ -2,7 +2,6 @@ package xyz.upperlevel.hgame.scenario.character.impl;
 
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
-import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 import xyz.upperlevel.hgame.scenario.sequence.Sequence;
 
 public class Santy implements Character {
@@ -17,11 +16,11 @@ public class Santy implements Character {
     }
 
     @Override
-    public Actor personify(int id) {
+    public ActorImpl personify(int id) {
         return new ActorImpl(id, this);
     }
 
-    private class ActorImpl extends Actor {
+    public class ActorImpl extends Actor {
         private int attackTask = -1;
 
         // Special attack

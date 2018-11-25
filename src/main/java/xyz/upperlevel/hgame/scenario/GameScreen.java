@@ -7,10 +7,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
-import xyz.upperlevel.hgame.network.DisconnectedEndpoint;
+import xyz.upperlevel.hgame.GameProtocol;
+import xyz.upperlevel.hgame.network.Client;
 import xyz.upperlevel.hgame.network.Endpoint;
+import xyz.upperlevel.hgame.network.Server;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
 import xyz.upperlevel.hgame.scenario.sequence.Sequence;
+
+import java.net.InetAddress;
 
 public class GameScreen extends ScreenAdapter {
     public static GameScreen instance;
@@ -40,8 +44,19 @@ public class GameScreen extends ScreenAdapter {
         camera = new OrthographicCamera();
 
         scenario = new Scenario();
+    }
 
-        endpoint = new DisconnectedEndpoint(null);
+    public void connect(InetAddress address, String nick, boolean master) {
+        if (master) {
+            Server server = new Server(GameProtocol.PROTOCOL, GameProtocol.GAME_PORT);
+            server.openAsync();
+            endpoint = server;
+        } else {
+            Client client = new Client(GameProtocol.PROTOCOL, address, GameProtocol.GAME_PORT);
+            client.openAsync(true);
+            endpoint = client;
+        }
+        scenario.initEndpoint(endpoint);
     }
 
     @Override

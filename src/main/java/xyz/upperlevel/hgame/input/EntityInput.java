@@ -15,4 +15,12 @@ public class EntityInput {
     public List<InputAction> getActions() {
         return unmodifiableList(actions);
     }
+
+    public void onNetworkAction(int actionType) {
+        actions.stream()
+                .filter(a -> a.getId() == actionType)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Illegal action: " + actionType))
+                .onTrigger();
+    }
 }

@@ -34,7 +34,7 @@ public class HGame extends Game {
             throw new RuntimeException(e);
         }
 
-        matchMakingScreen = new MatchMakingScreen(discovery, (oppIp, oppName) -> {
+        matchMakingScreen = new MatchMakingScreen(discovery, (oppIp, oppName, isMaster) -> {
             // TODO: start the connection and the game
         });
 

@@ -24,14 +24,13 @@ import xyz.upperlevel.hgame.network.discovery.DiscoveryPairResponseEvent;
 import xyz.upperlevel.hgame.network.discovery.DiscoveryResponseEvent;
 import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private final UdpDiscovery discovery;
-    private final BiConsumer<InetAddress, String> callback;
+    private final Callback callback;
 
     @Setter
     @Getter
@@ -43,7 +42,7 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private Skin skin;
     private List<String> renderPlayers;
 
-    public MatchMakingScreen(UdpDiscovery discovery, BiConsumer<InetAddress, String> callback) {
+    public MatchMakingScreen(UdpDiscovery discovery, Callback callback) {
         this.discovery = discovery;
         this.callback = callback;
         init();
@@ -81,14 +80,18 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (!renderPlayers.getSelection().hasItems()) return;
-                var selected = (Map.Entry<InetAddress, String>) players.entrySet()
+                var ip = players.keySet()
                         .stream()
                         .skip(renderPlayers.getSelectedIndex())
                         .findFirst()
                         .orElse(null);
-                if (selected == null) return;
-                discovery.stopService();
-                callback.accept(selected.getKey(), selected.getValue());
+                if (ip == null) return;
+
+                try {
+                    discovery.askPairing(ip);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         renderPlayers.getSelection().setRequired(false);
@@ -134,12 +137,16 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
     @EventHandler
     private void onPairRequest(DiscoveryPairRequestEvent event) {
         discovery.stopService();
-        callback.accept(event.getIp(), event.getNickname());
+        callback.onResult(event.getIp(), event.getNickname(), false);
     }
 
     @EventHandler
     private void onPairResponse(DiscoveryPairResponseEvent event) {
         discovery.stopService();
-        callback.accept(event.getIp(), event.getNickname());
+        callback.onResult(event.getIp(), event.getNickname(), true);
+    }
+
+    public interface Callback {
+        void onResult(InetAddress ip, String nick, boolean isMaster);
     }
 }

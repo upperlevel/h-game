@@ -1,18 +1,17 @@
 package xyz.upperlevel.hgame.input;
 
 import com.badlogic.gdx.Input;
-import xyz.upperlevel.hgame.scenario.character.Actor;
 
 @FunctionalInterface
 public interface InputTrigger {
-    boolean check(Actor actor, Input input);
+    boolean check(Input input);
 
     default InputTrigger and(InputTrigger other) {
-        return (a, i) -> check(a, i) && other.check(a, i);
+        return i -> check(i) && other.check(i);
     }
 
     default InputTrigger or(InputTrigger other) {
-        return (a, i) -> check(a, i) || other.check(a, i);
+        return i -> check(i) || other.check(i);
     }
 
     /**
@@ -21,7 +20,7 @@ public interface InputTrigger {
      * @return the equivalent InputTrigger
      */
     static InputTrigger onKeyDown(int key) {
-        return (a, in) -> in.isKeyPressed(key);
+        return in -> in.isKeyPressed(key);
     }
 
     /**
@@ -30,6 +29,6 @@ public interface InputTrigger {
      * @return the equivalent InputTrigger
      */
     static InputTrigger onKeyPress(int key) {
-        return (a, in) -> in.isKeyJustPressed(key);
+        return in -> in.isKeyJustPressed(key);
     }
 }

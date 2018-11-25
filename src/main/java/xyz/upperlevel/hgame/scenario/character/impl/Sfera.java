@@ -1,9 +1,12 @@
 package xyz.upperlevel.hgame.scenario.character.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
 
 public class Sfera implements Character {
+    private static final Logger logger = LogManager.getLogger();
     @Override
     public String getName() {
         return "Sfera";
@@ -36,7 +39,7 @@ public class Sfera implements Character {
 
         @Override
         public void specialAttack() {
-            System.out.println(getName() + ": my special attack!");
+            logger.warn("%s: my special attack!", getName());
         }
     }
 }

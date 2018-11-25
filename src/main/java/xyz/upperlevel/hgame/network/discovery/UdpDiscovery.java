@@ -1,8 +1,11 @@
 package xyz.upperlevel.hgame.network.discovery;
 
+import com.google.common.io.BaseEncoding;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import xyz.upperlevel.hgame.event.EventChannel;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +22,8 @@ public class UdpDiscovery {
     public static final int DISCOVERY_PORT = 23432;
     public static final int MAGIC_ID = 4242;
     private static final InetAddress BROADCAST;
+
+    private static final Logger logger = LogManager.getLogger();
 
     private DatagramSocket socket;
 
@@ -64,6 +69,9 @@ public class UdpDiscovery {
 
     public void listen() {
         byte[] buffer = new byte[2048];
+
+        logger.info("Started UDP server");
+
         try {
             while (true) {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -78,10 +86,14 @@ public class UdpDiscovery {
     }
 
     private void reply(SocketAddress target, PacketType type) throws IOException {
+        logger.trace("Replying to: %s, event: %s", target, type);
+
         var out = new ByteArrayOutputStream();
         byte[] magicData = ByteBuffer.allocate(Integer.BYTES).putInt(MAGIC_ID).array();
+
         out.write(magicData, 0, magicData.length);
         out.write(type.toId());
+
         switch (type) {
             case RESPONSE_HELLO:
             case RESPONSE_CONFIRM:
@@ -91,6 +103,7 @@ public class UdpDiscovery {
             default:
                 throw new IllegalArgumentException("type");
         }
+
         var packet = new DatagramPacket(out.toByteArray(), out.size(), target);
         socket.send(packet);
     }
@@ -98,16 +111,26 @@ public class UdpDiscovery {
     private void onPacketRead(DatagramPacket packet) throws IOException {
         ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), packet.getOffset(), packet.getLength());
 
+        if (logger.isTraceEnabled()) {
+            logger.trace("Packet: [%s]", BaseEncoding.base16().encode(packet.getData()));
+        }
+
         if (buffer.remaining() < Integer.BYTES || buffer.getInt() != MAGIC_ID) {
+            logger.trace("Packet dropped: invalid magic id");
             return;
         }
 
         var type = PacketType.fromId(buffer.get());
-        if (!type.isPresent()) return;
+        if (!type.isPresent()) {
+            logger.trace("Packet dropped: invalid event type");
+            return;
+        }
 
         var sender = (InetSocketAddress) packet.getSocketAddress();
 
         String name;
+
+        logger.trace("Packet from: %s, event: %s", sender, type.get());
 
         switch (type.get()) {
             case REQUEST_DISCOVERY:
@@ -144,6 +167,8 @@ public class UdpDiscovery {
     }
 
     public void discover() throws IOException {
+        logger.trace("Sending discovery packet");
+
         byte[] data = ByteBuffer.allocate(Integer.BYTES + 1)
                 .putInt(MAGIC_ID)
                 .put(PacketType.REQUEST_DISCOVERY.toId())
@@ -154,6 +179,7 @@ public class UdpDiscovery {
     }
 
     private void serviceRunner() {
+        logger.trace("Started discovery service");
         while (!Thread.interrupted()) {
             try {
                 discover();
@@ -167,6 +193,7 @@ public class UdpDiscovery {
                 break;
             }
         }
+        logger.trace("Stopped discovery service");
     }
 
     public void stopService() {

@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.Character;
-import xyz.upperlevel.hgame.scenario.character.impl.Sfera;
 import xyz.upperlevel.hgame.scenario.character.impl.Santy;
+import xyz.upperlevel.hgame.scenario.character.impl.Sfera;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scenario {
+    public static final Logger logger = LogManager.getLogger();
     public static final float ACTOR_MOVE_SPEED = 0.05f;
     public static final float ACTOR_JUMP_SPEED = 2f;
 
@@ -78,7 +81,7 @@ public class Scenario {
                 Character current = characters.get(currentCharacter);
                 changeCharacter(current);
                 currentCharacter = (currentCharacter + 1) % characters.size();
-                System.out.println("Character changed to: " + current.getName());
+                logger.info("Character changed to: %s", current.getName());
             }
         }
 

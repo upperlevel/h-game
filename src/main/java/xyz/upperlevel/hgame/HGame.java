@@ -1,9 +1,11 @@
 package xyz.upperlevel.hgame;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import lombok.Getter;
+import org.apache.logging.log4j.core.config.Configurator;
 import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
 import xyz.upperlevel.hgame.scenario.GameScreen;
 import xyz.upperlevel.hgame.scenario.LoginScreen;
@@ -22,6 +24,8 @@ public class HGame extends Game {
 
     @Override
     public void create() {
+        Configurator.initialize("config", null, Gdx.files.internal("log4j2.xml").path());
+
         discovery = new UdpDiscovery();
 
         try {

@@ -39,7 +39,6 @@ public class UdpDiscovery {
     @Getter
     private boolean available = false;
 
-
     static {
         try {
             BROADCAST = InetAddress.getByName("255.255.255.255");
@@ -102,10 +101,11 @@ public class UdpDiscovery {
             case RESPONSE_HELLO:
             case RESPONSE_CONFIRM:
             case RESPONSE_DENY:
+            case REQUEST_PAIR:
                 writeString(out, nick);
                 break;
             default:
-                throw new IllegalArgumentException("type");
+                throw new IllegalArgumentException("type " + type);
         }
 
         var packet = new DatagramPacket(out.toByteArray(), out.size(), target);
@@ -115,18 +115,18 @@ public class UdpDiscovery {
     private void onPacketRead(DatagramPacket packet) throws IOException {
         ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), packet.getOffset(), packet.getLength());
 
-        if (logger.isTraceEnabled()) {
-            logger.trace("Packet: [%s]", BaseEncoding.base16().encode(packet.getData()));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Packet: [{}]", BaseEncoding.base16().encode(packet.getData(), packet.getOffset(), packet.getLength()));
         }
 
         if (buffer.remaining() < Integer.BYTES || buffer.getInt() != MAGIC_ID) {
-            logger.trace("Packet dropped: invalid magic id");
+            logger.debug("Packet dropped: invalid magic id");
             return;
         }
 
         var type = PacketType.fromId(buffer.get());
         if (!type.isPresent()) {
-            logger.trace("Packet dropped: invalid event type");
+            logger.debug("Packet dropped: invalid event type");
             return;
         }
 
@@ -134,7 +134,7 @@ public class UdpDiscovery {
 
         String name;
 
-        logger.trace("Packet from: %s, event: %s", sender, type.get());
+        logger.debug("Packet from: {}, event: {}", sender, type.get());
 
         switch (type.get()) {
             case REQUEST_DISCOVERY:
@@ -171,7 +171,7 @@ public class UdpDiscovery {
     }
 
     public void discover() throws IOException {
-        logger.trace("Sending discovery packet");
+        logger.debug("Sending discovery packet");
 
         byte[] data = ByteBuffer.allocate(Integer.BYTES + 1)
                 .putInt(MAGIC_ID)
@@ -183,7 +183,7 @@ public class UdpDiscovery {
     }
 
     private void serviceRunner() {
-        logger.trace("Started discovery service");
+        logger.debug("Started discovery service");
         while (!Thread.interrupted()) {
             try {
                 discover();
@@ -197,7 +197,7 @@ public class UdpDiscovery {
                 break;
             }
         }
-        logger.trace("Stopped discovery service");
+        logger.debug("Stopped discovery service");
     }
 
     public void stopService() {

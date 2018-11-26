@@ -39,7 +39,7 @@ public class Sfera implements Character {
 
         @Override
         public void specialAttack() {
-            logger.warn("%s: my special attack!", getName());
+            logger.warn("{}: my special attack!", getName());
         }
     }
 }

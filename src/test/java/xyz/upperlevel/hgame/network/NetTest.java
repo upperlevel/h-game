@@ -10,6 +10,8 @@ import xyz.upperlevel.hgame.event.EventListener;
 import xyz.upperlevel.hgame.network.events.ConnectionCloseEvent;
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -36,13 +38,14 @@ public class NetTest {
     }
 
     @Test
-    public void simpleTest() throws InterruptedException {
-        Protocol protocol = new Protocol();
-        protocol.add(ExamplePacket.class);
-        protocol.add(SecondExamplePacket.class);
+    public void simpleTest() throws InterruptedException, UnknownHostException {
+        Protocol protocol = Protocol.builder()
+                .add(ExamplePacket.class)
+                .add(SecondExamplePacket.class)
+                .build();
 
         Server server = new Server(protocol, 12345);
-        Client client = new Client(protocol, "localhost", 12345);
+        Client client = new Client(protocol, InetAddress.getLocalHost(), 12345);
 
         var serverEvents = new LinkedBlockingQueue<Event>();
         var clientEvents = new LinkedBlockingQueue<Event>();

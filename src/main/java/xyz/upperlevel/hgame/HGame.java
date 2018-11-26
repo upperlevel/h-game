@@ -35,7 +35,10 @@ public class HGame extends Game {
         }
 
         matchMakingScreen = new MatchMakingScreen(discovery, (oppIp, oppName, isMaster) -> {
-            // TODO: start the connection and the game
+            Gdx.app.postRunnable(() -> {
+                setScreen(mainScreen);
+                mainScreen.connect(oppIp, oppName, isMaster);
+            });
         });
 
         loginScreen = new LoginScreen(name -> {
@@ -45,7 +48,7 @@ public class HGame extends Game {
 
         mainScreen = new GameScreen();
 
-        setScreen(mainScreen);
+        setScreen(loginScreen);
     }
 
     public static void main(String[] args) {

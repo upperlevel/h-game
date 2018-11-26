@@ -31,7 +31,7 @@ public final class StandardEntityInput {
                 new InputAction(// Jump
                         actor,
                         2,
-                        InputTrigger.onKeyDown(Input.Keys.W).and((a, i) -> a.isTouchingGround()),
+                        InputTrigger.onKeyDown(Input.Keys.W).and(i -> actor.isTouchingGround()),
                         JUMP
                 ),
                 new InputAction(

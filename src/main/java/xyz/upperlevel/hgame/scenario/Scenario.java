@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import xyz.upperlevel.hgame.event.EventListener;
 import xyz.upperlevel.hgame.input.InputAction;
 import xyz.upperlevel.hgame.network.Endpoint;
 import xyz.upperlevel.hgame.network.Server;
+import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 import xyz.upperlevel.hgame.scenario.character.Actor;
 import xyz.upperlevel.hgame.scenario.character.impl.Santy;
 import xyz.upperlevel.hgame.scenario.entity.EntityRegistry;
@@ -35,7 +37,9 @@ public class Scenario {
     }
 
     public void onGameStart() {
-        player = entityRegistry.spawn(Santy.class, 0, 0, true);
+        var x = 20 / 4;
+        if (isMaster) x += 20 / 2;
+        player = entityRegistry.spawn(Santy.class, x, groundHeight, isMaster);
     }
 
     public void update() {
@@ -89,5 +93,9 @@ public class Scenario {
         entityRegistry.registerType(Santy.class, new Santy()::personify);
 
         entityRegistry.initEndpoint(endpoint);
+
+        endpoint.getEvents().register(EventListener.listener(ConnectionOpenEvent.class, e -> {
+            onGameStart();
+        }));
     }
 }

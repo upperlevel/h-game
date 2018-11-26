@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario;
+package xyz.upperlevel.hgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -14,9 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import lombok.Getter;
-import lombok.Setter;
 import xyz.upperlevel.hgame.DefaultFont;
+import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.event.EventHandler;
 import xyz.upperlevel.hgame.event.Listener;
 import xyz.upperlevel.hgame.network.discovery.DiscoveryPairRequestEvent;
@@ -30,11 +29,8 @@ import java.util.LinkedHashMap;
 
 public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private final UdpDiscovery discovery;
-    private final Callback callback;
+    private final String name;
 
-    @Setter
-    @Getter
-    private String name;
     private LinkedHashMap<InetAddress, String> players = new LinkedHashMap<>();
 
     // Rendering
@@ -42,9 +38,9 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private Skin skin;
     private List<String> renderPlayers;
 
-    public MatchMakingScreen(UdpDiscovery discovery, Callback callback) {
+    public MatchMakingScreen(UdpDiscovery discovery, String name) {
         this.discovery = discovery;
-        this.callback = callback;
+        this.name = name;
         init();
     }
 
@@ -134,19 +130,23 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
         renderPlayers.setItems(items);
     }
 
+    private void onResult(InetAddress opponentIp, String opponentNick, boolean isMaster) {
+        Gdx.app.postRunnable(() -> {
+            var screen = new GameScreen();
+            HGame.get().setScreen(screen);
+            screen.connect(opponentIp, opponentNick, isMaster);
+        });
+    }
+
     @EventHandler
     private void onPairRequest(DiscoveryPairRequestEvent event) {
         discovery.stopService();
-        callback.onResult(event.getIp(), event.getNickname(), false);
+        onResult(event.getIp(), event.getNickname(), false);
     }
 
     @EventHandler
     private void onPairResponse(DiscoveryPairResponseEvent event) {
         discovery.stopService();
-        callback.onResult(event.getIp(), event.getNickname(), true);
-    }
-
-    public interface Callback {
-        void onResult(InetAddress ip, String nick, boolean isMaster);
+        onResult(event.getIp(), event.getNickname(), true);
     }
 }

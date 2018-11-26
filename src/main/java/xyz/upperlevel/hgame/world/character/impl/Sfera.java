@@ -7,6 +7,7 @@ import xyz.upperlevel.hgame.scenario.character.Character;
 
 public class Sfera implements Character {
     private static final Logger logger = LogManager.getLogger();
+
     @Override
     public String getName() {
         return "Sfera";

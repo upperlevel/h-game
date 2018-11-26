@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario;
+package xyz.upperlevel.hgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -10,8 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import xyz.upperlevel.hgame.scenario.character.Actor;
-import xyz.upperlevel.hgame.scenario.scheduler.Task;
+import xyz.upperlevel.hgame.world.character.Actor;
+import xyz.upperlevel.hgame.world.scheduler.Task;
 
 public class Conversation {
     public static final float STAY = 20;

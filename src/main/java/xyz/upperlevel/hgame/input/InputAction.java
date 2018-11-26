@@ -2,9 +2,8 @@ package xyz.upperlevel.hgame.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import xyz.upperlevel.hgame.scenario.GameScreen;
 import xyz.upperlevel.hgame.network.Endpoint;
-import xyz.upperlevel.hgame.scenario.character.Actor;
+import xyz.upperlevel.hgame.world.character.Actor;
 
 import java.util.function.Consumer;
 
@@ -18,8 +17,7 @@ public class InputAction {
     private InputTrigger trigger;
     private Consumer<Actor> consequence;
 
-    public void trigger() {
-        Endpoint endpoint = GameScreen.instance.getEndpoint();
+    public void trigger(Endpoint endpoint) {
         if (endpoint.isConnected()) {
             endpoint.send(new TriggerInputActionPacket(actor.getId(), id));
         }

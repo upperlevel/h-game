@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario;
+package xyz.upperlevel.hgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -16,17 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import xyz.upperlevel.hgame.DefaultFont;
-
-import java.util.function.Consumer;
+import xyz.upperlevel.hgame.HGame;
 
 public class LoginScreen extends ScreenAdapter {
     public static final String ACCEPTED_NAME_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#<>!_-";
+
     private Stage stage;
     private Skin skin;
-    private Consumer<String> callback;
 
-    public LoginScreen(Consumer<String> callback) {
-        this.callback = callback;
+    public LoginScreen() {
         init();
     }
 
@@ -73,22 +71,37 @@ public class LoginScreen extends ScreenAdapter {
         username.setTextFieldFilter((textField, c) -> ACCEPTED_NAME_CHARS.indexOf(c) >= 0);
         table.add(username).growX().row();
 
-        final var button = new TextButton("Play!", skin);
-        button.setDisabled(true);
-        table.add(button);
+        var playButton = new TextButton("Play", skin);
+        playButton.setDisabled(true);
+        table.add(playButton).pad(5.0f).width(100).row();
+
+        var trainButton = new TextButton("Train", skin);
+        trainButton.setDisabled(true);
+        table.add(trainButton).pad(5.0f).width(100).row();
 
         username.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                boolean valid = !username.getText().isEmpty();
-                button.setDisabled(!valid);
+                boolean invalid = username.getText().isEmpty();
+                playButton.setDisabled(invalid);
+                trainButton.setDisabled(invalid);
             }
         });
-        button.addListener(new ChangeListener() {
+
+        playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (button.isPressed()) {
-                    callback.accept(username.getText());
+                if (playButton.isPressed()) {
+                    HGame.get().setScreen(new MatchMakingScreen(HGame.get().getDiscovery(), username.getText()));
+                }
+            }
+        });
+
+        trainButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (trainButton.isPressed()) {
+                    HGame.get().setScreen(new TrainScreen());
                 }
             }
         });

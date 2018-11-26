@@ -1,49 +1,33 @@
-package xyz.upperlevel.hgame.scenario;
+package xyz.upperlevel.hgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import lombok.Getter;
 import xyz.upperlevel.hgame.GameProtocol;
 import xyz.upperlevel.hgame.network.Client;
 import xyz.upperlevel.hgame.network.Endpoint;
 import xyz.upperlevel.hgame.network.Server;
-import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
-import xyz.upperlevel.hgame.scenario.sequence.Sequence;
 
 import java.net.InetAddress;
 
 public class GameScreen extends ScreenAdapter {
-    public static GameScreen instance;
-
-    @Getter
-    private OrthographicCamera camera;
-
-    @Getter
-    private SpriteBatch batch;
-
-    @Getter
-    private ShapeRenderer shapeRenderer;
-
-    @Getter
-    private Scenario scenario;
+    private WorldRenderer renderer;
+    private World world;
 
     @Getter
     private Endpoint endpoint;
 
     @Override
     public void show() {
-        instance = this;
+        renderer = new WorldRenderer();
+        world = new World();
+    }
 
-        batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
-
-        camera = new OrthographicCamera();
-
-        scenario = new Scenario();
+    @Override
+    public void hide() {
+        Conversation.dispose();
+        renderer.dispose();
     }
 
     public void connect(InetAddress address, String nick, boolean master) {
@@ -56,7 +40,7 @@ public class GameScreen extends ScreenAdapter {
             client.openAsync(true);
             endpoint = client;
         }
-        scenario.initEndpoint(endpoint);
+        world.initEndpoint(endpoint);
     }
 
     @Override
@@ -66,21 +50,11 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        scenario.update();
-        Scheduler.update(); // Scheduler API update
-        Sequence.updateAll(); // Sequence API update
-        Event.update();
+        world.update(endpoint);
 
         // Render
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        scenario.render();
+        renderer.render(world);
         Conversation.render();
-    }
-
-    @Override
-    public void dispose() {
-        Conversation.dispose();
-        batch.dispose();
     }
 }

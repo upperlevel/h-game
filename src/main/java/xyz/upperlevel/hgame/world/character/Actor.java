@@ -11,7 +11,8 @@ import xyz.upperlevel.hgame.scenario.GameScreen;
 import xyz.upperlevel.hgame.input.EntityInput;
 import xyz.upperlevel.hgame.input.StandardEntityInput;
 import xyz.upperlevel.hgame.scenario.Conversation;
-import xyz.upperlevel.hgame.scenario.Scenario;
+import xyz.upperlevel.hgame.scenario.World;
+import xyz.upperlevel.hgame.scenario.WorldRenderer;
 import xyz.upperlevel.hgame.scenario.sequence.Sequence;
 import xyz.upperlevel.hgame.scenario.sequence.Trigger;
 import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
@@ -195,17 +196,17 @@ public class Actor {
         attack();
     }
 
-    public void update(Scenario scenario) {
+    public void update(World world) {
         float delta = Gdx.graphics.getDeltaTime();
 
         if (rigidBody) {
-            velocity.y -= scenario.gravity * delta;
+            velocity.y -= world.gravity * delta;
         }
         x += velocity.x * delta;
         y += velocity.y * delta;
 
-        if (!noClip && y < scenario.groundHeight) {
-            y = scenario.groundHeight;
+        if (!noClip && y < world.groundHeight) {
+            y = world.groundHeight;
             velocity.y = 0;
             touchingGround = true;
         } else {
@@ -213,12 +214,12 @@ public class Actor {
         }
     }
 
-    public void render() {
+    public void render(WorldRenderer renderer) {
         if (left != sprite.isFlipX()) {
             sprite.flip(true, false);
         }
         sprite.setPosition(x, y);
-        sprite.draw(GameScreen.instance.getBatch());
+        sprite.draw(renderer.getSpriteBatch());
     }
 
     public class Walking implements Runnable {

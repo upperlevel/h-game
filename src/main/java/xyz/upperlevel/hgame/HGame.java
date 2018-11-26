@@ -7,23 +7,23 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import lombok.Getter;
 import org.apache.logging.log4j.core.config.Configurator;
 import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
-import xyz.upperlevel.hgame.scenario.GameScreen;
-import xyz.upperlevel.hgame.scenario.LoginScreen;
-import xyz.upperlevel.hgame.scenario.MatchMakingScreen;
+import xyz.upperlevel.hgame.world.Event;
+import xyz.upperlevel.hgame.world.LoginScreen;
+import xyz.upperlevel.hgame.world.scheduler.Scheduler;
+import xyz.upperlevel.hgame.world.sequence.Sequence;
 
 import java.io.IOException;
 
 public class HGame extends Game {
+    private static HGame instance;
+
     @Getter
     private UdpDiscovery discovery;
 
-    // Screens
-    private LoginScreen loginScreen;
-    private MatchMakingScreen matchMakingScreen;
-    private GameScreen mainScreen;
-
     @Override
     public void create() {
+        instance = this;
+
         Configurator.initialize("config", null, Gdx.files.internal("log4j2.xml").path());
 
         discovery = new UdpDiscovery();
@@ -34,21 +34,21 @@ public class HGame extends Game {
             throw new RuntimeException(e);
         }
 
-        matchMakingScreen = new MatchMakingScreen(discovery, (oppIp, oppName, isMaster) -> {
-            Gdx.app.postRunnable(() -> {
-                setScreen(mainScreen);
-                mainScreen.connect(oppIp, oppName, isMaster);
-            });
-        });
+        setScreen(new LoginScreen());
+    }
 
-        loginScreen = new LoginScreen(name -> {
-            matchMakingScreen.setName(name);
-            setScreen(matchMakingScreen);
-        });
+    @Override
+    public void render() {
+        // Global APIs update
+        Scheduler.update();
+        Sequence.updateAll();
+        Event.update();
 
-        mainScreen = new GameScreen();
+        super.render();
+    }
 
-        setScreen(loginScreen);
+    public static HGame get() {
+        return instance;
     }
 
     public static void main(String[] args) {

@@ -1,13 +1,13 @@
 package xyz.upperlevel.hgame.input;
 
 import com.badlogic.gdx.Input;
-import xyz.upperlevel.hgame.scenario.character.Actor;
+import xyz.upperlevel.hgame.world.character.Actor;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static xyz.upperlevel.hgame.scenario.Scenario.ACTOR_JUMP_SPEED;
-import static xyz.upperlevel.hgame.scenario.Scenario.ACTOR_MOVE_SPEED;
+import static xyz.upperlevel.hgame.world.World.ACTOR_JUMP_SPEED;
+import static xyz.upperlevel.hgame.world.World.ACTOR_MOVE_SPEED;
 
 public final class StandardEntityInput {
     public static final Consumer<Actor> MOVE_LEFT = a -> a.move(-ACTOR_MOVE_SPEED);

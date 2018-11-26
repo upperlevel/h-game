@@ -1,6 +1,6 @@
-package xyz.upperlevel.hgame.scenario;
+package xyz.upperlevel.hgame.world;
 
-import xyz.upperlevel.hgame.scenario.character.Actor;
+import xyz.upperlevel.hgame.world.character.Actor;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;

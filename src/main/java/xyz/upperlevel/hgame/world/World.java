@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import lombok.Getter;
 import xyz.upperlevel.hgame.event.EventListener;
 import xyz.upperlevel.hgame.network.Endpoint;
-import xyz.upperlevel.hgame.network.Server;
+import xyz.upperlevel.hgame.network.NetSide;
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 import xyz.upperlevel.hgame.world.character.Actor;
 import xyz.upperlevel.hgame.world.character.impl.Santy;
@@ -65,7 +65,7 @@ public class World {
     }
 
     public void initEndpoint(Endpoint endpoint) {
-        isMaster = endpoint instanceof Server;
+        isMaster = endpoint.getSide() == NetSide.MASTER;
 
         entityRegistry.registerType(Santy.class, new Santy()::personify);
         entityRegistry.initEndpoint(endpoint);

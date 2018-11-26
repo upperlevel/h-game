@@ -88,6 +88,8 @@ public class SelectHostScene extends ScreenAdapter {
         table.add(portField).row();
 
         var connect = new TextButton("Connect", skin);
+        connect.setDisabled(true);
+
         connect.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -123,6 +125,7 @@ public class SelectHostScene extends ScreenAdapter {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ipField.setDisabled(serverButton.isChecked());
+                connect.setDisabled(btnGroup.getCheckedIndex() == -1);
             }
         };
 

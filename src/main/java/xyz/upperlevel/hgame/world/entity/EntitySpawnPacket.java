@@ -17,4 +17,10 @@ public class EntitySpawnPacket implements Packet {
     private int entityTypeId;
     private float x, y;
     private boolean isFacingLeft;
+
+    /**
+     * This is true only if the packet is a response to the client's request
+     * When the client sends a request to the server the value is ignored
+     */
+    private boolean isConfirmation;
 }

@@ -11,9 +11,11 @@ import xyz.upperlevel.hgame.event.EventChannel;
 import xyz.upperlevel.hgame.network.events.ConnectionCloseEvent;
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 
-public class Endpoint {
+public abstract class Endpoint {
     @Getter
     private final Protocol protocol;
+    @Getter
+    private final NetSide side;
     @Getter
     private final ObjectMapper jsonMapper;
     @Getter
@@ -25,8 +27,9 @@ public class Endpoint {
     @Setter(AccessLevel.PROTECTED)
     private EventLoopGroup eventGroup;
 
-    public Endpoint(Protocol protocol) {
+    public Endpoint(Protocol protocol, NetSide side) {
         this.protocol = protocol;
+        this.side = side;
         jsonMapper = new ObjectMapper();
 
         SimpleModule module = new SimpleModule();
@@ -59,6 +62,8 @@ public class Endpoint {
                 .orElseThrow(() -> new IllegalArgumentException("Packet not registered: " + packet.getClass()));
         channel.writeAndFlush(new PayloadPacket(id, packet));
     }
+
+    public abstract void openAsync();
 
     public void close() throws InterruptedException {
         if (!isConnected()) return;

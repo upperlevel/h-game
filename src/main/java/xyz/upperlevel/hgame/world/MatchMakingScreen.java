@@ -15,9 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import xyz.upperlevel.hgame.DefaultFont;
+import xyz.upperlevel.hgame.GameProtocol;
 import xyz.upperlevel.hgame.HGame;
 import xyz.upperlevel.hgame.event.EventHandler;
 import xyz.upperlevel.hgame.event.Listener;
+import xyz.upperlevel.hgame.network.Client;
+import xyz.upperlevel.hgame.network.Endpoint;
+import xyz.upperlevel.hgame.network.Server;
 import xyz.upperlevel.hgame.network.discovery.DiscoveryPairRequestEvent;
 import xyz.upperlevel.hgame.network.discovery.DiscoveryPairResponseEvent;
 import xyz.upperlevel.hgame.network.discovery.DiscoveryResponseEvent;
@@ -26,6 +30,8 @@ import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedHashMap;
+
+import static xyz.upperlevel.hgame.GdxUtil.runSync;
 
 public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private final UdpDiscovery discovery;
@@ -130,11 +136,20 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
         renderPlayers.setItems(items);
     }
 
-    private void onResult(InetAddress opponentIp, String opponentNick, boolean isMaster) {
-        Gdx.app.postRunnable(() -> {
+    private void onResult(InetAddress opponentIp, String opponentNick, boolean isServer) {
+        runSync(() -> {
             var screen = new GameScreen();
             HGame.get().setScreen(screen);
-            screen.connect(opponentIp, opponentNick, isMaster);
+
+            Endpoint ep;
+
+            if (isServer) {
+                ep = new Server(GameProtocol.PROTOCOL, GameProtocol.GAME_PORT);
+            } else {
+                ep = new Client(GameProtocol.PROTOCOL, opponentIp, GameProtocol.GAME_PORT);
+            }
+
+            screen.connect(ep);
         });
     }
 

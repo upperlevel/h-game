@@ -4,12 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import lombok.Getter;
-import xyz.upperlevel.hgame.GameProtocol;
-import xyz.upperlevel.hgame.network.Client;
 import xyz.upperlevel.hgame.network.Endpoint;
-import xyz.upperlevel.hgame.network.Server;
-
-import java.net.InetAddress;
 
 public class GameScreen extends ScreenAdapter {
     private WorldRenderer renderer;
@@ -30,17 +25,10 @@ public class GameScreen extends ScreenAdapter {
         renderer.dispose();
     }
 
-    public void connect(InetAddress address, String nick, boolean master) {
-        if (master) {
-            Server server = new Server(GameProtocol.PROTOCOL, GameProtocol.GAME_PORT);
-            server.openAsync();
-            endpoint = server;
-        } else {
-            Client client = new Client(GameProtocol.PROTOCOL, address, GameProtocol.GAME_PORT);
-            client.openAsync(true);
-            endpoint = client;
-        }
+    public void connect(Endpoint endpoint) {
+        this.endpoint = endpoint;
         world.initEndpoint(endpoint);
+        endpoint.openAsync();
     }
 
     @Override

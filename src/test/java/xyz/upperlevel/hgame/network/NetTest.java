@@ -59,7 +59,7 @@ public class NetTest {
         }));
 
         server.openAsync();
-        client.openAsync(true);
+        client.openAsync();
 
         assertThat(serverEvents.take(), instanceOf(ConnectionOpenEvent.class));
         assertThat(clientEvents.take(), instanceOf(ConnectionOpenEvent.class));

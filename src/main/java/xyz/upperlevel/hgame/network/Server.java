@@ -14,10 +14,11 @@ public class Server extends Endpoint {
     private final int port;
 
     public Server(Protocol protocol, int port) {
-        super(protocol);
+        super(protocol, NetSide.MASTER);
         this.port = port;
     }
 
+    @Override
     public void openAsync() {
         var eventGroup = new NioEventLoopGroup(1);
         setEventGroup(eventGroup);

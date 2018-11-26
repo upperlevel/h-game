@@ -12,6 +12,8 @@ import xyz.upperlevel.hgame.world.entity.EntityRegistry;
 
 import java.util.stream.Stream;
 
+import static xyz.upperlevel.hgame.GdxUtil.runSync;
+
 public class World {
     public static final float ACTOR_MOVE_SPEED = 0.05f;
     public static final float ACTOR_JUMP_SPEED = 2f;
@@ -41,7 +43,7 @@ public class World {
     public void onGameStart() {
         var x = 20 / 4;
         if (isMaster) x += 20 / 2;
-        player = entityRegistry.spawn(Santy.class, x, groundHeight, isMaster);
+        entityRegistry.spawn(Santy.class, x, groundHeight, isMaster, p ->  player = p);
     }
 
     public Stream<Actor> getEntities() {
@@ -49,6 +51,7 @@ public class World {
     }
 
     public void update(Endpoint endpoint) { // TODO endpoint here?
+        if (!isReady()) return;
         // Inputs
         var input = Gdx.input;
         player.getInput()
@@ -67,8 +70,14 @@ public class World {
         entityRegistry.registerType(Santy.class, new Santy()::personify);
         entityRegistry.initEndpoint(endpoint);
 
-        endpoint.getEvents().register(EventListener.listener(ConnectionOpenEvent.class, e -> {
-            onGameStart();
-        }));
+        endpoint.getEvents().register(EventListener.listener(
+                ConnectionOpenEvent.class,
+                e -> runSync(this::onGameStart)
+        ));
+    }
+
+    public boolean isReady() {
+        // TODO: isn't there a cleaner way to do this? like waiting in another screen
+        return player != null;
     }
 }

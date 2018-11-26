@@ -2,11 +2,15 @@ package xyz.upperlevel.hgame.network;
 
 public class DisconnectedEndpoint extends Endpoint {
     public DisconnectedEndpoint() {
-        super(null);
+        super(null, NetSide.SLAVE);
     }
 
     @Override
     public void send(Packet packet) {
+    }
+
+    @Override
+    public void openAsync() {
     }
 
     @Override

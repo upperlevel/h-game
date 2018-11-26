@@ -30,6 +30,7 @@ public class WorldRenderer {
     }
 
     public void render(World world) {
+        if (!world.isReady()) return;
         var height = world.getHeight();
         var groundHeight = world.getGroundHeight();
         var player = world.getPlayer();

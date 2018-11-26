@@ -1,11 +1,12 @@
 package xyz.upperlevel.hgame.world.scheduler;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scheduler {
-    private static final Map<Integer, TaskHandle> tasksById = new HashMap<>();
-    private static int id = 0;
+    private static final Map<Integer, TaskHandle> tasksById = new ConcurrentHashMap<>();
+    private static AtomicInteger id = new AtomicInteger(0);
 
     /**
      * Starts a new task.
@@ -15,8 +16,9 @@ public class Scheduler {
      * @return the id of the created task.
      */
     public static int start(Runnable action, long delay, boolean repeating) {
-        tasksById.put(id, new TaskHandle(id, action, delay, repeating));
-        return id++;
+        int taskId = id.getAndIncrement();
+        tasksById.put(taskId, new TaskHandle(taskId, action, delay, repeating));
+        return taskId;
     }
 
     /**
@@ -31,8 +33,7 @@ public class Scheduler {
 
     public static void update() {
         long currentTime = System.currentTimeMillis();
-        Map<Integer, TaskHandle> tasksByIdCopy = new HashMap<>(tasksById);
-        for (TaskHandle handle : tasksByIdCopy.values()) {
+        for (TaskHandle handle : tasksById.values()) {
             if (handle.isReady(currentTime)) {
                 handle.run();
                 if (!handle.isRepeating()) {

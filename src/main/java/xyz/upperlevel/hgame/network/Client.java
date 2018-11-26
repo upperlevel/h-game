@@ -18,12 +18,14 @@ public class Client extends Endpoint {
     private final int port;
 
     public Client(Protocol protocol, InetAddress host, int port) {
-        super(protocol);
+        super(protocol, NetSide.SLAVE);
         this.host = host;
         this.port = port;
     }
 
-    public void openAsync(boolean tcpNoDelay) {
+    @Override
+    public void openAsync() {
+        boolean tcpNoDelay = true;
         var eventGroup = new NioEventLoopGroup(1);
 
         setEventGroup(eventGroup);

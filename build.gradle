@@ -118,3 +118,12 @@ task start(type: Exec, overwrite: true) {
     commandLine "java", "-jar", "h-game.jar"
 }
 start.workingDir = installGameDist.destinationDir
+
+jar {
+    manifest {
+        attributes (
+                // Needed by log4j2
+                "Multi-Release": true
+        )
+    }
+}

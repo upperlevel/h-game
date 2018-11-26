@@ -1,10 +1,12 @@
-package xyz.upperlevel.hgame.world;
+package xyz.upperlevel.hgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import xyz.upperlevel.hgame.network.DisconnectedEndpoint;
 import xyz.upperlevel.hgame.network.Endpoint;
+import xyz.upperlevel.hgame.world.World;
+import xyz.upperlevel.hgame.world.WorldRenderer;
 
 public class TrainScreen extends ScreenAdapter {
     private Endpoint endpoint;

@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world;
+package xyz.upperlevel.hgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -150,6 +150,7 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
             }
 
             screen.connect(ep);
+            ep.openAsync();
         });
     }
 

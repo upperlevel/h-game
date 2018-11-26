@@ -8,7 +8,7 @@ import lombok.Getter;
 import org.apache.logging.log4j.core.config.Configurator;
 import xyz.upperlevel.hgame.network.discovery.UdpDiscovery;
 import xyz.upperlevel.hgame.world.Event;
-import xyz.upperlevel.hgame.world.LoginScreen;
+import xyz.upperlevel.hgame.screens.LoginScreen;
 import xyz.upperlevel.hgame.world.scheduler.Scheduler;
 import xyz.upperlevel.hgame.world.sequence.Sequence;
 

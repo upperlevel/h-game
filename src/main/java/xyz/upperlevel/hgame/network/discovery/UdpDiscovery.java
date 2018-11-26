@@ -48,9 +48,10 @@ public class UdpDiscovery {
     }
 
     public void start() throws IOException {
-        socket = new DatagramSocket(DISCOVERY_PORT);
+        socket = new DatagramSocket(null);
         socket.setReuseAddress(true);
         socket.setBroadcast(true);
+        socket.bind(new InetSocketAddress(DISCOVERY_PORT));
         var thread = new Thread(this::listen, "Discovery Server");
         thread.setDaemon(true);
         thread.start();

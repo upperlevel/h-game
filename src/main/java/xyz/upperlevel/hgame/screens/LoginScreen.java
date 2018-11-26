@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world;
+package xyz.upperlevel.hgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -71,9 +71,13 @@ public class LoginScreen extends ScreenAdapter {
         username.setTextFieldFilter((textField, c) -> ACCEPTED_NAME_CHARS.indexOf(c) >= 0);
         table.add(username).growX().row();
 
-        var playButton = new TextButton("Play", skin);
-        playButton.setDisabled(true);
-        table.add(playButton).pad(5.0f).width(100).row();
+        var lanParty = new TextButton("LAN Party", skin);
+        lanParty.setDisabled(true);
+        table.add(lanParty).pad(5.0f).width(100).row();
+
+        var connect = new TextButton("Connect", skin);
+        connect.setDisabled(true);
+        table.add(connect).pad(5.0f).width(100).row();
 
         var trainButton = new TextButton("Train", skin);
         trainButton.setDisabled(true);
@@ -83,17 +87,25 @@ public class LoginScreen extends ScreenAdapter {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 boolean invalid = username.getText().isEmpty();
-                playButton.setDisabled(invalid);
+                lanParty.setDisabled(invalid);
+                connect.setDisabled(invalid);
                 trainButton.setDisabled(invalid);
             }
         });
 
-        playButton.addListener(new ChangeListener() {
+        lanParty.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (playButton.isPressed()) {
+                if (lanParty.isPressed()) {
                     HGame.get().setScreen(new MatchMakingScreen(HGame.get().getDiscovery(), username.getText()));
                 }
+            }
+        });
+
+        connect.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                HGame.get().setScreen(new SelectHostScene());
             }
         });
 

@@ -1,9 +1,9 @@
-package xyz.upperlevel.hgame.scenario.entity;
+package xyz.upperlevel.hgame.world.entity;
 
 import xyz.upperlevel.hgame.input.TriggerInputActionPacket;
 import xyz.upperlevel.hgame.network.Endpoint;
-import xyz.upperlevel.hgame.scenario.character.Actor;
-import xyz.upperlevel.hgame.scenario.character.Character;
+import xyz.upperlevel.hgame.world.character.Actor;
+import xyz.upperlevel.hgame.world.character.Character;
 
 import java.util.ArrayList;
 import java.util.HashMap;

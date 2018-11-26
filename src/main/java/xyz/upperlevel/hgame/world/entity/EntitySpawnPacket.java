@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.entity;
+package xyz.upperlevel.hgame.world.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

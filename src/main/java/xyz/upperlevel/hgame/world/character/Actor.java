@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.character;
+package xyz.upperlevel.hgame.world.character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,15 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-import xyz.upperlevel.hgame.scenario.GameScreen;
 import xyz.upperlevel.hgame.input.EntityInput;
 import xyz.upperlevel.hgame.input.StandardEntityInput;
-import xyz.upperlevel.hgame.scenario.Conversation;
-import xyz.upperlevel.hgame.scenario.World;
-import xyz.upperlevel.hgame.scenario.WorldRenderer;
-import xyz.upperlevel.hgame.scenario.sequence.Sequence;
-import xyz.upperlevel.hgame.scenario.sequence.Trigger;
-import xyz.upperlevel.hgame.scenario.scheduler.Scheduler;
+import xyz.upperlevel.hgame.world.Conversation;
+import xyz.upperlevel.hgame.world.World;
+import xyz.upperlevel.hgame.world.WorldRenderer;
+import xyz.upperlevel.hgame.world.sequence.Sequence;
+import xyz.upperlevel.hgame.world.sequence.Trigger;
+import xyz.upperlevel.hgame.world.scheduler.Scheduler;
 
 public class Actor {
     public static final float WIDTH = 2.0f;

@@ -1,9 +1,9 @@
-package xyz.upperlevel.hgame.scenario.character.impl;
+package xyz.upperlevel.hgame.world.character.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.upperlevel.hgame.scenario.character.Actor;
-import xyz.upperlevel.hgame.scenario.character.Character;
+import xyz.upperlevel.hgame.world.character.Actor;
+import xyz.upperlevel.hgame.world.character.Character;
 
 public class Sfera implements Character {
     private static final Logger logger = LogManager.getLogger();

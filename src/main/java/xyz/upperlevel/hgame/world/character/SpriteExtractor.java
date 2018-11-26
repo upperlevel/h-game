@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.character;
+package xyz.upperlevel.hgame.world.character;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

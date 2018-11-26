@@ -1,8 +1,8 @@
-package xyz.upperlevel.hgame.scenario.character.impl;
+package xyz.upperlevel.hgame.world.character.impl;
 
-import xyz.upperlevel.hgame.scenario.character.Actor;
-import xyz.upperlevel.hgame.scenario.character.Character;
-import xyz.upperlevel.hgame.scenario.sequence.Sequence;
+import xyz.upperlevel.hgame.world.character.Actor;
+import xyz.upperlevel.hgame.world.character.Character;
+import xyz.upperlevel.hgame.world.sequence.Sequence;
 
 public class Santy implements Character {
     @Override

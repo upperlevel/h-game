@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.scheduler;
+package xyz.upperlevel.hgame.world.scheduler;
 
 import lombok.Getter;
 

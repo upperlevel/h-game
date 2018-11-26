@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.sequence;
+package xyz.upperlevel.hgame.world.sequence;
 
 import lombok.Getter;
 

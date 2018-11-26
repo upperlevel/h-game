@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.scenario.character;
+package xyz.upperlevel.hgame.world.character;
 
 
 public interface Character {

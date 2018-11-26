@@ -67,7 +67,7 @@ public class Actor {
         sprite = new Sprite(texture);
         sprite.setSize(WIDTH, HEIGHT);
 
-        regions = SpriteExtractor.grid(texture, 6, 4);
+        regions = SpriteExtractor.grid(texture, 9, 4);
         setFrame(0, 0);
     }
 

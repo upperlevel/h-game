@@ -23,7 +23,7 @@ public class Sequence {
 
     /**
      * Appends an action to the current sequence.
-     * To continue the sequence, the action is supposed to call the function {@link Sequence.Step#next()}.
+     * To continue the sequence, the action is supposed to call the function {@link Sequence.Step#next(Trigger)}.
      */
     public Sequence append(Consumer<Step> action) {
         steps.add(new Step(steps.size()) {

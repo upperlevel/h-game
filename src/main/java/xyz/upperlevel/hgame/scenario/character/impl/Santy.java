@@ -59,7 +59,8 @@ public class Santy implements Character {
             animate(
                     Sequence.create()
                             .repeat((step, time) -> setFrame(time % 2, 3), 200, 15)
-                            .repeat((step, time) -> setFrame(time + 2, 3), 500, 4)
+                            .repeat((step, time) -> setFrame(time + 2, 3), 500, 2)
+                            .repeat((step, time) -> setFrame(time + 4, 3), 200, 5)
                             .delay(2000)
                             .act(() -> setFrame(0, 0))
             );

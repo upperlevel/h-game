@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import xyz.upperlevel.hgame.DefaultFont;
@@ -55,7 +56,7 @@ public class SelectHostScene extends ScreenAdapter {
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
 
-        var textFieldStyle = new TextField.TextFieldStyle();
+        TextFieldStyle textFieldStyle = new TextFieldStyle();
         textFieldStyle.font = skin.getFont("default");
         textFieldStyle.fontColor = Color.SKY;
         textFieldStyle.cursor = skin.newDrawable("white", Color.GRAY);
@@ -63,31 +64,31 @@ public class SelectHostScene extends ScreenAdapter {
         skin.add("default", textFieldStyle);
 
 
-        var table = new Table(skin);
+        Table table = new Table(skin);
         table.setFillParent(true);
 
-        var clientButton = new TextButton("Client", skin);
-        var serverButton = new TextButton("Server", skin);
+        TextButton clientButton = new TextButton("Client", skin);
+        TextButton serverButton = new TextButton("Server", skin);
 
-        var btnGroup = new ButtonGroup<>(clientButton, serverButton);
+        ButtonGroup btnGroup = new ButtonGroup<>(clientButton, serverButton);
 
         table.add(clientButton);
         table.add(serverButton);
         table.row();
 
-        var ipField = new TextField("", skin);
+        TextField ipField = new TextField("", skin);
         ipField.setMessageText("host");
         ipField.setDisabled(true);
 
         table.add(ipField);
 
-        var portField = new TextField(Integer.toString(GameProtocol.GAME_PORT), skin);
+        TextField portField = new TextField(Integer.toString(GameProtocol.GAME_PORT), skin);
         portField.setMessageText("port");
         portField.setTextFieldFilter((textField, c) -> Character.isDigit(c));
 
         table.add(portField).row();
 
-        var connect = new TextButton("Connect", skin);
+        TextButton connect = new TextButton("Connect", skin);
         connect.setDisabled(true);
 
         connect.addListener(new ChangeListener() {
@@ -108,8 +109,8 @@ public class SelectHostScene extends ScreenAdapter {
                     return;
                 }
 
-                var game = new GameScreen();
-                var connScreen = new WaitingConnectionScreen(endpoint, game);
+                GameScreen game = new GameScreen();
+                WaitingConnectionScreen connScreen = new WaitingConnectionScreen(endpoint, game);
 
                 game.connect(endpoint);
 
@@ -121,7 +122,7 @@ public class SelectHostScene extends ScreenAdapter {
 
         table.add(connect).row();
 
-        var onBtnChange = new ChangeListener() {
+        ChangeListener onBtnChange = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ipField.setDisabled(serverButton.isChecked());

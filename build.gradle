@@ -21,8 +21,8 @@ apply plugin: "distribution"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "application"
 
-sourceCompatibility = 1.10
-targetCompatibility = 1.10
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 shadowJar {
     baseName = project.name

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import xyz.upperlevel.hgame.DefaultFont;
 import xyz.upperlevel.hgame.GameProtocol;
@@ -67,14 +68,14 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
 
         skin.add("default", DefaultFont.FONT);
 
-        var style = new List.ListStyle();
+        List.ListStyle style = new List.ListStyle();
         style.font = skin.getFont("default");
         style.down = skin.newDrawable("white", Color.BLUE);
         style.selection = skin.newDrawable("white", Color.SKY);
         skin.add("default", style);
 
 
-        var table = new Table(skin);
+        Table table = new Table(skin);
         table.setFillParent(true);
 
         renderPlayers = new List<>(skin);
@@ -82,7 +83,7 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (!renderPlayers.getSelection().hasItems()) return;
-                var ip = players.keySet()
+                InetAddress ip = players.keySet()
                         .stream()
                         .skip(renderPlayers.getSelectedIndex())
                         .findFirst()
@@ -97,7 +98,7 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
             }
         });
         renderPlayers.getSelection().setRequired(false);
-        var scrollPane = new ScrollPane(renderPlayers);
+        ScrollPane scrollPane = new ScrollPane(renderPlayers);
         table.add(scrollPane).grow();
 
         stage.addActor(table);
@@ -131,14 +132,14 @@ public class MatchMakingScreen extends ScreenAdapter implements Listener {
     private void onResponse(DiscoveryResponseEvent event) {
         if (players.containsKey(event.getIp())) return;
         players.put(event.getIp(), event.getNickname());
-        var items = renderPlayers.getItems();
+        Array<String> items = renderPlayers.getItems();
         items.add(event.getNickname());
         renderPlayers.setItems(items);
     }
 
     private void onResult(InetAddress opponentIp, String opponentNick, boolean isServer) {
         runSync(() -> {
-            var screen = new GameScreen();
+            GameScreen screen = new GameScreen();
             HGame.get().setScreen(screen);
 
             Endpoint ep;

@@ -62,13 +62,13 @@ public class WaitingConnectionScreen extends ScreenAdapter {
 
         skin.add("default", DefaultFont.FONT);
 
-        var labelStyle = new Label.LabelStyle();
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = skin.getFont("default");
         labelStyle.background = skin.newDrawable("white", Color.CLEAR);
         skin.add("default", labelStyle);
 
 
-        var textButtonStyle = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
         textButtonStyle.down = skin.newDrawable("white", Color.RED);
         textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
@@ -76,7 +76,7 @@ public class WaitingConnectionScreen extends ScreenAdapter {
         skin.add("default", textButtonStyle);
 
 
-        var table = new Table(skin);
+        Table table = new Table(skin);
         table.setFillParent(true);
 
         text = new Label("Connecting", skin);
@@ -84,7 +84,7 @@ public class WaitingConnectionScreen extends ScreenAdapter {
 
         table.add(text).growX().row();
 
-        var button = new TextButton("Cancel", skin);
+        TextButton button = new TextButton("Cancel", skin);
         button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

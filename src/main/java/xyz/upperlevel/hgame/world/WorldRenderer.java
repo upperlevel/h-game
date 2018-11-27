@@ -31,9 +31,9 @@ public class WorldRenderer {
 
     public void render(World world) {
         if (!world.isReady()) return;
-        var height = world.getHeight();
-        var groundHeight = world.getGroundHeight();
-        var player = world.getPlayer();
+        float height = world.getHeight();
+        float groundHeight = world.getGroundHeight();
+        Actor player = world.getPlayer();
 
         camera.setToOrtho(false, Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight() * height, height);
 

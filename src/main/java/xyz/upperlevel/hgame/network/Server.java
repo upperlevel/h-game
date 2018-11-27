@@ -20,7 +20,7 @@ public class Server extends Endpoint {
 
     @Override
     public void openAsync() {
-        var eventGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup eventGroup = new NioEventLoopGroup(1);
         setEventGroup(eventGroup);
 
         ServerBootstrap b = new ServerBootstrap();

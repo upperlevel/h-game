@@ -47,8 +47,8 @@ public class NetTest {
         Server server = new Server(protocol, 12345);
         Client client = new Client(protocol, InetAddress.getLocalHost(), 12345);
 
-        var serverEvents = new LinkedBlockingQueue<Event>();
-        var clientEvents = new LinkedBlockingQueue<Event>();
+        LinkedBlockingQueue<Event> serverEvents = new LinkedBlockingQueue<>();
+        LinkedBlockingQueue<Event> clientEvents = new LinkedBlockingQueue<>();
 
 
         server.getEvents().register(EventListener.listener(Event.class, e -> {

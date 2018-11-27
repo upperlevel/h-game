@@ -11,7 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -44,7 +46,7 @@ public class LoginScreen extends ScreenAdapter {
         skin.add("default", DefaultFont.FONT);
 
         // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        TextButtonStyle textButtonStyle = new TextButtonStyle();
         textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
         textButtonStyle.down = skin.newDrawable("white", Color.NAVY);
         textButtonStyle.disabled = skin.newDrawable("white", Color.RED);
@@ -52,7 +54,7 @@ public class LoginScreen extends ScreenAdapter {
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
 
-        var textFieldStyle = new TextField.TextFieldStyle();
+        TextFieldStyle textFieldStyle = new TextFieldStyle();
         textFieldStyle.font = skin.getFont("default");
         textFieldStyle.fontColor = Color.SKY;
         textFieldStyle.cursor = skin.newDrawable("white", Color.GRAY);
@@ -64,22 +66,22 @@ public class LoginScreen extends ScreenAdapter {
         table.setFillParent(true);
         stage.addActor(table);
 
-        final var username = new TextField("", skin);
+        TextField username = new TextField("", skin);
         username.setMessageText("Username");
         username.setAlignment(Align.center);
         username.setMaxLength(50);
         username.setTextFieldFilter((textField, c) -> ACCEPTED_NAME_CHARS.indexOf(c) >= 0);
         table.add(username).growX().row();
 
-        var lanParty = new TextButton("LAN Party", skin);
+        TextButton lanParty = new TextButton("LAN Party", skin);
         lanParty.setDisabled(true);
         table.add(lanParty).pad(5.0f).width(100).row();
 
-        var connect = new TextButton("Connect", skin);
+        TextButton connect = new TextButton("Connect", skin);
         connect.setDisabled(true);
         table.add(connect).pad(5.0f).width(100).row();
 
-        var trainButton = new TextButton("Train", skin);
+        TextButton trainButton = new TextButton("Train", skin);
         trainButton.setDisabled(true);
         table.add(trainButton).pad(5.0f).width(100).row();
 

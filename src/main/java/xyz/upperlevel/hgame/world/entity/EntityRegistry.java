@@ -28,9 +28,9 @@ public class EntityRegistry {
     }
 
     private Actor spawn0(int type, float x, float y, boolean left) {
-        var factory = factories.get(type);
+        EntityFactory<?> factory = factories.get(type);
 
-        var entity = factory.personify(nextId++);
+        Actor entity = factory.personify(nextId++);
         entity.x = x;
         entity.y = y;
         entity.setLeft(left);
@@ -57,7 +57,7 @@ public class EntityRegistry {
     }
 
     protected void onNetSpawn(int typeId, float x, float y, boolean facingLeft, boolean isConfirm) {
-        var entity = spawn0(typeId, x, y, facingLeft);
+        Actor entity = spawn0(typeId, x, y, facingLeft);
 
         if (endpoint.getSide() == NetSide.MASTER) {
             endpoint.send(new EntitySpawnPacket(typeId, x, y, facingLeft, true));

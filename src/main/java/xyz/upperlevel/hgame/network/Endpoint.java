@@ -11,6 +11,8 @@ import xyz.upperlevel.hgame.event.EventChannel;
 import xyz.upperlevel.hgame.network.events.ConnectionCloseEvent;
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent;
 
+import java.util.OptionalInt;
+
 public abstract class Endpoint {
     @Getter
     private final Protocol protocol;
@@ -58,7 +60,7 @@ public abstract class Endpoint {
     }
 
     public void send(Packet packet) {
-        var id = protocol.fromClass(packet.getClass())
+        int id = protocol.fromClass(packet.getClass())
                 .orElseThrow(() -> new IllegalArgumentException("Packet not registered: " + packet.getClass()));
         channel.writeAndFlush(new PayloadPacket(id, packet));
     }

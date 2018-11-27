@@ -3,7 +3,7 @@ package xyz.upperlevel.hgame.input;
 import com.badlogic.gdx.Input;
 import xyz.upperlevel.hgame.world.character.Actor;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import static xyz.upperlevel.hgame.world.World.ACTOR_JUMP_SPEED;
@@ -15,7 +15,7 @@ public final class StandardEntityInput {
     public static final Consumer<Actor> JUMP = a -> a.jump(ACTOR_JUMP_SPEED);
 
     public static EntityInput create(Actor actor) {
-        return new EntityInput(List.of(
+        return new EntityInput(Arrays.asList(
                 new InputAction(// Left
                         actor,
                         0,

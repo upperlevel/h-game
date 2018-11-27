@@ -52,7 +52,7 @@ public class UdpDiscovery {
         socket.setReuseAddress(true);
         socket.setBroadcast(true);
         socket.bind(new InetSocketAddress(DISCOVERY_PORT));
-        var thread = new Thread(this::listen, "Discovery Server");
+        Thread thread = new Thread(this::listen, "Discovery Server");
         thread.setDaemon(true);
         thread.start();
     }
@@ -92,7 +92,7 @@ public class UdpDiscovery {
     private void reply(SocketAddress target, PacketType type) throws IOException {
         logger.trace("Replying to: %s, event: %s", target, type);
 
-        var out = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] magicData = ByteBuffer.allocate(Integer.BYTES).putInt(MAGIC_ID).array();
 
         out.write(magicData, 0, magicData.length);
@@ -109,7 +109,7 @@ public class UdpDiscovery {
                 throw new IllegalArgumentException("type " + type);
         }
 
-        var packet = new DatagramPacket(out.toByteArray(), out.size(), target);
+        DatagramPacket packet = new DatagramPacket(out.toByteArray(), out.size(), target);
         socket.send(packet);
     }
 
@@ -125,13 +125,13 @@ public class UdpDiscovery {
             return;
         }
 
-        var type = PacketType.fromId(buffer.get());
+        Optional<UdpDiscovery.PacketType> type = PacketType.fromId(buffer.get());
         if (!type.isPresent()) {
             logger.debug("Packet dropped: invalid event type");
             return;
         }
 
-        var sender = (InetSocketAddress) packet.getSocketAddress();
+        InetSocketAddress sender = (InetSocketAddress) packet.getSocketAddress();
 
         String name;
 

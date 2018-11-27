@@ -1,6 +1,7 @@
 package xyz.upperlevel.hgame.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import lombok.Getter;
 import xyz.upperlevel.hgame.event.EventListener;
 import xyz.upperlevel.hgame.network.Endpoint;
@@ -41,7 +42,7 @@ public class World {
     }
 
     public void onGameStart() {
-        var x = 20 / 4;
+        int x = 20 / 4;
         if (isMaster) x += 20 / 2;
         entityRegistry.spawn(Santy.class, x, groundHeight, isMaster, p ->  player = p);
     }
@@ -53,7 +54,7 @@ public class World {
     public void update(Endpoint endpoint) { // TODO endpoint here?
         if (!isReady()) return;
         // Inputs
-        var input = Gdx.input;
+        Input input = Gdx.input;
         player.getInput()
                 .getActions()
                 .stream()

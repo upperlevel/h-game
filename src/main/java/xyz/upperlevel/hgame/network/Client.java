@@ -26,7 +26,7 @@ public class Client extends Endpoint {
     @Override
     public void openAsync() {
         boolean tcpNoDelay = true;
-        var eventGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup eventGroup = new NioEventLoopGroup(1);
 
         setEventGroup(eventGroup);
 

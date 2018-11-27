@@ -31,8 +31,8 @@ class PayloadPacketCodec extends ByteToMessageCodec<PayloadPacket> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         InputStream stream = new ByteBufInputStream(in);
-        var readIndex = in.readerIndex();
-        var readBytes = in.readableBytes();
+        int readIndex = in.readerIndex();
+        int readBytes = in.readableBytes();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Received packet: " + in.toString(readIndex, readBytes, UTF_8));

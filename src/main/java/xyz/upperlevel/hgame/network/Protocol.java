@@ -3,6 +3,7 @@ package xyz.upperlevel.hgame.network;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -31,12 +32,12 @@ public class Protocol {
         private BiMap<Integer, Class<? extends Packet>> handle = HashBiMap.create();
 
         public ProtocolBuilder add(Class<? extends Packet> clazz) {
-            var ann = clazz.getAnnotation(ProtocolId.class);
+            ProtocolId ann = clazz.getAnnotation(ProtocolId.class);
             if (ann == null) {
                 throw new IllegalArgumentException("Cannot find @ProtocolId for class: " + clazz.getName());
             }
 
-            var previous = handle.putIfAbsent(ann.value(), clazz);
+            Class<? extends Packet> previous = handle.putIfAbsent(ann.value(), clazz);
             if (previous != null) {
                 throw new IllegalStateException("Id " + ann.value() + " used for both " + previous.getName() + " and " + clazz.getName());
             }

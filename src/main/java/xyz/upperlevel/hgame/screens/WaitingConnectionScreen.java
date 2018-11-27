@@ -113,7 +113,8 @@ public class WaitingConnectionScreen extends ScreenAdapter {
         if (gdelta >= BLINK_DELTA) {
             gdelta -= BLINK_DELTA;
             points = (points + 1) % 4;
-            text.setText("Connecting" + ".".repeat(points));
+            String str = "Connecting...";
+            text.setText(str.substring(0, str.length() - (3 - points)));
         }
 
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);

@@ -39,7 +39,7 @@ public class NetTest {
 
     @Test
     public void simpleTest() throws InterruptedException, UnknownHostException {
-        Protocol protocol = Protocol.builder()
+        Protocol protocol = Protocol.Companion.builder()
                 .add(ExamplePacket.class)
                 .add(SecondExamplePacket.class)
                 .build();

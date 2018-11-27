@@ -11,6 +11,9 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.2.71'
+}
 
 group "xyz.upperlevel.hgame"
 version "1.0"
@@ -68,6 +71,8 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.4"
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.7"
+
     compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
     compile group: 'io.netty', name: 'netty-all', version: '4.1.31.Final'
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
@@ -81,6 +86,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 distributions {
@@ -125,5 +131,16 @@ jar {
                 // Needed by log4j2
                 "Multi-Release": true
         )
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }

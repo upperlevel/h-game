@@ -1,12 +1,12 @@
 package xyz.upperlevel.hgame.world
 
-import com.badlogic.gdx.Gdx
 import xyz.upperlevel.hgame.event.EventListener
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.controllers.RemoteController
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import java.util.stream.Stream
@@ -36,22 +36,17 @@ class World {
         groundHeight = 1.0f
     }
 
-    fun onGameStart() {
+    fun onGameStart(endpoint: Endpoint) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
-        entityRegistry.spawn(Santy::class.java, x.toFloat(), groundHeight, isMaster) { p -> player = p }
+        entityRegistry.spawn(Santy::class.java, x.toFloat(), groundHeight, isMaster) { spawned ->
+            player = spawned
+            RemoteController.bind(player!!, endpoint);
+        }
     }
 
     fun update(endpoint: Endpoint) { // TODO endpoint here?
         if (!isReady) return
-        // Inputs
-        val input = Gdx.input
-        player!!.input
-                .getActions()
-                .stream()
-                .filter { a -> a.trigger(input) }
-                .forEach { action -> action.trigger(endpoint) }
-
         // Updates
         entityRegistry.entities.forEach { e -> e.update(this) }
     }
@@ -63,9 +58,9 @@ class World {
         entityRegistry.registerType(Santy::class.java) { Santy().personify(it) }
         entityRegistry.initEndpoint(endpoint)
 
-        endpoint.events.register(EventListener.listener(
-                ConnectionOpenEvent::class.java
-        ) { runSync { this.onGameStart() } })
+        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java) {
+            runSync { this.onGameStart(endpoint) }
+        })
     }
 
     companion object {

@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
-import xyz.upperlevel.hgame.input.StandardEntityInput
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.character.controllers.Controller
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import xyz.upperlevel.hgame.world.sequence.Trigger
@@ -35,13 +36,16 @@ open class Actor(val id: Int,
 
     private var walkToTask = -1
     private var walkTask = -1
-    private var backToIdle = -1
 
     private var sayTask = -1
 
-    var input = StandardEntityInput.create(this)
+    private var idle: Boolean = false
+    private var walking: Boolean = false
+    private var backToIdle: Sequence? = null
 
     private var animation: Sequence? = null
+
+    val controller = Controller.bind(this)
 
     init {
         val texture = Texture(Gdx.files.internal("images/" + character.texturePath))
@@ -50,7 +54,7 @@ open class Actor(val id: Int,
         sprite.setSize(WIDTH, HEIGHT)
 
         regions = SpriteExtractor.grid(texture, 9, 4)
-        setFrame(0, 0)
+        idle()
     }
 
     /**
@@ -59,10 +63,20 @@ open class Actor(val id: Int,
      * to have one animation running per time.
      */
     fun animate(animation: Sequence) {
+        logger.debug("Animation asked to be started on {} (id = {}).", character.name, id)
+
+        // If back to idle task existed, better dismiss to avoid issues
+        backToIdle?.dismiss()
+        backToIdle = null
+
         val old = this.animation
-        old?.dismiss()
+        if (old != null) {
+            logger.debug("Old animation was present, dismissing it.")
+            old.dismiss()
+        }
         this.animation = animation
         animation.play()
+        logger.debug("Animation started successfully.")
     }
 
     fun setFrame(x: Int, y: Int) {
@@ -140,21 +154,37 @@ open class Actor(val id: Int,
         return x >= other.x && x <= other.x + WIDTH || x + WIDTH >= other.x && x + WIDTH <= other.x + WIDTH
     }
 
+    fun idle() {
+        animate(Sequence.create().repeat({ _, time ->  setFrame(time % 2, 0) }, 200, -1))
+    }
+
+    fun control(inputX: Float, inputY: Float) {
+        // X-axis
+        if (inputX == 0f && inputY == 0f && !idle) {
+            idle()
+            idle = true
+        }
+
+        if (inputX != 0f) {
+            move(inputX)
+        }
+    }
+
     open fun move(offsetX: Float) {
         left = offsetX < 0
-        if (walkTask == -1) {
-            // The player is moving and the walking task wasn't started.
-            walkTask = Scheduler.start(Walking(), 100, true)
+        if (!walking) {
+            animate(Sequence.create().repeat({ _, time ->
+                val forward = Math.floor(time / 3.0).toInt() % 2 == 0
+                setFrame(if (forward) time % 3 else 3 - time % 3 - 1, 1)
+            }, 100, -1))
+            walking = true
         }
-        if (backToIdle != -1) {
-            Scheduler.cancel(backToIdle)
+        /*
+        if (backToIdle == null) {
+           // backToIdle = null; already done by idle() who calls animate().
+            backToIdle = Sequence.create().delay(1000).act(this::idle).play();
         }
-        backToIdle = Scheduler.start({
-            Scheduler.cancel(walkTask)
-            walkTask = -1
-            setFrame(0, 0)
-            backToIdle = -1
-        }, 100)
+        */
         x += offsetX
     }
 
@@ -221,6 +251,7 @@ open class Actor(val id: Int,
     }
 
     companion object {
+        private val logger = LogManager.getLogger()
         const val WIDTH = 2.0f
         const val HEIGHT = 2.0f
     }

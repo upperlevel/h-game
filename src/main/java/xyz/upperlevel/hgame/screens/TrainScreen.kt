@@ -19,7 +19,7 @@ class TrainScreen : ScreenAdapter() {
 
         world = World()
         world!!.initEndpoint(endpoint)
-        world!!.onGameStart()
+        world!!.onGameStart(endpoint)
 
         renderer = WorldRenderer()
     }

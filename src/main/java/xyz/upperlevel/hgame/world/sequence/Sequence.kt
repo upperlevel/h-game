@@ -1,9 +1,11 @@
 package xyz.upperlevel.hgame.world.sequence
 
+import com.badlogic.gdx.Gdx
+import org.apache.logging.log4j.LogManager
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-class Sequence private constructor() {
+class Sequence {
     private val incomingSteps = HashMap<Step, Trigger>()
     private val steps = ArrayList<Step>()
     private val children = ArrayList<Sequence>()
@@ -25,6 +27,24 @@ class Sequence private constructor() {
         append { step ->
             action()
             step.next(Triggers.NONE)
+        }
+        return this
+    }
+
+    fun pressKey(key: Int, action: () -> Unit): Sequence {
+        append { step ->
+            pressKey(key, action)
+            action()
+            step.next { Gdx.input.isKeyPressed(key) }
+        }
+        return this
+    }
+
+    fun pressKeyOnce(key: Int, action: () -> Unit): Sequence {
+        append { step ->
+            pressKeyOnce(key, action)
+            action()
+            step.next { Gdx.input.isKeyJustPressed(key) }
         }
         return this
     }
@@ -65,7 +85,9 @@ class Sequence private constructor() {
         val wrapped = AtomicInteger()
         repeat({ step ->
             action(step, wrapped.get())
-            if (wrapped.incrementAndGet() >= times) {
+            // If 'times' is negative, it'll repeat the loop infinitely,
+            // The counter will increment starting from 0.
+            if (wrapped.incrementAndGet() >= times && times >= 0) {
                 step.next(Triggers.NONE)
             }
         }, each)
@@ -82,14 +104,14 @@ class Sequence private constructor() {
         children.forEach { it.update() }
     }
 
-    fun play() {
+    fun play(): Sequence {
         if (steps.size > 0) {
             steps[0].start()
         }
+        return this
     }
 
     fun dismiss() {
-        incomingSteps.clear()
         children.forEach { it.dismiss() }
         sequences.remove(this)
     }
@@ -112,6 +134,7 @@ class Sequence private constructor() {
 
     companion object {
         private val sequences = ArrayList<Sequence>()
+        private val logger = LogManager.getLogger()
 
         fun create(): Sequence {
             val sequence = Sequence()
@@ -120,13 +143,13 @@ class Sequence private constructor() {
         }
 
         fun updateAll() {
-            for (sequence in sequences) {
+            for (sequence in ArrayList(sequences)) {
                 sequence.update()
             }
         }
 
         fun dismissAll() {
-            for (sequence in sequences) {
+            for (sequence in ArrayList(sequences)) {
                 sequence.dismiss()
             }
         }

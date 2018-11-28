@@ -74,8 +74,8 @@ class EntityRegistry {
         endpoint.events.register(TriggerInputActionPacket::class.java) { (actorId, actionId) ->
             runSync {
                 _entities[actorId]!!
-                        .input
-                        .onNetworkAction(actionId)
+                        .controller
+                        .issue(actionId)
             }
         }
     }

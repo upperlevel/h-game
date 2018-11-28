@@ -10,10 +10,10 @@ object DefaultFont {
     val FONT: BitmapFont
 
     init {
-        val generator = FreeTypeFontGenerator(Gdx.files.internal("Lato.ttf"))
+        val generator = FreeTypeFontGenerator(Gdx.files.internal("font.ttf"))
         val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
         parameter.size = 32
-        parameter.borderWidth = 2f
+        parameter.borderWidth = 3f
         parameter.borderColor = Color.BLACK
 
         FONT = generator.generateFont(parameter)

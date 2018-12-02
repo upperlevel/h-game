@@ -1,6 +1,6 @@
 package xyz.upperlevel.hgame.world.character.impl
 
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
@@ -12,7 +12,7 @@ class Santy : Character {
         return ActorImpl(id, this)
     }
 
-    inner class ActorImpl(id: Int, character: Character) : Actor(id, character) {
+    inner class ActorImpl(id: Int, character: Character) : Entity(id, character) {
         private val attackTask = -1
 
         // Special attack

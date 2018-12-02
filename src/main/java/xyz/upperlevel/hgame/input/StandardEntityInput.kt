@@ -3,7 +3,7 @@ package xyz.upperlevel.hgame.input
 import com.badlogic.gdx.Input
 import xyz.upperlevel.hgame.world.World.Companion.ACTOR_JUMP_SPEED
 import xyz.upperlevel.hgame.world.World.Companion.ACTOR_MOVE_SPEED
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import java.util.*
 
 object StandardEntityInput {
@@ -11,36 +11,36 @@ object StandardEntityInput {
     val MOVE_RIGHT: Consequence = { it.move(ACTOR_MOVE_SPEED) }
     val JUMP: Consequence = { it.jump(ACTOR_JUMP_SPEED) }
 
-    fun create(actor: Actor): EntityInput {
+    fun create(entity: Entity): EntityInput {
         return EntityInput(Arrays.asList(
                 InputAction (// Left
-                        actor,
+                        entity,
                         0,
                         InputTriggers.onKeyDown(Input.Keys.A),
                         MOVE_LEFT
                 ),
                 InputAction(// Right
-                        actor,
+                        entity,
                         1,
                         InputTriggers.onKeyDown(Input.Keys.D),
                         MOVE_RIGHT
                 ),
                 InputAction(// Jump
-                        actor,
+                        entity,
                         2,
-                        InputTriggers.onKeyDown(Input.Keys.W).and { actor.isTouchingGround },
+                        InputTriggers.onKeyDown(Input.Keys.W).and { entity.isTouchingGround },
                         JUMP
                 ),
                 InputAction(
-                        actor,
+                        entity,
                         3,
                         InputTriggers.onKeyPress(Input.Keys.SPACE)
-                ) { obj: Actor -> obj.attack() },
+                ) { obj: Entity -> obj.attack() },
                 InputAction(
-                        actor,
+                        entity,
                         4,
                         InputTriggers.onKeyPress(Input.Keys.J)
-                ) { obj: Actor -> obj.specialAttack() }
+                ) { obj: Entity -> obj.specialAttack() }
         ))
     }
 }

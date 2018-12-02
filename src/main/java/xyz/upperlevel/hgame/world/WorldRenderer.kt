@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 
 class WorldRenderer {
     val camera: OrthographicCamera = OrthographicCamera()
@@ -22,7 +22,7 @@ class WorldRenderer {
         camera.setToOrtho(false, Gdx.graphics.width / Gdx.graphics.height.toFloat() * height, height)
 
         // Moves the camera to the position of the player.
-        camera.position.x = player.x + Actor.WIDTH / 2f
+        camera.position.x = player.x + Entity.WIDTH / 2f
         camera.position.y = height / 2f + (player.y - groundHeight)
         camera.update()
 

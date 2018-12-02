@@ -1,5 +1,5 @@
 package xyz.upperlevel.hgame.world.entity
 
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 
-typealias EntityFactory = (id: Int) -> Actor
+typealias EntityFactory = (id: Int) -> Entity

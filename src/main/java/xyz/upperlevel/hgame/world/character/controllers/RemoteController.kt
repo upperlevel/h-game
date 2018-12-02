@@ -3,10 +3,10 @@ package xyz.upperlevel.hgame.world.character.controllers
 import com.badlogic.gdx.Gdx
 import xyz.upperlevel.hgame.input.TriggerInputActionPacket
 import xyz.upperlevel.hgame.network.Endpoint
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
-class RemoteController private constructor(actor: Actor, val endpoint: Endpoint) : Controller(actor) {
+class RemoteController private constructor(entity: Entity, val endpoint: Endpoint) : Controller(entity) {
     private val test = Sequence.create()
 
     init {
@@ -16,14 +16,14 @@ class RemoteController private constructor(actor: Actor, val endpoint: Endpoint)
                 if (Gdx.input.isKeyPressed(key)) {
                     callback()
                     if (endpoint.isConnected) {
-                        endpoint.send(TriggerInputActionPacket(actor.id, key))
+                        endpoint.send(TriggerInputActionPacket(entity.id, key))
                     }
                     moved = true
                 }
             }
 
             if (!moved) {
-                actor.control(0f, 0f)
+                entity.control(0f, 0f)
             }
         }, 1).play()
     }
@@ -33,6 +33,6 @@ class RemoteController private constructor(actor: Actor, val endpoint: Endpoint)
     }
 
     companion object {
-        fun bind(player: Actor, endpoint: Endpoint): RemoteController = RemoteController(player, endpoint)
+        fun bind(player: Entity, endpoint: Endpoint): RemoteController = RemoteController(player, endpoint)
     }
 }

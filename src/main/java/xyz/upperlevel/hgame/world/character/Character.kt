@@ -13,8 +13,8 @@ interface Character {
     val texturePath: String
 
     /**
-     * Generates an instance of the [Character]'s [Actor].
-     * The [Actor] is the object that will populate the Scenario.
+     * Generates an instance of the [Character]'s [Entity].
+     * The [Entity] is the object that will populate the Scenario.
      */
-    fun personify(id: Int): Actor
+    fun personify(id: Int): Entity
 }

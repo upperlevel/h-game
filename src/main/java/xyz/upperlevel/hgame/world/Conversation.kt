@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.scheduler.Task
 
 object Conversation {
@@ -97,8 +97,8 @@ object Conversation {
         }
     }
 
-    fun show(actor: Actor, text: String, audio: String? = null) {
-        show(actor.character.name + ":", text, audio)
+    fun show(entity: Entity, text: String, audio: String? = null) {
+        show(entity.character.name + ":", text, audio)
     }
 
     fun resize(width: Int, height: Int) {

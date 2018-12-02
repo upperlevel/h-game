@@ -5,7 +5,7 @@ import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.controllers.RemoteController
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
@@ -18,12 +18,12 @@ class World {
 
     private val entityRegistry = EntityRegistry()
 
-    var player: Actor? = null
+    var player: Entity? = null
         private set
 
     private var isMaster = false
 
-    val entities: Stream<Actor>
+    val entities: Stream<Entity>
         get() = entityRegistry.entities
 
     // TODO: isn't there a cleaner way to do this? like waiting in another screen

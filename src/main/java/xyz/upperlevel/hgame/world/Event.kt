@@ -1,6 +1,6 @@
 package xyz.upperlevel.hgame.world
 
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import java.util.*
 import java.util.function.Supplier
 import kotlin.collections.Map.Entry
@@ -22,11 +22,11 @@ object Event {
         }
     }
 
-    fun greaterX(actor: Actor, x: Float): () ->  Boolean {
-        return { actor.x >= x }
+    fun greaterX(entity: Entity, x: Float): () ->  Boolean {
+        return { entity.x >= x }
     }
 
-    fun lowerX(actor: Actor, x: Float): () -> Boolean {
-        return { actor.x <= x }
+    fun lowerX(entity: Entity, x: Float): () -> Boolean {
+        return { entity.x <= x }
     }
 }

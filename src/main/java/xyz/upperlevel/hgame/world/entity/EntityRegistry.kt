@@ -4,12 +4,12 @@ import xyz.upperlevel.hgame.input.TriggerInputActionPacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
 import java.util.*
 import java.util.stream.Stream
 
-typealias Callback = (Actor) -> Unit
+typealias Callback = (Entity) -> Unit
 
 class EntityRegistry {
     // TODO: use actors instead of entities
@@ -17,16 +17,16 @@ class EntityRegistry {
     private val factoryIdByType = HashMap<Class<*>, Int>()
     private val pendingSpawns = ArrayDeque<Callback>()
 
-    private val _entities = HashMap<Int, Actor>()
+    private val _entities = HashMap<Int, Entity>()
 
-    val entities: Stream<Actor>
+    val entities: Stream<Entity>
         get() = _entities.values.stream()
 
     private var nextId = 0
 
     private var endpoint: Endpoint? = null
 
-    private fun spawn0(type: Int, x: Float, y: Float, left: Boolean): Actor {
+    private fun spawn0(type: Int, x: Float, y: Float, left: Boolean): Entity {
         val factory = factories[type]
 
         val entity = factory(nextId++)

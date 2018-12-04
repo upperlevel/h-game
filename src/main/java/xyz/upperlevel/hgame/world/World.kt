@@ -58,9 +58,9 @@ class World {
         entityRegistry.registerType(Santy::class.java) { Santy().personify(it) }
         entityRegistry.initEndpoint(endpoint)
 
-        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java) {
+        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, {
             runSync { this.onGameStart(endpoint) }
-        })
+        }))
     }
 
     companion object {

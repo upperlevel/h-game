@@ -169,7 +169,7 @@ class UdpDiscovery {
         discoverService = null
     }
 
-    fun startService(@NonNull nick: String) {
+    fun startService(nick: String) {
         this.nick = nick
         isAvailable = true
         discoverService = Thread(Runnable { this.serviceRunner() }, "Discovery Client")
@@ -238,7 +238,7 @@ class UdpDiscovery {
         }
 
         @Throws(IOException::class)
-        private fun writeString(out: ByteArrayOutputStream, @NonNull str: String) {
+        private fun writeString(out: ByteArrayOutputStream, str: String) {
             out.write(str.length.toByte().toInt())
             out.write(str.toByteArray(StandardCharsets.UTF_8))
         }

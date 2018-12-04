@@ -70,13 +70,13 @@ class EntityRegistry {
     fun initEndpoint(endpoint: Endpoint) {
         this.endpoint = endpoint
 
-        endpoint.events.register(EntitySpawnPacket::class.java) { packet -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } }
-        endpoint.events.register(TriggerInputActionPacket::class.java) { (actorId, actionId) ->
+        endpoint.events.register(EntitySpawnPacket::class.java, { packet: EntitySpawnPacket -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
+        endpoint.events.register(TriggerInputActionPacket::class.java, { (actorId, actionId) ->
             runSync {
                 _entities[actorId]!!
                         .controller
                         .issue(actionId)
             }
-        }
+        })
     }
 }

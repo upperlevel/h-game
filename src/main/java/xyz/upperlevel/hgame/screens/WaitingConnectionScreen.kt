@@ -79,7 +79,7 @@ class WaitingConnectionScreen(
 
         stage.addActor(table)
 
-        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java) { runSync { HGame.get().screen = nextScreen } })
+        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, { runSync { HGame.get().screen = nextScreen } }))
     }
 
     override fun show() {

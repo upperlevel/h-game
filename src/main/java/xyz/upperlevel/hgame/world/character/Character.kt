@@ -1,5 +1,7 @@
 package xyz.upperlevel.hgame.world.character
 
+import com.badlogic.gdx.physics.box2d.World
+
 
 interface Character {
     /**
@@ -16,5 +18,5 @@ interface Character {
      * Generates an instance of the [Character]'s [Entity].
      * The [Entity] is the object that will populate the Scenario.
      */
-    fun personify(id: Int): Entity
+    fun personify(id: Int, pworld: World): Entity
 }

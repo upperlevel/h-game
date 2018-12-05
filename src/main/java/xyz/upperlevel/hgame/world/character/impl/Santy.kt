@@ -1,18 +1,20 @@
 package xyz.upperlevel.hgame.world.character.impl
 
+import com.badlogic.gdx.physics.box2d.World
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
+import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : Character {
     override val name = "Santy"
     override val texturePath = "prof_santy.png"
 
-    override fun personify(id: Int): ActorImpl {
-        return ActorImpl(id, this)
+    override fun personify(id: Int, pworld: World): ActorImpl {
+        return ActorImpl(id, pworld, this)
     }
 
-    inner class ActorImpl(id: Int, character: Character) : Entity(id, character) {
+    inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
         private val attackTask = -1
 
         // Special attack

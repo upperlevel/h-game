@@ -31,8 +31,12 @@ abstract class Entity(val id: Int,
 
     var left = false
 
-    var isTouchingGround = false
-        private set
+    val isTouchingGround: Boolean
+        // has ground contact AND the velocity is going down (or static)
+        // if the velocity is going up it means the jump has begun
+        get() = groundContactCount > 0 && body.linearVelocity.y <= 0
+
+    var groundContactCount = 0
 
     private val sprite: Sprite
     private val regions: Array<Array<TextureRegion>>
@@ -50,6 +54,7 @@ abstract class Entity(val id: Int,
     val groundSensor = body.createFixture(createSensor())
 
     init {
+        body.userData = this
         val texture = Texture(Gdx.files.internal("images/" + character.texturePath))
 
         sprite = Sprite(texture)

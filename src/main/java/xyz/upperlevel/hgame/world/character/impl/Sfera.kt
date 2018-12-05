@@ -1,19 +1,21 @@
 package xyz.upperlevel.hgame.world.character.impl
 
+import com.badlogic.gdx.physics.box2d.World
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
+import xyz.upperlevel.hgame.world.character.Player
 
 class Sfera : Character {
     override val name = "Sfera"
 
     override val texturePath = "prof_sfera.png"
 
-    override fun personify(id: Int): Entity {
-        return ActorImpl(id, this)
+    override fun personify(id: Int, pworld: World): Entity {
+        return ActorImpl(id, pworld, this)
     }
 
-    private inner class ActorImpl(id: Int, character: Character) : Entity(id, character) {
+    private inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
 
         override fun move(offsetX: Float) {
             super.move(offsetX * 0.5f)

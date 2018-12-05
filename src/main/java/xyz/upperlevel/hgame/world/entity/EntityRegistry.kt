@@ -30,8 +30,7 @@ class EntityRegistry {
         val factory = factories[type]
 
         val entity = factory(nextId++)
-        entity.x = x
-        entity.y = y
+        entity.body.setTransform(x, y, 0f)
         entity.left = left
         _entities[entity.id] = entity
         return entity

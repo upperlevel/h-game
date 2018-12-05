@@ -17,7 +17,7 @@ class NetTest {
     data class ExamplePacket(val text: String) : Packet
 
     @ProtocolId(2)
-    data class SecondExamplePacket(val aSimpleText: Int) : Packet
+    data class SecondExamplePacket(val simpleText: Int) : Packet
 
     @Test
     @Throws(InterruptedException::class, UnknownHostException::class)

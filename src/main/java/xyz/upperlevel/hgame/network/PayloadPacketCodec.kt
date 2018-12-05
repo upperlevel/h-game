@@ -21,7 +21,6 @@ internal class PayloadPacketCodec(private val jsonMapper: ObjectMapper) : ByteTo
         jsonMapper.writeValue(stream, msg)
     }
 
-    @Throws(Exception::class)
     override fun decode(ctx: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
         val stream: InputStream = ByteBufInputStream(`in`)
         val readIndex = `in`.readerIndex()

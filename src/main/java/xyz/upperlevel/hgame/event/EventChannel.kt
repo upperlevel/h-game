@@ -152,7 +152,7 @@ class EventChannel {
     }
 
     private fun isBase(clazz: Class<*>?): Boolean {
-        if (clazz == null) return true
+        if (clazz == null || clazz.superclass == null) return true
         if (clazz.superclass == Any::class.java) return true
         for (i in clazz.interfaces) {
             if (isBase(i)) {

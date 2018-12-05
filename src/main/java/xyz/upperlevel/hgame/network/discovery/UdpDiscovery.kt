@@ -1,7 +1,6 @@
 package xyz.upperlevel.hgame.network.discovery
 
 import com.google.common.io.BaseEncoding
-import lombok.NonNull
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.event.EventChannel
 import java.io.ByteArrayOutputStream

@@ -1,6 +1,5 @@
 package xyz.upperlevel.hgame.world.entity
 
-import xyz.upperlevel.hgame.input.TriggerInputActionPacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync

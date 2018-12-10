@@ -1,7 +1,6 @@
 package xyz.upperlevel.hgame.world.character.controllers
 
 import com.badlogic.gdx.Gdx
-import xyz.upperlevel.hgame.input.TriggerInputActionPacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Sequence

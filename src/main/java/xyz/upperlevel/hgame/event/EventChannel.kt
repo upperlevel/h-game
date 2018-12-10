@@ -1,17 +1,31 @@
 package xyz.upperlevel.hgame.event
 
 import xyz.upperlevel.hgame.event.EventListener.Companion.listener
-import java.lang.invoke.MethodHandle
-import java.lang.invoke.MethodHandles
-import java.lang.reflect.Method
 import java.util.*
-import java.util.function.Consumer
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.superclasses
+import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 class EventChannel {
     private val byListenerAndPriority = HashMap<Class<*>, MutableMap<Byte, MutableSet<EventListener<*>>>>()
     private val byEventBaked = HashMap<Class<*>, Array<EventListener<*>>>()
+
+    private var children: MutableSet<EventChannel> = HashSet()
+
+    var parent: EventChannel? = null
+        set(value) {
+            field?.children?.remove(this)
+            field = value
+            value?.children?.add(this)
+            rebakeAll()
+        }
 
     var exceptionHandler: (Throwable) -> Unit = { e ->
         if (e is Exception)
@@ -66,14 +80,14 @@ class EventChannel {
             false
     }
 
-    fun register(listener: Listener) {
-        register0(listener, listener.javaClass)
+    inline fun <reified T : Listener> register(listener: T) {
+        register(listener, T::class)
     }
 
-    private fun register0(listener: Listener, clazz: Class<*>) {
-        val methods = clazz.declaredMethods
+    fun register(listener: Listener, clazz: KClass<*>) {
+        val methods = clazz.declaredFunctions
         for (method in methods) {
-            val handler = method.getAnnotation(EventHandler::class.java) ?: continue
+            val handler = method.findAnnotation<EventHandler>() ?: continue
 
             val l: EventListener<*>
             try {
@@ -84,19 +98,20 @@ class EventChannel {
 
             register(l)
         }
-        if (clazz.superclass != null)
-            register0(listener, clazz.superclass)
+        clazz.superclasses.forEach {
+            register(listener, it)
+        }
     }
 
 
-    fun unregister(listener: Listener) {
-        unregister0(listener, listener.javaClass)
+    inline fun <reified T : Listener> unregister(listener: T) {
+        unregister(listener, T::class)
     }
 
-    private fun unregister0(listener: Listener, clazz: Class<*>) {
-        val methods = clazz.methods
+    fun unregister(listener: Listener, clazz: KClass<*>) {
+        val methods = clazz.declaredFunctions
         for (method in methods) {
-            val handler = method.getAnnotation(EventHandler::class.java) ?: continue
+            val handler = method.findAnnotation<EventHandler>() ?: continue
             val l: EventListener<*>
             try {
                 l = eventHandlerToListener(listener, method, handler.priority)
@@ -107,21 +122,22 @@ class EventChannel {
             if (!unregister(l))
                 throw IllegalStateException("Cannot remove method $method")
         }
-        if (clazz.superclass != null)
-            unregister0(listener, clazz.superclass)
+        clazz.superclasses.forEach {
+            unregister(listener, it)
+        }
     }
 
 
-    private fun eventHandlerToListener(instance: Any, listener: Method, priority: Byte): EventListener<*> {
-        if (listener.parameterCount != 1)
-            throw IllegalArgumentException("Cannot derive EventListener from the argument method: bad argument number")
+    private fun eventHandlerToListener(instance: Any, listener: KFunction<*>, priority: Byte): EventListener<*> {
+        if (listener.valueParameters.size != 1) {
+            throw IllegalArgumentException("Cannot derive EventListener from the argument method: bad argument number (expected: 1, found: ${listener.parameters.size})")
+        }
 
         listener.isAccessible = true
-        val method = MethodHandles.lookup().unreflect(listener)
 
-        val argument = listener.parameterTypes[0]
+        val argument = listener.valueParameters[0].type.jvmErasure
 
-        return ReflectionEventListener(argument, priority, method, listener, instance)
+        return ReflectionEventListener(argument.java, priority, listener, instance)
     }
 
     private fun call0(event: Event, clazz: Class<*>?) {
@@ -140,7 +156,7 @@ class EventChannel {
         }
         // If it wasn't in the map
         // And it can have event children
-        if (isBase(clazz)) {
+        if (isBase(clazz) && clazz != Event::class.java) {
             call0(event, Event::class.java)
         } else {
             call0(event, clazz.superclass)
@@ -162,55 +178,63 @@ class EventChannel {
         return false
     }
 
-    fun bake(clazz: Class<*>) {
-        val baked = bake0(clazz)
-        if (!baked.isEmpty()) {
-            val b = baked.toTypedArray()
-            byEventBaked[clazz] = b
-        } else
-            byEventBaked.remove(clazz)
+    fun rebakeAll() {
+        byListenerAndPriority.keys.forEach { bakeAndAssign(it) }
+    }
 
+    fun bake(clazz: Class<*>) {
         for (other in byListenerAndPriority.keys) {
-            if (other != clazz && clazz.isAssignableFrom(other))
-                bake(other)
+            if (clazz.isAssignableFrom(other)) {
+                bakeAndAssign(other)
+            }
         }
     }
 
-    private fun bake0(clazz: Class<*>): List<EventListener<*>> {
-        val handlers = byListenerAndPriority[clazz]
-        val baked: MutableList<EventListener<*>>
+    private fun bakeAndAssign(clazz: Class<*>) {
+        val baked = bake0(clazz)
+        if (!baked.isEmpty()) {
+            byEventBaked[clazz] = baked.sortedBy { it.first }
+                    .map { it.second }
+                    .toTypedArray()
+        } else {
+            byEventBaked.remove(clazz)
+        }
 
-        baked = if (handlers != null) {
-            handlers.entries
-                    .sortedBy { it.key.toInt() }
-                    .flatMap { it.value }
-                    .toMutableList()
-        } else
-            ArrayList()
+        children.forEach {
+            it.bakeAndAssign(clazz)
+        }
+    }
+
+    private fun bake0(clazz: Class<*>): List<Pair<Byte, EventListener<*>>> {
+        val handlers = byListenerAndPriority[clazz]
+        val baked = ArrayList<Pair<Byte, EventListener<*>>>()
+
+        if (handlers != null) {
+            baked.addAll(handlers.entries.flatMap { entry ->
+                entry.value.map { Pair(entry.key, it) }
+            })
+        }
 
         if (!isBase(clazz)) {
             val superClazz = clazz.superclass
-            if (superClazz != CancellableEvent::class.java)
+            if (superClazz != CancellableEvent::class.java) {
                 baked.addAll(bake0(superClazz))
+            }
+        }
+        if (parent != null) {
+            baked.addAll(parent!!.bake0(clazz))
         }
         return baked
     }
 
     inner class ReflectionEventListener(clazz: Class<*>,
                                         priority: Byte,
-                                        method: MethodHandle,
-                                        val listener: Method,
+                                        val listener: KFunction<*>,
                                         val instance: Any) : EventListener<Event>(clazz, priority) {
-        val method: MethodHandle
-
-        init {
-            val met = method.bindTo(instance)
-            this.method = met.asType(met.type().changeParameterType(0, Event::class.java))
-        }
 
         override fun call(event: Event) {
             try {
-                method.invokeExact(event)
+                listener.call(instance, event)
             } catch (t: Throwable) {
                 exceptionHandler(t)
             }

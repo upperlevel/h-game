@@ -4,7 +4,7 @@ import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.world.character.Entity
 import java.util.*
 
-class BehaviourMap {
+class BehaviourMap(val entity: Entity) {
     private val behaviours = HashMap<String, Behaviour>()
     var endpoint: Endpoint? = null
 
@@ -16,10 +16,14 @@ class BehaviourMap {
                 field = newVal
                 newVal = field?.onEnable()
             } while (newVal != null)
-            endpoint?.send()
+            endpoint?.send(BehaviourChangePacket(entity.id, field?.id))
         }
     var initialized = false
         private set
+
+    fun active(id: String?) {
+        active = if (id != null) behaviours[id] else null
+    }
 
     fun register(id: String, behaviour: Behaviour) {
         if (initialized) {
@@ -56,7 +60,7 @@ class BehaviourMap {
 
     companion object {
         fun createDefault(entity: Entity): BehaviourMap {
-            return BehaviourMap().apply {
+            return BehaviourMap(entity).apply {
                 register(IdleBehaviour(this, entity))
                 register(WalkLeftBehaviour(this, entity))
                 register(WalkRightBehaviour(this, entity))

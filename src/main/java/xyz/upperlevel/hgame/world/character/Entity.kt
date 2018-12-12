@@ -15,7 +15,6 @@ import xyz.upperlevel.hgame.input.BehaviourMap
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.character.controllers.Controller
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
@@ -148,27 +147,6 @@ abstract class Entity(val id: Int,
             isSensor = true
             shape = PolygonShape().apply {
                 setAsBox(texSize.x, 0.3f)
-            }
-        }
-    }
-
-    inner class Walking : Runnable {
-        private var frame: Int = 0
-        private var backward: Boolean = false
-
-        override fun run() {
-            setFrame(frame, 1)
-            if (backward) {
-                frame--
-            } else {
-                frame++
-            }
-            if (frame < 0) {
-                frame = 0
-                backward = false
-            } else if (frame == 3) {
-                frame = 2
-                backward = true
             }
         }
     }

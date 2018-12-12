@@ -1,5 +1,7 @@
 package xyz.upperlevel.hgame.world.entity
 
+import xyz.upperlevel.hgame.input.BehaviourChangePacket
+import xyz.upperlevel.hgame.input.BehaviourMap
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
@@ -69,11 +71,9 @@ class EntityRegistry {
         this.endpoint = endpoint
 
         endpoint.events.register(EntitySpawnPacket::class.java, { packet: EntitySpawnPacket -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
-        endpoint.events.register(TriggerInputActionPacket::class.java, { (actorId, actionId) ->
+        endpoint.events.register(BehaviourChangePacket::class.java, { packet: BehaviourChangePacket ->
             runSync {
-                _entities[actorId]!!
-                        .controller
-                        .issue(actionId)
+                _entities[packet.actorId]?.behaviourMap?.active(packet.behaviour)
             }
         })
     }

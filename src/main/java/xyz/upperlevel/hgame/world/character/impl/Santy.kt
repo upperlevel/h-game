@@ -1,7 +1,6 @@
 package xyz.upperlevel.hgame.world.character.impl
 
 import com.badlogic.gdx.physics.box2d.World
-import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
@@ -15,16 +14,6 @@ class Santy : Character {
     }
 
     inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
-        private val attackTask = -1
-
-        // Special attack
-        private val shakingTask = -1
-        private val specialAttackTask = -1
-
-        override fun move(offsetX: Float) {
-            super.move(offsetX * 0.5f)
-        }
-
         override fun jump(strength: Float) {
             super.jump(strength * 0.5f)
         }

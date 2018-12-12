@@ -16,11 +16,6 @@ class Sfera : Character {
     }
 
     private inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
-
-        override fun move(offsetX: Float) {
-            super.move(offsetX * 0.5f)
-        }
-
         override fun jump(strength: Float) {
             super.jump(strength * 0.5f)
         }

@@ -12,7 +12,6 @@ import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.controllers.RemoteController
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import java.util.stream.Stream
@@ -70,7 +69,6 @@ class World {
         if (isMaster) x += 20 / 2
         entityRegistry.spawn(Santy::class.java, x.toFloat(), groundHeight, isMaster) { spawned ->
             player = spawned
-            RemoteController.bind(player!!, endpoint);
         }
     }
 
@@ -108,9 +106,6 @@ class World {
     }
 
     companion object {
-        const val ACTOR_MOVE_SPEED = 0.05f
-        const val ACTOR_JUMP_SPEED = 2f
-
         // Physics constants
         const val TIME_STEP = 1f/60
         const val VELOCITY_ITERATIONS = 6

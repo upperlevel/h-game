@@ -2,21 +2,22 @@ package xyz.upperlevel.hgame.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import xyz.upperlevel.hgame.world.character.Actor
+import com.badlogic.gdx.math.Vector2
+import xyz.upperlevel.hgame.world.character.Entity
 
-class WalkLeftBehaviour(behaviourMap: BehaviourMap, actor: Actor) : Behaviour(behaviourMap, "walk_left", actor) {
+class WalkLeftBehaviour(behaviourMap: BehaviourMap, entity: Entity) : Behaviour(behaviourMap, "walk_left", entity) {
     override fun initialize() {
         hook({ !Gdx.input.isKeyPressed(Input.Keys.A) }, behaviourMap["idle"]!!)
-        Behaviour.addDefault(this)
+        Behaviour.addDefault(entity, this)
     }
 
     override fun onEnable(): Behaviour? {
-        // TODO: Apply force
+        entity.moveForce = Vector2(-1f,  0f)
         return super.onEnable()
     }
 
     override fun onDisable() {
         super.onDisable()
-        // TODO: Disable force
+        entity.moveForce = null
     }
 }

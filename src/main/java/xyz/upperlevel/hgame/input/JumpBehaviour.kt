@@ -1,14 +1,14 @@
 package xyz.upperlevel.hgame.input
 
-import xyz.upperlevel.hgame.world.character.Actor
+import xyz.upperlevel.hgame.world.character.Entity
 
-class JumpBehaviour(behaviourMap: BehaviourMap, actor: Actor) : Behaviour(behaviourMap, "jump", actor) {
+class JumpBehaviour(behaviourMap: BehaviourMap, entity: Entity) : Behaviour(behaviourMap, "jump", entity) {
     override fun initialize() {
-        // TODO: touchGround -> idle
+        hook({ entity.isTouchingGround }, behaviourMap["idle"]!!)
     }
 
     override fun onEnable(): Behaviour? {
-        // TODO: apply impulse
-        return null
+        entity.jump(1.0f)
+        return null // Override super behaviour: don't check isTouchingGround
     }
 }

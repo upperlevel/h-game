@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
+import xyz.upperlevel.hgame.input.BehaviourMap
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
@@ -31,6 +33,8 @@ abstract class Entity(val id: Int,
 
     var left = false
 
+    var moveForce: Vector2? = null
+
     val isTouchingGround: Boolean
         // has ground contact AND the velocity is going down (or static)
         // if the velocity is going up it means the jump has begun
@@ -49,9 +53,9 @@ abstract class Entity(val id: Int,
 
     private var animation: Sequence? = null
 
-    val controller = Controller.bind(this)
+    var behaviourMap: BehaviourMap? = null
 
-    val groundSensor = body.createFixture(createSensor())
+    val groundSensor: Fixture = body.createFixture(createSensor())!!
 
     init {
         body.userData = this
@@ -127,7 +131,8 @@ abstract class Entity(val id: Int,
     }
 
     fun update(world: World) {
-        val delta = Gdx.graphics.deltaTime
+        // If there's a movement force, apply it
+        moveForce?.let { body.applyForce(it, body.worldCenter, true) }
     }
 
     fun render(renderer: WorldRenderer) {

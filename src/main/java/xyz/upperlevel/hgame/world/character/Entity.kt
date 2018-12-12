@@ -29,10 +29,14 @@ abstract class Entity(val id: Int,
     val y: Float
         get() = body.position.y
 
-
-    var left = false
-
+    var left: Boolean = false
     var moveForce: Vector2? = null
+        set(value) {
+            field = value
+            if (field != null) {
+                left = field?.x!! < 0
+            }
+        }
 
     val isTouchingGround: Boolean
         // has ground contact AND the velocity is going down (or static)
@@ -46,8 +50,6 @@ abstract class Entity(val id: Int,
 
     private var sayTask = -1
 
-    private var idle: Boolean = false
-    private var walking: Boolean = false
     private var backToIdle: Sequence? = null
 
     private var animation: Sequence? = null
@@ -64,7 +66,6 @@ abstract class Entity(val id: Int,
         sprite.setSize(texSize.x, texSize.y)
 
         regions = SpriteExtractor.grid(texture, 9, 4)
-        idle()
     }
 
     /**
@@ -110,10 +111,6 @@ abstract class Entity(val id: Int,
         say(text, audioPath, -1)
     }
 
-    fun idle() {
-        animate(Sequence.create().repeat({ _, time ->  setFrame(time % 2, 0) }, 200, -1))
-    }
-
     open fun jump(velocity: Float) {
         body.applyLinearImpulse(Vector2(0f, -velocity), body.worldCenter, true)
     }
@@ -132,6 +129,9 @@ abstract class Entity(val id: Int,
     fun update(world: World) {
         // If there's a movement force, apply it
         moveForce?.let { body.applyForce(it, body.worldCenter, true) }
+
+        // Updates the BehaviourMap, needed to check hooks.
+        behaviourMap?.update()
     }
 
     fun render(renderer: WorldRenderer) {

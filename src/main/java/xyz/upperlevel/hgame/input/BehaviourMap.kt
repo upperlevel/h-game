@@ -2,6 +2,7 @@ package xyz.upperlevel.hgame.input
 
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.world.character.Entity
+import java.lang.IllegalStateException
 import java.util.*
 
 class BehaviourMap(val entity: Entity) {
@@ -10,19 +11,29 @@ class BehaviourMap(val entity: Entity) {
 
     var active: Behaviour? = null
         set(value) {
+            // Disables the old State.
             field?.onDisable()
+
+            // Checks hooks to see if someone is verified.
             var newVal = value
             do {
                 field = newVal
-                newVal = field?.onEnable()
+                newVal = field?.resolveHooks()
             } while (newVal != null)
+
+            // Now we have the new State, so we can enable and send the change.
+            field?.onEnable()
             endpoint?.send(BehaviourChangePacket(entity.id, field?.id))
         }
+
     var initialized = false
         private set
 
-    fun active(id: String?) {
-        active = if (id != null) behaviours[id] else null
+    fun active(behaviourId: String?) {
+        if (behaviourId !in behaviours) {
+            throw IllegalArgumentException("behaviourId not found: $behaviourId")
+        }
+        active = behaviours[behaviourId]
     }
 
     fun register(id: String, behaviour: Behaviour) {
@@ -33,7 +44,6 @@ class BehaviourMap(val entity: Entity) {
             throw RuntimeException("Behaviour conflict, two ids registered with the same behaviour")
         }
         behaviours[id] = behaviour
-        behaviour.initialize()
     }
 
     fun register(behaviour: Behaviour) {
@@ -53,9 +63,13 @@ class BehaviourMap(val entity: Entity) {
     }
 
     fun initialize(startBehaviour: String) {
-        if (startBehaviour !in behaviours) throw IllegalArgumentException("startBehaviour not found")
         behaviours.values.forEach { it.initialize() }
-        active = behaviours[startBehaviour]
+        active(startBehaviour)
+        initialized = true
+    }
+
+    fun update() {
+        active?.onUpdate()
     }
 
     companion object {

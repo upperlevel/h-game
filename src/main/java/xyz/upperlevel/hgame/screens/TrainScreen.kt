@@ -17,23 +17,24 @@ class TrainScreen : ScreenAdapter() {
         // Fake endpoint. We don't need network for the training session.
         endpoint = DisconnectedEndpoint()
 
-        world = World()
-        world!!.initEndpoint(endpoint)
-        world!!.onGameStart(endpoint)
+        world = World().apply {
+            initEndpoint(endpoint)
+            onGameStart(endpoint)
+        }
 
         renderer = WorldRenderer()
     }
 
     override fun hide() {
-        renderer!!.dispose()
+        renderer?.dispose()
     }
 
     override fun render(delta: Float) {
-        // Update
-        world!!.update(endpoint)
+        world.let {
+            world?.update(endpoint)
 
-        // Render
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        renderer!!.render(world!!)
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+            renderer?.render(world!!)
+        }
     }
 }

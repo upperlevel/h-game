@@ -3,6 +3,7 @@ package xyz.upperlevel.hgame.input
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Trigger
 import java.util.*
@@ -14,9 +15,11 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
         hooks[trigger] = behaviour
     }
 
-    fun firstActiveHook(): Behaviour? {
+    fun resolveHooks(): Behaviour? {
+        logger.debug("Checking hooks...")
         hooks.forEach {
             if (it.key.invoke()) {
+                logger.debug("Hook verified! Setting next Behaviour to: ${it.value.id}")
                 return it.value
             }
         }
@@ -26,11 +29,20 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
     open fun initialize() {
     }
 
-    open fun onEnable(): Behaviour? {
-        return firstActiveHook()
+    open fun onEnable() {
     }
 
-    open fun onDisable() {}
+    open fun onUpdate() {
+        // Each time checks if there is a hook verified.
+        val next = resolveHooks()
+        if (next != null) {
+            behaviourMap.active = next
+        }
+    }
+
+    open fun onDisable() {
+        logger.debug("Behaviour disabled: $id")
+    }
 
     companion object {
         val logger = LogManager.getLogger()

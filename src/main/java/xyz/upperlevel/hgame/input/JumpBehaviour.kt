@@ -7,8 +7,7 @@ class JumpBehaviour(behaviourMap: BehaviourMap, entity: Entity) : Behaviour(beha
         hook({ entity.isTouchingGround }, behaviourMap["idle"]!!)
     }
 
-    override fun onEnable(): Behaviour? {
+    override fun onEnable() {
         entity.jump(1.0f)
-        return null // Override super behaviour: don't check isTouchingGround
     }
 }

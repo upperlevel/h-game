@@ -94,6 +94,18 @@ class Sequence {
         return this
     }
 
+    /**
+     * Creates a timer that increments until it reaches the limit, when the limit is
+     * reached starts decrementing. When 0 is reached back it repeats infinitely.
+     */
+    fun oscillate(action: (Step, Int) -> Unit, each: Long, limit: Int): Sequence {
+        repeat({ step, time ->
+            val forward = Math.floor(time / limit.toDouble()).toInt() % 2 == 0
+            action(step, if (forward) time % limit else limit - time % limit - 1)
+        }, 100, -1)
+        return this
+    }
+
     fun update() {
         for ((step, value) in HashMap(incomingSteps)) {
             if (value()) {

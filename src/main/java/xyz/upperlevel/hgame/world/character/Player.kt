@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.world.character
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourMap
@@ -32,7 +33,9 @@ open class Player(id: Int, world: World, character: Character)
 
             bodyFixtureDef = FixtureDef().apply {
                 shape =  PolygonShape().apply {
-                    setAsBox(WIDTH, HEIGHT)
+                    val w = WIDTH / 2f
+                    val h = HEIGHT / 2f
+                    setAsBox(w, h, Vector2(w, h), 0f)
                 }
                 density = 1f
             }

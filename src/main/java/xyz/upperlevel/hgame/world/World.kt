@@ -21,7 +21,7 @@ class World {
     var height = 0.0f
     var groundHeight = 0.0f
 
-    val physics = PhysicsWorld(Vector2(0f, 9.8f), true)
+    val physics = PhysicsWorld(Vector2(0f, -9.8f), true)
     var physicsAccumulator = 0f
 
     private val entityRegistry = EntityRegistry()
@@ -54,20 +54,21 @@ class World {
         })
         ground.createFixture(FixtureDef().apply {
             density = 1f
-            restitution = 0.7f
+            restitution = 0.3f
             shape = PolygonShape().apply {
-                // Create a 20x10
-                setAsBox(groundWidth / 2f, groundHeight / 2f)
+                // Create a w*h box centered at the top middle
+                val w = groundWidth / 2f
+                val h = groundHeight / 2f
+                setAsBox(w, h, Vector2(w, -h), 0f)
             }
         })
         ground.userData = GROUND_DATA// Used in ground touch listener
-        ground.setTransform(0f, (- groundHeight / 2f) + this.groundHeight, 0f)
     }
 
     fun onGameStart(endpoint: Endpoint) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
-        entityRegistry.spawn(Santy::class.java, x.toFloat(), groundHeight, isMaster) { spawned ->
+        entityRegistry.spawn(Santy::class.java, x.toFloat(), 0f, isMaster) { spawned ->
             player = spawned
         }
     }

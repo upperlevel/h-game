@@ -146,7 +146,7 @@ abstract class Entity(val id: Int,
         return FixtureDef().apply {
             isSensor = true
             shape = PolygonShape().apply {
-                setAsBox(texSize.x, 0.3f)
+                setAsBox(texSize.x / 2, 0.3f, Vector2(texSize.x / 2f, 0f), 0f)
             }
         }
     }

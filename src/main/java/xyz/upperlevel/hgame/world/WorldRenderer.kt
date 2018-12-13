@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Player
 
@@ -12,6 +13,7 @@ class WorldRenderer {
     val camera: OrthographicCamera = OrthographicCamera()
     val spriteBatch: SpriteBatch = SpriteBatch()
     val shapeRenderer: ShapeRenderer = ShapeRenderer()
+    val debugRenderer = Box2DDebugRenderer()
 
 
     fun render(world: World) {
@@ -34,12 +36,14 @@ class WorldRenderer {
         // Draws the ground before all.
         shapeRenderer.color = Color.BLACK
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.rect(player.x - 10, 0f, 20f, groundHeight + 1)
+        shapeRenderer.rect(player.x - 10, -groundHeight, 20f, groundHeight + 0.5f)
         shapeRenderer.end()
 
         spriteBatch.begin()
         world.entities.forEach { actor -> actor.render(this) }
         spriteBatch.end()
+
+        debugRenderer.render(world.physics, camera.combined)
     }
 
     fun dispose() {

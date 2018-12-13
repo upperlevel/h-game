@@ -8,7 +8,7 @@ import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Trigger
 import java.util.*
 
-open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity: Entity) {
+open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity: Entity, var instantHookCheck: Boolean = true) {
     private val hooks = HashMap<Trigger, Behaviour>()
 
     fun hook(trigger: Trigger, behaviour: Behaviour) {
@@ -52,7 +52,7 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
             if (id in behaviour.behaviourMap) {
                 behaviour.hooks[trigger] = map[id]!!
             } else {
-                logger.warn("Cannot find jump behaviour")
+                logger.warn("Cannot find $id behaviour")
             }
         }
 

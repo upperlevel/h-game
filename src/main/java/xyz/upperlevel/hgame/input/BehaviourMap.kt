@@ -18,7 +18,10 @@ class BehaviourMap(val entity: Entity) {
             var newVal = value
             do {
                 field = newVal
-                newVal = field?.resolveHooks()
+                field?.let {
+                    newVal = if (it.instantHookCheck) it.resolveHooks()
+                    else null
+                }
             } while (newVal != null)
 
             // Now we have the new State, so we can enable and send the change.

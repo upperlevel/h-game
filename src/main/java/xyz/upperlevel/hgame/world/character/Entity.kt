@@ -112,7 +112,8 @@ abstract class Entity(val id: Int,
     }
 
     open fun jump(velocity: Float) {
-        body.applyLinearImpulse(Vector2(0f, -velocity), body.worldCenter, true)
+        logger.info("JUMPING")
+        body.applyLinearImpulse(Vector2(0f, velocity), body.worldCenter, true)
     }
 
     open fun attack() {
@@ -146,7 +147,7 @@ abstract class Entity(val id: Int,
         return FixtureDef().apply {
             isSensor = true
             shape = PolygonShape().apply {
-                setAsBox(texSize.x / 2, 0.3f, Vector2(texSize.x / 2f, 0f), 0f)
+                setAsBox(texSize.x / 2, 0.1f, Vector2(texSize.x / 2f, 0f), 0f)
             }
         }
     }

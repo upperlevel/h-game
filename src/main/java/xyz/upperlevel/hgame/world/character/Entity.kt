@@ -116,15 +116,14 @@ abstract class Entity(val id: Int,
         body.applyLinearImpulse(Vector2(0f, velocity), body.worldCenter, true)
     }
 
-    open fun attack() {
-        setFrame(2, 0)
-        // TODO delay to remove
+    open fun attack(): Sequence {
+        return Sequence.create().act { setFrame(0, 0) }
     }
 
-    open fun specialAttack() {
+    open fun specialAttack(): Sequence {
         // By default, special attack is implemented as a normal attack.
         // The Character should override the Actor class in order to implement its own special attack.
-        attack()
+        return attack()
     }
 
     fun update(world: World) {

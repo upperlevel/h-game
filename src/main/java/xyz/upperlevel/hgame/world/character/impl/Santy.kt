@@ -18,26 +18,23 @@ class Santy : Character {
             super.jump(strength * 0.5f)
         }
 
-        override fun attack() {
-            animate(
-                    Sequence.create()
-                            .act { setFrame(0, 2) }
-                            .delay(200)
-                            .act { setFrame(1, 2) }
-                            .delay(200)
-                            .act { setFrame(0, 0) }
-            )
+        override fun attack(): Sequence {
+            return Sequence.create()
+                    .act { setFrame(0, 2) }
+                    .delay(200)
+                    .act { setFrame(1, 2) }
+                    .delay(200)
+                    .act { setFrame(0, 0) }
+                    .play()
         }
 
-        override fun specialAttack() {
-            animate(
-                    Sequence.create()
+        override fun specialAttack(): Sequence {
+            return Sequence.create()
                             .repeat({ _, time -> setFrame(time % 2, 3) }, 200, 15)
                             .repeat({ _, time -> setFrame(time + 2, 3) }, 500, 2)
                             .repeat({ _, time -> setFrame(time + 4, 3) }, 200, 5)
                             .delay(2000)
                             .act { setFrame(0, 0) }
-            )
         }
     }
 }

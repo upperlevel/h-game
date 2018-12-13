@@ -19,10 +19,6 @@ class Sfera : Character {
         override fun jump(strength: Float) {
             super.jump(strength * 0.5f)
         }
-
-        override fun specialAttack() {
-            logger.warn("{}: my special attack!", name)
-        }
     }
 
     companion object {

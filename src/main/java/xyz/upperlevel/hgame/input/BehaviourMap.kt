@@ -82,6 +82,8 @@ class BehaviourMap(val entity: Entity) {
                 register(WalkLeftBehaviour(this, entity))
                 register(WalkRightBehaviour(this, entity))
                 register(JumpBehaviour(this, entity))
+                register(AttackBehaviour(this, entity))
+                register(SpecialAttackBehaviour(this, entity))
                 initialize("idle")
             }
         }

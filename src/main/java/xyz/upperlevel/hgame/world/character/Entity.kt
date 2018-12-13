@@ -65,7 +65,7 @@ abstract class Entity(val id: Int,
         sprite = Sprite(texture)
         sprite.setSize(texSize.x, texSize.y)
 
-        regions = SpriteExtractor.grid(texture, 9, 4)
+        regions = character.getSprites(texture)
     }
 
     /**

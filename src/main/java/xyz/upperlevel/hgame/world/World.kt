@@ -12,6 +12,7 @@ import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.impl.Mixter
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import java.util.stream.Stream
@@ -68,7 +69,7 @@ class World {
     fun onGameStart(endpoint: Endpoint) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
-        entityRegistry.spawn(Santy::class.java, x.toFloat(), 0f, isMaster) { spawned ->
+        entityRegistry.spawn(Mixter::class.java, x.toFloat(), 0f, isMaster) { spawned ->
             player = spawned
         }
     }
@@ -99,6 +100,7 @@ class World {
 
         // TODO: better type management
         entityRegistry.registerType(Santy::class.java) { Santy().personify(it, physics) }
+        entityRegistry.registerType(Mixter::class.java) { Mixter().personify(it, physics) }
         entityRegistry.initEndpoint(endpoint)
 
         endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, {

@@ -3,13 +3,13 @@ package xyz.upperlevel.hgame.input
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Trigger
 import java.util.*
 
-open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity: Entity, var instantHookCheck: Boolean = true) {
+open class Behaviour(val layer: BehaviourLayer, val id: String, val entity: Entity, var instantHookCheck: Boolean = true) {
     private val hooks = HashMap<Trigger, Behaviour>()
+    open val animated = false
 
     fun hook(trigger: Trigger, behaviour: Behaviour) {
         hooks[trigger] = behaviour
@@ -36,7 +36,7 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
         // Each time checks if there is a hook verified.
         val next = resolveHooks()
         if (next != null) {
-            behaviourMap.active = next
+            layer.active = next
         }
     }
 
@@ -47,22 +47,22 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
         logger.debug("Behaviour disabled: $id")
     }
 
+    open fun onAnimationEnable() {
+    }
+
+    open fun onAnimationDisable() {
+    }
+
     companion object {
         val logger = LogManager.getLogger()
 
-        private fun tryAdd(behaviour: Behaviour, trigger: Trigger, id: String) {
-            val map = behaviour.behaviourMap
-            if (id in behaviour.behaviourMap) {
+        fun tryAdd(behaviour: Behaviour, trigger: Trigger, id: String) {
+            val map = behaviour.layer
+            if (id in behaviour.layer) {
                 behaviour.hooks[trigger] = map[id]!!
             } else {
                 logger.warn("Cannot find $id behaviour")
             }
-        }
-
-        fun addDefault(entity: Entity, behaviour: Behaviour) {
-            //tryAdd(behaviour, { Gdx.input.isKeyPressed(Input.Keys.W) && entity.isTouchingGround }, "jump")
-            tryAdd(behaviour, { Gdx.input.isKeyJustPressed(Input.Keys.SPACE) }, "attack")
-            tryAdd(behaviour, { Gdx.input.isKeyJustPressed(Input.Keys.J) }, "special_attack")
         }
     }
 }

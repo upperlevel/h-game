@@ -1,17 +1,17 @@
 package xyz.upperlevel.hgame.input
 
-import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.Player
-import java.lang.IllegalStateException
 import java.util.*
 
-class BehaviourMap(val entity: Entity) {
+class BehaviourLayer(val entity: Entity) {
     private val behaviours = HashMap<String, Behaviour>()
-    var endpoint: Endpoint? = null
+
+    var index = 0
+    var parent: BehaviourManager? = null
 
     var active: Behaviour? = null
         set(value) {
+            val previous = field
             // Disables the old State.
             field?.onDisable()
 
@@ -27,7 +27,8 @@ class BehaviourMap(val entity: Entity) {
 
             // Now we have the new State, so we can enable and send the change.
             field?.onEnable()
-            endpoint?.send(BehaviourChangePacket(entity.id, field?.id))
+            parent?.onBehaviourChange(this, previous, field)
+            parent?.endpoint?.send(BehaviourChangePacket(entity.id, index, field?.id))
         }
 
     var initialized = false
@@ -74,19 +75,5 @@ class BehaviourMap(val entity: Entity) {
 
     fun update() {
         active?.onUpdate()
-    }
-
-    companion object {
-        fun createPlayerBehaviour(entity: Player): BehaviourMap {
-            return BehaviourMap(entity).apply {
-                register(IdleBehaviour(this, entity))
-                register(WalkLeftBehaviour(this, entity))
-                register(WalkRightBehaviour(this, entity))
-                //register(JumpBehaviour(this, entity))
-                register(AttackBehaviour(this, entity))
-                register(SpecialAttackBehaviour(this, entity))
-                initialize("idle")
-            }
-        }
     }
 }

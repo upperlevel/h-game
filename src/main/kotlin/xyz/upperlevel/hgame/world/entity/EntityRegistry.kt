@@ -74,7 +74,11 @@ class EntityRegistry {
         endpoint.events.register(EntitySpawnPacket::class.java, { packet -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
         endpoint.events.register(BehaviourChangePacket::class.java, { packet ->
             runSync {
-                _entities[packet.actorId]?.behaviourMap?.active(packet.behaviour)
+                _entities[packet.actorId]
+                        ?.behaviour
+                        ?.layers
+                        ?.get(packet.layerIndex)
+                        ?.active(packet.behaviour)
             }
         })
 

@@ -10,7 +10,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import com.badlogic.gdx.physics.box2d.World as PWorld
 import org.lwjgl.util.vector.Vector2f
-import xyz.upperlevel.hgame.input.BehaviourMap
+import xyz.upperlevel.hgame.input.BehaviourLayer
+import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
@@ -38,9 +39,9 @@ open class Player(id: Int, world: PWorld, character: Character)
         }
 
     init {
-        // Creates a default BehaviourMap for the Player.
+        // Creates a default Behaviour for the Player.
         // Each Player should have one.
-        behaviourMap = BehaviourMap.createPlayerBehaviour(this)
+        behaviour = BehaviourManager.createPlayerBehaviour(this)
     }
 
     override fun update(world: World) {
@@ -71,7 +72,7 @@ open class Player(id: Int, world: PWorld, character: Character)
         logger.info("JUMPING")
         body.applyLinearImpulse(Vector2(0f, jumpForce), body.worldCenter, true)
         if (active) {
-            behaviourMap?.endpoint?.send(PlayerJumpPacket(id))
+            behaviour?.endpoint?.send(PlayerJumpPacket(id))
         }
     }
 

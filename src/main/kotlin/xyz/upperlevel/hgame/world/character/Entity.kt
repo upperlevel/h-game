@@ -11,7 +11,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
-import xyz.upperlevel.hgame.input.BehaviourMap
+import xyz.upperlevel.hgame.input.BehaviourLayer
+import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
 import xyz.upperlevel.hgame.world.sequence.Sequence
@@ -44,7 +45,7 @@ abstract class Entity(val id: Int,
 
     private var animation: Sequence? = null
 
-    var behaviourMap: BehaviourMap? = null
+    var behaviour: BehaviourManager? = null
 
     val groundSensor: Fixture = body.createFixture(createSensor())!!
 
@@ -85,12 +86,12 @@ abstract class Entity(val id: Int,
     }
 
     open fun update(world: World) {
-        // Updates the BehaviourMap, needed to check hooks.
-        behaviourMap?.update()
+        // Updates the BehaviourLayer, needed to check hooks.
+        behaviour?.update()
     }
 
     open fun prePhysicStep(world: World) {
-        behaviourMap?.active?.onPrePhysics()
+        behaviour?.onPrePhysics()
     }
 
     fun render(renderer: WorldRenderer) {

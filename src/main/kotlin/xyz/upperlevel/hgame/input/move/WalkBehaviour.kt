@@ -1,23 +1,19 @@
-package xyz.upperlevel.hgame.input
+package xyz.upperlevel.hgame.input.move
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
+import xyz.upperlevel.hgame.input.Behaviour
+import xyz.upperlevel.hgame.input.BehaviourLayer
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
-open class WalkBehaviour(behaviourMap: BehaviourMap, id: String, val player: Player, val horizontalImpulse: Float)
-             : Behaviour(behaviourMap, id, player) {
+open class WalkBehaviour(behaviourGraph: BehaviourLayer, id: String, val player: Player, val horizontalImpulse: Float)
+             : Behaviour(behaviourGraph, id, player) {
     private var animation: Sequence? = null
     var maxVelocity = 7f
 
-    override fun initialize() {
-        Behaviour.addDefault(entity, this)
-    }
-
-    override fun onEnable() {
-        animation = Sequence.create().oscillate({ _, time -> entity.setFrame(time, 1) }, 200, 3).play()
-    }
+    override val animated = true
 
     override fun onPrePhysics() {
         super.onPrePhysics()
@@ -38,16 +34,20 @@ open class WalkBehaviour(behaviourMap: BehaviourMap, id: String, val player: Pla
         }
     }
 
-    override fun onDisable() {
+    override fun onAnimationEnable() {
+        animation = Sequence.create().oscillate({ _, time -> entity.setFrame(time, 1) }, 200, 3).play()
+    }
+
+    override fun onAnimationDisable() {
         animation?.dismiss()
     }
 }
 
-class WalkLeftBehaviour(behaviourMap: BehaviourMap, player: Player)
-    : WalkBehaviour(behaviourMap, "walk_left", player,-2f) {
+class WalkLeftBehaviour(behaviourGraph: BehaviourLayer, player: Player)
+    : WalkBehaviour(behaviourGraph, "walk_left", player,-2f) {
     override fun initialize() {
         super.initialize()
-        hook({ !Gdx.input.isKeyPressed(Input.Keys.A) }, behaviourMap["idle"]!!)
+        hook({ !Gdx.input.isKeyPressed(Input.Keys.A) }, layer["idle"]!!)
     }
 
     override fun onEnable() {
@@ -56,11 +56,11 @@ class WalkLeftBehaviour(behaviourMap: BehaviourMap, player: Player)
     }
 }
 
-class WalkRightBehaviour(behaviourMap: BehaviourMap, player: Player)
-    : WalkBehaviour(behaviourMap, "walk_right", player, 2f) {
+class WalkRightBehaviour(behaviourGraph: BehaviourLayer, player: Player)
+    : WalkBehaviour(behaviourGraph, "walk_right", player, 2f) {
     override fun initialize() {
         super.initialize()
-        hook({ !Gdx.input.isKeyPressed(Input.Keys.D) }, behaviourMap["idle"]!!)
+        hook({ !Gdx.input.isKeyPressed(Input.Keys.D) }, layer["idle"]!!)
     }
 
     override fun onEnable() {

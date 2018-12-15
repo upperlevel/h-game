@@ -95,7 +95,7 @@ class TrainScreen : ScreenAdapter() {
             world?.update(endpoint)
 
             playerPosition.setText("Position: %.2f %.2f".format(world?.player?.x, world?.player?.y))
-            playerBehaviour.setText("Current behaviour: %s".format(world?.player?.behaviourMap?.active?.id))
+            playerBehaviour.setText("Current behaviour: %s".format(world?.player?.behaviour?.toString()))
 
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
             renderer?.render(world!!)

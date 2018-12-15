@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.world.entity
 
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
@@ -74,20 +75,30 @@ class EntityRegistry {
         endpoint.events.register(EntitySpawnPacket::class.java, { packet -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
         endpoint.events.register(BehaviourChangePacket::class.java, { packet ->
             runSync {
-                _entities[packet.actorId]
+                val res = _entities[packet.actorId]
                         ?.behaviour
                         ?.layers
                         ?.get(packet.layerIndex)
                         ?.active(packet.behaviour)
+                if (res == null) {
+                    logger.warn("Invalid packet")
+                }
             }
         })
 
         endpoint.events.register(PlayerJumpPacket::class.java, { packet ->
             runSync {
                 val player = _entities[packet.entityId]
-                if (player == null || player !is Player) return@runSync// TODO: log error
+                if (player == null || player !is Player) {
+                    logger.warn("Invalid packet: invalid entity")
+                    return@runSync
+                }// TODO: log error
                 player.jump()
             }
         })
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger()
     }
 }

@@ -24,6 +24,8 @@ class IdleBehaviour(behaviourGraph: BehaviourLayer, val player: Player) : Behavi
     }
 
     override fun onPrePhysics() {
+        super.onPrePhysics()
+
         val vel = player.body.linearVelocity
         vel.x *= 0.9f
         player.body.linearVelocity = vel

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Player
 
 class WorldRenderer {

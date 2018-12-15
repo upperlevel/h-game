@@ -71,6 +71,8 @@ class World {
         if (isMaster) x += 20 / 2
         entityRegistry.spawn(Mixter::class.java, x.toFloat(), 0f, isMaster) { spawned ->
             player = spawned
+            // Assign the endpoint to the behaviour (to activate it)
+            spawned.behaviour?.let { it.endpoint = endpoint }
             (spawned as Player).active = true
         }
     }

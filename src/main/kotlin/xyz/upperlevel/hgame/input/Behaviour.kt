@@ -1,7 +1,5 @@
 package xyz.upperlevel.hgame.input
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.sequence.Trigger
@@ -34,9 +32,11 @@ open class Behaviour(val layer: BehaviourLayer, val id: String, val entity: Enti
 
     open fun onUpdate() {
         // Each time checks if there is a hook verified.
-        val next = resolveHooks()
-        if (next != null) {
-            layer.active = next
+        if (layer.parent?.active == true) {
+            val next = resolveHooks()
+            if (next != null) {
+                layer.active = next
+            }
         }
     }
 

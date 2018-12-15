@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.input
 
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.character.Entity
 import java.util.*
 
@@ -15,12 +16,16 @@ class BehaviourLayer(val entity: Entity) {
             // Disables the old State.
             field?.onDisable()
 
+            val active = parent?.active ?: false
+
             // Checks hooks to see if someone is verified.
             var newVal = value
             do {
                 field = newVal
                 field?.let {
-                    newVal = if (it.instantHookCheck) it.resolveHooks()
+                    // If the behaviour system is active try to resolve the hooks
+                    // Otherwise just assign null to newVal then go on
+                    newVal = if (active && it.instantHookCheck) it.resolveHooks()
                     else null
                 }
             } while (newVal != null)
@@ -38,6 +43,7 @@ class BehaviourLayer(val entity: Entity) {
         if (behaviourId !in behaviours) {
             throw IllegalArgumentException("behaviourId not found: $behaviourId")
         }
+        logger.info("Activating $behaviourId")
         active = behaviours[behaviourId]
     }
 
@@ -75,5 +81,9 @@ class BehaviourLayer(val entity: Entity) {
 
     fun update() {
         active?.onUpdate()
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger()
     }
 }

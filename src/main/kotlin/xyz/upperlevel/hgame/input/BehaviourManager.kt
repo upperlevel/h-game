@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.input
 
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.input.attack.AttackBehaviour
 import xyz.upperlevel.hgame.input.attack.NoAttackBehaviour
 import xyz.upperlevel.hgame.input.attack.SpecialAttackBehaviour
@@ -22,6 +23,13 @@ class BehaviourManager(val layers: List<BehaviourLayer>) {
         }
 
     var endpoint: Endpoint? = null
+
+    /**
+     * Is true only when the current behaviour system is active (so it needs to check hooks and send states)
+     * If it's passive it doesn't need to check for behaviour changes as they will be sent from the other endpoint
+     */
+    val active: Boolean
+        get() = endpoint != null
 
     init {
         layers.forEachIndexed { index, layer ->
@@ -52,6 +60,8 @@ class BehaviourManager(val layers: List<BehaviourLayer>) {
     fun onBehaviourChange(layer: BehaviourLayer, previous: Behaviour?, next: Behaviour?) {
         val current = currentAnimated
 
+        logger.info("Behaviour Change: layer: ${layer.index} prev: $previous next: $next")
+
         if (current == null) {
             // The current one is null
             // use the new one only if animated, else keep the null animation
@@ -74,6 +84,8 @@ class BehaviourManager(val layers: List<BehaviourLayer>) {
     }
 
     companion object {
+        private val logger = LogManager.getLogger()
+
         fun createPlayerBehaviour(entity: Player): BehaviourManager {
             val moveLayer = BehaviourLayer(entity).apply {
                 register(IdleBehaviour(this, entity))

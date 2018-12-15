@@ -21,8 +21,8 @@ class Santy : Character {
     }
 
     inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
-        override fun jump(velocity: Float) {
-            super.jump(velocity * 0.5f)
+        init {
+            jumpForce *= 0.5f
         }
 
         override fun attack(): Sequence {

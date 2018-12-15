@@ -12,10 +12,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourMap
-import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 abstract class Entity(val id: Int,
@@ -30,13 +28,6 @@ abstract class Entity(val id: Int,
         get() = body.position.y
 
     var left: Boolean = false
-    var moveForce: Vector2? = null
-        set(value) {
-            field = value
-            if (field != null) {
-                left = field?.x!! < 0
-            }
-        }
 
     val isTouchingGround: Boolean
         // has ground contact AND the velocity is going down (or static)
@@ -48,7 +39,6 @@ abstract class Entity(val id: Int,
     private val sprite: Sprite
     private val regions: Array<Array<TextureRegion>>
 
-    private var sayTask = -1
 
     private var backToIdle: Sequence? = null
 
@@ -94,44 +84,13 @@ abstract class Entity(val id: Int,
         sprite.setRegion(regions[x][y])
     }
 
-    fun say(text: String, audio: String, duration: Long) {
-        if (sayTask != -1) {
-            Scheduler.cancel(sayTask)
-            sayTask = -1
-        }
-        if (duration > 0) {
-            sayTask = Scheduler.start({
-                // GameScreen.instance.getScenario().setRenderingSentence(this, null);
-            }, duration)
-        }
-        Conversation.show(this, text, audio)
-    }
-
-    fun say(text: String, audioPath: String) {
-        say(text, audioPath, -1)
-    }
-
-    open fun jump(velocity: Float) {
-        logger.info("JUMPING")
-        body.applyLinearImpulse(Vector2(0f, velocity), body.worldCenter, true)
-    }
-
-    open fun attack(): Sequence {
-        return Sequence.create().act { setFrame(0, 0) }
-    }
-
-    open fun specialAttack(): Sequence {
-        // By default, special attack is implemented as a normal attack.
-        // The Character should override the Actor class in order to implement its own special attack.
-        return attack()
-    }
-
-    fun update(world: World) {
-        // If there's a movement force, apply it
-        moveForce?.let { body.applyForce(it, body.worldCenter, true) }
-
+    open fun update(world: World) {
         // Updates the BehaviourMap, needed to check hooks.
         behaviourMap?.update()
+    }
+
+    open fun prePhysicStep(world: World) {
+        behaviourMap?.active?.onPrePhysics()
     }
 
     fun render(renderer: WorldRenderer) {

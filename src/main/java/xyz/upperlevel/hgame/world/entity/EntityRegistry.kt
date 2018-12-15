@@ -1,12 +1,13 @@
 package xyz.upperlevel.hgame.world.entity
 
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
-import xyz.upperlevel.hgame.input.BehaviourMap
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Character
+import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.Player
+import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
 import java.util.*
 import java.util.stream.Stream
 
@@ -70,10 +71,18 @@ class EntityRegistry {
     fun initEndpoint(endpoint: Endpoint) {
         this.endpoint = endpoint
 
-        endpoint.events.register(EntitySpawnPacket::class.java, { packet: EntitySpawnPacket -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
-        endpoint.events.register(BehaviourChangePacket::class.java, { packet: BehaviourChangePacket ->
+        endpoint.events.register(EntitySpawnPacket::class.java, { packet -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
+        endpoint.events.register(BehaviourChangePacket::class.java, { packet ->
             runSync {
                 _entities[packet.actorId]?.behaviourMap?.active(packet.behaviour)
+            }
+        })
+
+        endpoint.events.register(PlayerJumpPacket::class.java, { packet ->
+            runSync {
+                val player = _entities[packet.entityId]
+                if (player == null || player !is Player) return@runSync// TODO: log error
+                player.jump()
             }
         })
     }

@@ -1,13 +1,13 @@
 package xyz.upperlevel.hgame.input
 
-import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
-class AttackBehaviour(behaviourMap: BehaviourMap, entity: Entity) : Behaviour(behaviourMap, "attack", entity) {
+class AttackBehaviour(behaviourMap: BehaviourMap, player: Player) : Behaviour(behaviourMap, "attack", player) {
     private var animation: Sequence? = null
 
     override fun onEnable() {
-        animation = entity.attack().act {
+        animation = (entity as Player).attack().act {
             entity.behaviourMap.let {
                 // When the animation's finished goes back to IdleBehaviour.
                 it?.active = it?.get("idle")

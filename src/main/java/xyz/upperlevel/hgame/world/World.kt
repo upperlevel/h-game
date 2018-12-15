@@ -12,6 +12,7 @@ import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.impl.Mixter
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
@@ -55,7 +56,6 @@ class World {
         })
         ground.createFixture(FixtureDef().apply {
             density = 1f
-            restitution = 0.3f
             shape = PolygonShape().apply {
                 // Create a w*h box centered at the top middle
                 val w = groundWidth / 2f
@@ -71,6 +71,7 @@ class World {
         if (isMaster) x += 20 / 2
         entityRegistry.spawn(Mixter::class.java, x.toFloat(), 0f, isMaster) { spawned ->
             player = spawned
+            (spawned as Player).active = true
         }
     }
 
@@ -83,6 +84,7 @@ class World {
 
         physicsAccumulator += deltaTime
         while (physicsAccumulator >= TIME_STEP) {
+            entityRegistry.entities.forEach { it.prePhysicStep(this) }
             physics.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
             physicsAccumulator -= TIME_STEP
         }

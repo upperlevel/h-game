@@ -40,6 +40,9 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
         }
     }
 
+    open fun onPrePhysics() {
+    }
+
     open fun onDisable() {
         logger.debug("Behaviour disabled: $id")
     }
@@ -57,7 +60,7 @@ open class Behaviour(val behaviourMap: BehaviourMap, val id: String, val entity:
         }
 
         fun addDefault(entity: Entity, behaviour: Behaviour) {
-            tryAdd(behaviour, { Gdx.input.isKeyPressed(Input.Keys.W) && entity.isTouchingGround }, "jump")
+            //tryAdd(behaviour, { Gdx.input.isKeyPressed(Input.Keys.W) && entity.isTouchingGround }, "jump")
             tryAdd(behaviour, { Gdx.input.isKeyJustPressed(Input.Keys.SPACE) }, "attack")
             tryAdd(behaviour, { Gdx.input.isKeyJustPressed(Input.Keys.J) }, "special_attack")
         }

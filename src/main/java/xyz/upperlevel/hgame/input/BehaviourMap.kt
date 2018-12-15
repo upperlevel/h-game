@@ -2,6 +2,7 @@ package xyz.upperlevel.hgame.input
 
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.Player
 import java.lang.IllegalStateException
 import java.util.*
 
@@ -76,12 +77,12 @@ class BehaviourMap(val entity: Entity) {
     }
 
     companion object {
-        fun createDefault(entity: Entity): BehaviourMap {
+        fun createPlayerBehaviour(entity: Player): BehaviourMap {
             return BehaviourMap(entity).apply {
                 register(IdleBehaviour(this, entity))
                 register(WalkLeftBehaviour(this, entity))
                 register(WalkRightBehaviour(this, entity))
-                register(JumpBehaviour(this, entity))
+                //register(JumpBehaviour(this, entity))
                 register(AttackBehaviour(this, entity))
                 register(SpecialAttackBehaviour(this, entity))
                 initialize("idle")

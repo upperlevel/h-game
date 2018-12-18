@@ -108,6 +108,10 @@ open class Player(id: Int, world: PWorld, character: Character)
                     setAsBox(w, h, Vector2(w, h), 0f)
                 }
                 density = 1f
+                filter.apply {
+                    categoryBits = 0x2 // Category 0x2 (default is 0x1)
+                    maskBits = 0x2.inv()// Collides with everything but 0x2
+                }
             }
         }
 

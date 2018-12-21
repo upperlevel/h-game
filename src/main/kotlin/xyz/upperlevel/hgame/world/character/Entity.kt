@@ -11,16 +11,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
-import xyz.upperlevel.hgame.input.BehaviourLayer
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.sequence.Sequence
 
-abstract class Entity(val id: Int,
-                      val body: Body,
-                      val texSize: Vector2f,
-                      val character: Character) {
+open class Entity(val id: Int,
+                  val world: World,
+                  val body: Body,
+                  val texSize: Vector2f,
+                  val entityType: EntityType) {
 
     val x: Float
         get() = body.position.x
@@ -40,45 +39,18 @@ abstract class Entity(val id: Int,
     private val sprite: Sprite
     private val regions: Array<Array<TextureRegion>>
 
-
-    private var backToIdle: Sequence? = null
-
-    private var animation: Sequence? = null
-
     var behaviour: BehaviourManager? = null
 
     val groundSensor: Fixture = body.createFixture(createSensor())!!
 
     init {
         body.userData = this
-        val texture = Texture(Gdx.files.internal("images/" + character.texturePath))
+        val texture = Texture(Gdx.files.internal("images/" + entityType.texturePath))
 
         sprite = Sprite(texture)
         sprite.setSize(texSize.x, texSize.y)
 
-        regions = character.getSprites(texture)
-    }
-
-    /**
-     * Allows to play the given animation with the security that the
-     * previous animation is stopped. An [Entity] is supposed
-     * to have one animation running per time.
-     */
-    fun animate(animation: Sequence) {
-        logger.debug("Animation asked to be started on {} (id = {}).", character.name, id)
-
-        // If back to idle task existed, better dismiss to avoid issues
-        backToIdle?.dismiss()
-        backToIdle = null
-
-        val old = this.animation
-        if (old != null) {
-            logger.debug("Old animation was present, dismissing it.")
-            old.dismiss()
-        }
-        this.animation = animation
-        animation.play()
-        logger.debug("Animation started successfully.")
+        regions = entityType.getSprites(texture)
     }
 
     fun setFrame(x: Int, y: Int) {

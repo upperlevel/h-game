@@ -8,21 +8,21 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
-import com.badlogic.gdx.physics.box2d.World as PWorld
 import org.lwjgl.util.vector.Vector2f
-import xyz.upperlevel.hgame.input.BehaviourLayer
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
+import com.badlogic.gdx.physics.box2d.World as Physics
 
-open class Player(id: Int, world: PWorld, character: Character)
+open class Player(id: Int, world: World, entityType: EntityType)
         : Entity(
                 id,
-                createBody(world),
+                world,
+                createBody(world.physics),
                 Vector2f(WIDTH, HEIGHT),
-                character
+                entityType
 ) {
 
     var active = false
@@ -115,8 +115,8 @@ open class Player(id: Int, world: PWorld, character: Character)
             }
         }
 
-        private fun createBody(world: PWorld): Body {
-            val body = world.createBody(bodyDef)
+        private fun createBody(physics: Physics): Body {
+            val body = physics.createBody(bodyDef)
             body.createFixture(bodyFixtureDef)
             return body
         }

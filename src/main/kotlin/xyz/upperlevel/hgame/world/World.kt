@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.event.EventChannel
 import xyz.upperlevel.hgame.event.EventListener
 import xyz.upperlevel.hgame.network.Endpoint
@@ -12,9 +13,12 @@ import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Player
+import xyz.upperlevel.hgame.world.character.impl.Mikrotik
 import xyz.upperlevel.hgame.world.character.impl.Mixter
 import xyz.upperlevel.hgame.world.character.impl.Santy
+import xyz.upperlevel.hgame.world.entity.Callback
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import java.util.stream.Stream
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
@@ -69,12 +73,16 @@ class World {
     fun onGameStart(endpoint: Endpoint) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
-        entityRegistry.spawn(Mixter::class.java, x.toFloat(), 0f, isMaster) { spawned ->
+        spawn(Mixter::class.java, x.toFloat(), 0f) { spawned ->
             player = spawned
             // Assign the endpoint to the behaviour (to activate it)
             spawned.behaviour?.let { it.endpoint = endpoint }
             (spawned as Player).active = true
         }
+    }
+
+    fun spawn(entityType: Class<out EntityType>, x: Float, y: Float, callback: Callback) {
+        entityRegistry.spawn(entityType, x, y, isMaster, callback)
     }
 
     private fun doPhysicsStep(deltaTime: Float) {
@@ -103,8 +111,13 @@ class World {
         isMaster = endpoint.side == NetSide.MASTER
 
         // TODO: better type management
-        entityRegistry.registerType(Santy::class.java) { Santy().personify(it, physics) }
-        entityRegistry.registerType(Mixter::class.java) { Mixter().personify(it, physics) }
+        // Players
+        entityRegistry.registerType(Santy::class.java) { Santy().personify(it, this) }
+        entityRegistry.registerType(Mixter::class.java) { Mixter().personify(it, this) }
+
+        // Misc
+        entityRegistry.registerType(Mikrotik::class.java) { Mikrotik().personify(it, this) }
+
         entityRegistry.initEndpoint(endpoint)
 
         endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, {
@@ -119,5 +132,7 @@ class World {
         const val POSITION_ITERATIONS = 2
 
         val GROUND_DATA = Object()
+
+        private val logger = LogManager.getLogger()
     }
 }

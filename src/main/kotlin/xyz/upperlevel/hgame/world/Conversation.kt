@@ -98,7 +98,7 @@ object Conversation {
     }
 
     fun show(entity: Entity, text: String, audio: String? = null) {
-        show(entity.character.name + ":", text, audio)
+        show(entity.entityType.name + ":", text, audio)
     }
 
     fun resize(width: Int, height: Int) {

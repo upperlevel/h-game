@@ -2,10 +2,10 @@ package xyz.upperlevel.hgame.world.character
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.physics.box2d.World
+import xyz.upperlevel.hgame.world.World
 
 
-interface Character {
+interface EntityType {
     /**
      * The name of the character.
      */
@@ -19,8 +19,8 @@ interface Character {
     fun getSprites(texture: Texture): Array<Array<TextureRegion>>
 
     /**
-     * Generates an instance of the [Character]'s [Entity].
+     * Generates an instance of the [EntityType]'s [Entity].
      * The [Entity] is the object that will populate the Scenario.
      */
-    fun personify(id: Int, pworld: World): Entity
+    fun personify(id: Int, world: World): Entity
 }

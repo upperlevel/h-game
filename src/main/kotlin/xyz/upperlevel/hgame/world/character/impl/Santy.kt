@@ -2,13 +2,13 @@ package xyz.upperlevel.hgame.world.character.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.physics.box2d.World
-import xyz.upperlevel.hgame.world.character.Character
+import xyz.upperlevel.hgame.world.World
+import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.SpriteExtractor
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
-class Santy : Character {
+class Santy : EntityType {
     override val name = "Santy"
     override val texturePath = "santy.png"
 
@@ -16,11 +16,11 @@ class Santy : Character {
         return SpriteExtractor.grid(texture, 9, 4)
     }
 
-    override fun personify(id: Int, pworld: World): ActorImpl {
-        return ActorImpl(id, pworld, this)
+    override fun personify(id: Int, world: World): ActorImpl {
+        return ActorImpl(id, world, this)
     }
 
-    inner class ActorImpl(id: Int, world: World, character: Character) : Player(id, world, character) {
+    inner class ActorImpl(id: Int, world: World, entityType: EntityType) : Player(id, world, entityType) {
         init {
             jumpForce *= 0.5f
         }

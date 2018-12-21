@@ -5,7 +5,7 @@ import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.Character
+import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
@@ -39,7 +39,7 @@ class EntityRegistry {
         return entity
     }
 
-    fun spawn(entityType: Class<out Character>, x: Float, y: Float, left: Boolean, callback: Callback) {
+    fun spawn(entityType: Class<out EntityType>, x: Float, y: Float, left: Boolean, callback: Callback) {
         val id = factoryIdByType[entityType]
             ?: throw IllegalArgumentException("Entity $entityType not registered!")
 

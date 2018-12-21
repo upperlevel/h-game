@@ -16,10 +16,12 @@ import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.impl.Mikrotik
+import xyz.upperlevel.hgame.world.character.impl.MikrotikEntity
 import xyz.upperlevel.hgame.world.character.impl.Mixter
 import xyz.upperlevel.hgame.world.character.impl.Santy
 import xyz.upperlevel.hgame.world.entity.Callback
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
+import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
 import java.util.stream.Stream
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
@@ -46,11 +48,25 @@ class World {
     val isReady: Boolean
         get() = player != null
 
+    // A list that contains entities that needs to remove the body.
+    private val destroyedEntities: MutableList<Entity> = ArrayList()
+
     init {
         height = 5.0f
         groundHeight = 1.0f
         physics.setContactListener(EventContactListener(events))
+
         events.register(EntityGroundListener()) // Listen for ground contacts
+
+        // Listener used only to make Mikrotik explode when it touches the ground.
+        events.register(PhysicContactBeginEvent::class.java, { event ->
+            val entityA = event.contact.fixtureA.body.userData
+            val entityB = event.contact.fixtureB.body.userData
+
+            // If the touched entity is not the thrower then it disappears.
+            if (entityA is MikrotikEntity && entityA.thrower != entityB) despawn(entityA)
+            if (entityB is MikrotikEntity && entityB.thrower != entityA) despawn(entityB)
+        })
 
         // Spawn the ground
         val groundWidth = 20f
@@ -85,6 +101,11 @@ class World {
         entityRegistry.spawn(entityType, x, y, isMaster, callback)
     }
 
+    fun despawn(entity: Entity) {
+        entityRegistry.despawn(entity)
+        destroyedEntities.add(entity)
+    }
+
     private fun doPhysicsStep(deltaTime: Float) {
         // fixed time step
 
@@ -98,6 +119,10 @@ class World {
             physics.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
             physicsAccumulator -= TIME_STEP
         }
+
+        // Removes all the bodies only after the world.step (otherwise box2d will crash lol).
+        destroyedEntities.forEach { entity -> entity.destroy() }
+        destroyedEntities.clear()
     }
 
     fun update(endpoint: Endpoint) { // TODO endpoint here?
@@ -127,7 +152,7 @@ class World {
 
     companion object {
         // Physics constants
-        const val TIME_STEP = 1f/60
+        const val TIME_STEP = 1f / 60
         const val VELOCITY_ITERATIONS = 6
         const val POSITION_ITERATIONS = 2
 

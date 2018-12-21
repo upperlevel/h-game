@@ -43,6 +43,8 @@ open class Entity(val id: Int,
 
     val groundSensor: Fixture = body.createFixture(createSensor())!!
 
+    var destroyed: Boolean = false
+
     init {
         body.userData = this
         val texture = Texture(Gdx.files.internal("images/" + entityType.texturePath))
@@ -72,6 +74,13 @@ open class Entity(val id: Int,
         }
         sprite.setPosition(x, y)
         sprite.draw(renderer.spriteBatch)
+    }
+
+    fun destroy() {
+        if (!destroyed) {
+            world.physics.destroyBody(body)
+            destroyed = true
+        }
     }
 
     private fun createSensor(): FixtureDef {

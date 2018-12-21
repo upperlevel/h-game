@@ -45,7 +45,7 @@ class Mixter : EntityType {
                     .act { setFrame(1, 3) }
                     .delay(250)
                     .act {
-                        val powerX = .5f
+                        val powerX = .35f
                         val powerY = .25f
                         val x = x + Player.WIDTH / 2f + if (left) -Mikrotik.WIDTH else 0f
                         val y = y + Player.HEIGHT / 2f
@@ -57,6 +57,8 @@ class Mixter : EntityType {
                                     Vector2(spawned.x, spawned.y),
                                     true
                             )
+
+                            (spawned as MikrotikEntity).thrower = this
                         }
                         setFrame(2, 3)
                     }

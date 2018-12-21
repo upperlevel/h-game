@@ -53,6 +53,10 @@ class EntityRegistry {
         }
     }
 
+    fun despawn(entity: Entity) {
+        _entities.remove(entity.id)
+    }
+
     private fun onNetSpawn(typeId: Int, x: Float, y: Float, facingLeft: Boolean, isConfirm: Boolean) {
         val entity = spawn0(typeId, x, y, facingLeft)
 

@@ -10,11 +10,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.event.Listener
 import xyz.upperlevel.hgame.world.World
-import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.SpriteExtractor
+import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 
 class Mikrotik : EntityType, Listener {
@@ -32,7 +32,7 @@ class Mikrotik : EntityType, Listener {
         }
 
         val bodyFixtureDef = FixtureDef().apply {
-            shape =  PolygonShape().apply {
+            shape = PolygonShape().apply {
                 val w = WIDTH / 2f
                 val h = HEIGHT / 2f
                 setAsBox(w, h, Vector2(w, h), 0f)
@@ -50,11 +50,15 @@ class Mikrotik : EntityType, Listener {
     }
 
     override fun personify(id: Int, world: World): Entity {
-        return Entity(id, world, createBody(world.physics), Vector2f(WIDTH, HEIGHT), this)
+        return MikrotikEntity(id, world, createBody(world.physics), Vector2f(WIDTH, HEIGHT), this)
     }
 
     companion object {
-        const val WIDTH  = .25f
+        const val WIDTH = .25f
         const val HEIGHT = .25f
     }
+}
+
+class MikrotikEntity(id: Int, world: World, body: Body, texSize: Vector2f, entityType: EntityType) : Entity(id, world, body, texSize, entityType) {
+    lateinit var thrower: Player
 }

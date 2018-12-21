@@ -1,6 +1,8 @@
 package xyz.upperlevel.hgame.world.entity
 
+import com.badlogic.gdx.physics.box2d.World
 import org.apache.logging.log4j.LogManager
+import xyz.upperlevel.hgame.event.EventChannel
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
@@ -14,7 +16,7 @@ import java.util.stream.Stream
 
 typealias Callback = (Entity) -> Unit
 
-class EntityRegistry {
+class EntityRegistry(private val events: EventChannel) {
     // TODO: use actors instead of entities
     private val factories = ArrayList<EntityFactory>()
     private val factoryIdByType = HashMap<Class<*>, Int>()
@@ -36,6 +38,9 @@ class EntityRegistry {
         entity.body.setTransform(x, y, 0f)
         entity.left = left
         _entities[entity.id] = entity
+
+        events.call(EntitySpawnEvent(entity))
+
         return entity
     }
 

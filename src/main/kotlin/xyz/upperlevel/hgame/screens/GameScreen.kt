@@ -9,19 +9,19 @@ import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
 
 class GameScreen : ScreenAdapter() {
-    private var renderer: WorldRenderer? = null
     private val world = World()
+    private var renderer: WorldRenderer = WorldRenderer(world)
+
 
     var endpoint: Endpoint? = null
         private set
 
     override fun show() {
-        renderer = WorldRenderer()
     }
 
     override fun hide() {
         Conversation.dispose()
-        renderer?.dispose()
+        renderer.dispose()
     }
 
     fun connect(endpoint: Endpoint) {
@@ -38,7 +38,7 @@ class GameScreen : ScreenAdapter() {
 
         // Render
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        renderer!!.render(world)
+        renderer.render()
         Conversation.render()
     }
 }

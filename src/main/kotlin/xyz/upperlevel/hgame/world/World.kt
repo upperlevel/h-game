@@ -32,14 +32,14 @@ class World {
     val physics = PhysicsWorld(Vector2(0f, -9.8f), true)
     var physicsAccumulator = 0f
 
-    private val entityRegistry = EntityRegistry()
+    val events = EventChannel()
+
+    private val entityRegistry = EntityRegistry(events)
 
     var player: Entity? = null
         private set
 
     private var isMaster = false
-
-    val events = EventChannel()
 
     val entities: Stream<Entity>
         get() = entityRegistry.entities

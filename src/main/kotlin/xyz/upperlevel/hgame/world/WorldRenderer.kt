@@ -8,14 +8,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import xyz.upperlevel.hgame.world.character.Player
 
-class WorldRenderer {
+class WorldRenderer(val world: World) {
     val camera: OrthographicCamera = OrthographicCamera()
     val spriteBatch: SpriteBatch = SpriteBatch()
+    val hudRenderer: HudRenderer = HudRenderer(world)
     val shapeRenderer: ShapeRenderer = ShapeRenderer()
     val debugRenderer = Box2DDebugRenderer()
 
 
-    fun render(world: World) {
+    fun render() {
         if (!world.isReady) return
         val height = world.height
         val groundHeight = world.groundHeight
@@ -43,6 +44,8 @@ class WorldRenderer {
         spriteBatch.end()
 
         debugRenderer.render(world.physics, camera.combined)
+
+        hudRenderer.render(this)
     }
 
     fun dispose() {

@@ -79,7 +79,7 @@ class TrainScreen : ScreenAdapter() {
             onGameStart(endpoint)
         }
 
-        renderer = WorldRenderer()
+        renderer = WorldRenderer(world!!)
     }
 
     override fun hide() {
@@ -98,7 +98,7 @@ class TrainScreen : ScreenAdapter() {
             playerBehaviour.setText("Current behaviour: %s".format(world?.player?.behaviour?.toString()))
 
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-            renderer?.render(world!!)
+            renderer?.render()
         }
         stage.act(delta)
         stage.draw()

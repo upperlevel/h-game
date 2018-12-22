@@ -57,7 +57,6 @@ class World {
             val entityA = event.contact.fixtureA.body.userData
             val entityB = event.contact.fixtureB.body.userData
 
-            // If the touched entity is not the thrower then it disappears.
             if (entityA is ThrowableEntity && entityA.thrower != entityB) despawn(entityA)
             if (entityB is ThrowableEntity && entityB.thrower != entityA) despawn(entityB)
         })
@@ -86,6 +85,7 @@ class World {
 
         val entity = EntityTypes.MIXTER.create(this)
         entity.setPosition(x.toFloat(), 0f)
+        entity.left = isMaster
         spawn(entity)
         player = entity
 

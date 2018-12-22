@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.Body
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Endpoint
+import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.character.Entity
@@ -13,20 +14,24 @@ import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
 import java.util.*
 import kotlin.collections.ArrayList
 
-typealias Callback = (Entity) -> Unit
-
 class EntityRegistry(val world: World) {
-    // TODO: use actors instead of entities
-    private val pendingSpawns = ArrayDeque<Callback>()
-
     private val _entities = HashMap<Int, Entity>()
 
     val entities: Collection<Entity>
         get() = _entities.values
 
-    private var nextId = 0
+    private val playerCount = 2
+    private var localId = 0
+    private var localOffset = -1
 
     private var endpoint: Endpoint? = null
+        set(value) {
+            localOffset = when (value!!.side) {
+                NetSide.MASTER -> 0
+                NetSide.SLAVE -> 1
+            }
+            field = value
+        }
 
     /**
      * List of bodies that are waiting to be removed from this world.
@@ -38,18 +43,21 @@ class EntityRegistry(val world: World) {
         return _entities[entityId]
     }
 
-    private fun strictSpawn(entity: Entity) {
-        if (!entity.spawned) {
-            entity.id = nextId++
-            _entities[entity.id] = entity
+    private fun forceSpawn(entity: Entity) {
+        // Assigns entity id if not present.
+        if (entity.id < 0) entity.id = localId++ * playerCount + localOffset
 
-            world.events.call(EntitySpawnEvent(entity))
-        }
+        // Spawns the entity.
+        _entities[entity.id] = entity
+
+        world.events.call(EntitySpawnEvent(entity))
+
+        logger.info("Created entity type=${entity.entityType.id} with id=${entity.id} (side=${endpoint!!.side.name})")
     }
 
     fun spawn(entity: Entity) {
         if (!entity.spawned) {
-            strictSpawn(entity)
+            forceSpawn(entity)
             endpoint!!.send(entity.serialize())
         }
     }
@@ -59,15 +67,13 @@ class EntityRegistry(val world: World) {
             _entities.remove(entity.id)
             entity.id = -1
             pendingDestruction.add(entity.body)
-            logger.info("Initiated despawn process for entity: ${entity.id}")
         }
     }
 
     fun despawn(entity: Entity) {
         if (entity.spawned) {
             strictDespawn(entity)
-            endpoint!!.send(EntityDespawnPacket(entity.id))
-            logger.info("Despawn packet sent for entity: ${entity.id}")
+            // Currently no despawn packet, the logic is the same so both endpoint should despawn at the same time.
         }
     }
 
@@ -86,14 +92,11 @@ class EntityRegistry(val world: World) {
 
         endpoint.events.register(EntitySpawnPacket::class.java, { packet ->
             runSync {
-                var entity = getEntity(packet.entityId)
+                logger.info("Received entity ${packet.entityTypeId} and id=${packet.entityId}")
 
-                // The entity wasn't found, we need to spawn it.
-                if (entity == null) {
-                    entity = EntityTypes[packet.entityTypeId]!!.create(world)
-                    strictSpawn(entity)
-                }
+                val entity = EntityTypes[packet.entityTypeId]!!.create(world)
                 entity.deserialize(packet)
+                forceSpawn(entity)
             }
         })
         endpoint.events.register(BehaviourChangePacket::class.java, { packet ->
@@ -117,9 +120,6 @@ class EntityRegistry(val world: World) {
                 }// TODO: log error
                 player.jump()
             }
-        })
-        endpoint.events.register(EntityDespawnPacket::class.java, { packet ->
-            runSync { strictDespawn(_entities[packet.entityId]!!) }
         })
     }
 

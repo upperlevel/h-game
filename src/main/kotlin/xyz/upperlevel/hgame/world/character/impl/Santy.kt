@@ -9,7 +9,7 @@ import xyz.upperlevel.hgame.world.character.SpriteExtractor
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : EntityType {
-    override val id = "mixter"
+    override val id = "santy"
     override val texturePath = "santy.png"
 
     override val width = 2f

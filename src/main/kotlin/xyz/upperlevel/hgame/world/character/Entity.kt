@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
+import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
@@ -119,7 +120,7 @@ open class Entity(val entityType: EntityType, val world: World) {
 
     open fun deserialize(packet: EntitySpawnPacket) {
         if (entityType.id != packet.entityTypeId) throw IllegalStateException("Mismatching entity type id and packet's entity type id.")
-        if (id != packet.entityId) throw IllegalStateException("Mismatching entity id and packet's entity id.")
+        id = packet.entityId
         x = packet.x
         y = packet.y
         left = packet.isFacingLeft

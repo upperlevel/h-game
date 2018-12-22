@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.util.vector.Vector2f
-import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
@@ -101,15 +100,6 @@ open class Entity(val entityType: EntityType, val world: World) {
         // Position is in the bottom left corner.
         throwable.x = centerX - throwable.width / 2f
         throwable.y = centerY - throwable.height / 2f
-
-        // Calculates the impulse to apply.
-        val powerX = (Math.cos(angle.toDouble()) * power).toFloat()
-        val powerY = (Math.sin(angle.toDouble()) * power).toFloat()
-        throwable.body.applyLinearImpulse(
-                Vector2(if (left) -powerX else powerX, powerY),
-                Vector2(centerX, centerY),
-                true
-        )
 
         world.spawn(throwable)
     }

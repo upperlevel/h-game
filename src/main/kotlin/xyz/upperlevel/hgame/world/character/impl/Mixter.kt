@@ -2,28 +2,27 @@ package xyz.upperlevel.hgame.world.character.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.math.Vector2
-import xyz.upperlevel.hgame.world.EntityGroundListener
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.EntityType
-import xyz.upperlevel.hgame.world.character.Player
-import xyz.upperlevel.hgame.world.character.SpriteExtractor
+import xyz.upperlevel.hgame.world.character.*
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Mixter : EntityType {
-    override val name = "Mixter"
+    override val id = "mixter"
     override val texturePath = "mixter.png"
+
+    override val width = 2f
+    override val height = 2f
 
     override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 3, 4)
     }
 
-    override fun personify(id: Int, world: World): Entity {
-        return ActorImpl(id, world, this)
+    override fun create(world: World): Entity {
+        return ActorImpl(this, world)
     }
 
-    private inner class ActorImpl(id: Int, world: World, entityType: EntityType) : Player(id, world, entityType) {
+    private inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
         init {
             jumpForce *= 0.5f
         }
@@ -45,24 +44,19 @@ class Mixter : EntityType {
                     .act { setFrame(1, 3) }
                     .delay(250)
                     .act {
-                        val powerX = .35f
-                        val powerY = .25f
-                        val x = x + Player.WIDTH / 2f + if (left) -Mikrotik.WIDTH else 0f
-                        val y = y + Player.HEIGHT / 2f
+                        val power = EntityTypes.MIKROTIK.width * 2f
 
-                        world.spawn(Mikrotik::class.java, x, y) { spawned ->
-                            // Applies a force to the Mikrotik.
-                            spawned.body.applyLinearImpulse(
-                                    Vector2(if (left) -powerX else powerX, powerY),
-                                    Vector2(spawned.x, spawned.y),
-                                    true
-                            )
+                        // Creates the Mikrotik and makes Mixter chucks it (will spawn it).
+                        val mikrotik = EntityTypes.MIKROTIK.create(world) as ThrowableEntity
+                        this.chuck(mikrotik, power, Math.toRadians(45.0).toFloat())
 
-                            (spawned as MikrotikEntity).thrower = this
-                        }
                         setFrame(2, 3)
                     }
                     .delay(1000)
         }
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger()
     }
 }

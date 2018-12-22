@@ -14,20 +14,31 @@ import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 
-open class Entity(val id: Int,
-                  val world: World,
-                  val body: Body,
-                  val texSize: Vector2f,
-                  val entityType: EntityType) {
+open class Entity(val entityType: EntityType, val world: World) {
+    val body: Body = entityType.createBody(world.physics)
+    val groundSensor: Fixture = body.createFixture(createSensor())
 
-    val x: Float
+    var x: Float
         get() = body.position.x
+        set(value) = body.setTransform(value, y, 0f)
 
-    val y: Float
+    var y: Float
         get() = body.position.y
+        set(value) = body.setTransform(x, value, 0f)
+
+    val width: Float
+        get() = entityType.width
+
+    val height: Float
+        get() = entityType.height
 
     var left: Boolean = false
+
+    var id: Int = -1
+    val spawned: Boolean
+        get() = id >= 0
 
     val isTouchingGround: Boolean
         // has ground contact AND the velocity is going down (or static)
@@ -41,18 +52,21 @@ open class Entity(val id: Int,
 
     var behaviour: BehaviourManager? = null
 
-    val groundSensor: Fixture = body.createFixture(createSensor())!!
-
-    var destroyed: Boolean = false
+    private var destroyed = false
 
     init {
         body.userData = this
+
         val texture = Texture(Gdx.files.internal("images/" + entityType.texturePath))
 
         sprite = Sprite(texture)
-        sprite.setSize(texSize.x, texSize.y)
-
+        sprite.setSize(width, height)
         regions = entityType.getSprites(texture)
+    }
+
+    fun setPosition(x: Float, y: Float) {
+        this.x = x
+        this.y = y
     }
 
     fun setFrame(x: Int, y: Int) {
@@ -76,18 +90,46 @@ open class Entity(val id: Int,
         sprite.draw(renderer.spriteBatch)
     }
 
-    fun destroy() {
-        if (!destroyed) {
-            world.physics.destroyBody(body)
-            destroyed = true
-        }
+    fun chuck(throwable: ThrowableEntity, power: Float, angle: Float, spawnAt: Vector2f = Vector2f(width / 2f, height / 2f)) {
+        throwable.thrower = this
+
+        // The middle of the throwable entity.
+        val centerX = x + spawnAt.x
+        val centerY = y + spawnAt.y
+
+        // Position is in the bottom left corner.
+        throwable.x = centerX - throwable.width / 2f
+        throwable.y = centerY - throwable.height / 2f
+
+        // Calculates the impulse to apply.
+        val powerX = (Math.cos(angle.toDouble()) * power).toFloat()
+        val powerY = (Math.sin(angle.toDouble()) * power).toFloat()
+        throwable.body.applyLinearImpulse(
+                Vector2(if (left) -powerX else powerX, powerY),
+                Vector2(centerX, centerY),
+                true
+        )
+
+        world.spawn(throwable)
+    }
+
+    open fun serialize(): EntitySpawnPacket {
+        return EntitySpawnPacket(entityType.id, id, x, y, left)
+    }
+
+    open fun deserialize(packet: EntitySpawnPacket) {
+        if (entityType.id != packet.entityTypeId) throw IllegalStateException("Mismatching entity type id and packet's entity type id.")
+        if (id != packet.entityId) throw IllegalStateException("Mismatching entity id and packet's entity id.")
+        x = packet.x
+        y = packet.y
+        left = packet.isFacingLeft
     }
 
     private fun createSensor(): FixtureDef {
         return FixtureDef().apply {
             isSensor = true
             shape = PolygonShape().apply {
-                setAsBox(texSize.x / 2, 0.1f, Vector2(texSize.x / 2f, 0f), 0f)
+                setAsBox(width / 2, 0.1f, Vector2(width / 2f, 0f), 0f)
             }
         }
     }

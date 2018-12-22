@@ -9,18 +9,21 @@ import xyz.upperlevel.hgame.world.character.SpriteExtractor
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : EntityType {
-    override val name = "Santy"
+    override val id = "mixter"
     override val texturePath = "santy.png"
+
+    override val width = 2f
+    override val height = 2f
 
     override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 9, 4)
     }
 
-    override fun personify(id: Int, world: World): ActorImpl {
-        return ActorImpl(id, world, this)
+    override fun create(world: World): ActorImpl {
+        return ActorImpl(this, world)
     }
 
-    inner class ActorImpl(id: Int, world: World, entityType: EntityType) : Player(id, world, entityType) {
+    inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
         init {
             jumpForce *= 0.5f
         }

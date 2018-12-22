@@ -74,9 +74,9 @@ class TrainScreen : ScreenAdapter() {
         // Fake endpoint. We don't need network for the training session.
         endpoint = DisconnectedEndpoint()
 
-        world = World().apply {
-            initEndpoint(endpoint)
-            onGameStart(endpoint)
+        world = World().also {
+            it.initEndpoint(endpoint)
+            it.onGameStart(endpoint)
         }
 
         renderer = WorldRenderer(world!!)

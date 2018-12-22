@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
-import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
@@ -16,27 +15,15 @@ import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics
 
-open class Player(id: Int, world: World, entityType: EntityType)
-        : Entity(
-                id,
-                world,
-                createBody(world.physics),
-                Vector2f(WIDTH, HEIGHT),
-                entityType
-) {
-
+open class Player(entityType: EntityType, world: World) : Entity(entityType, world) {
     var active = false
 
     private var sayTask = -1
     var jumpForce = 40f
 
     var friction: Float
-        set(value) {
-            body.fixtureList[0].friction = value
-        }
-        get() {
-            return body.fixtureList[0].friction
-        }
+        get() = body.fixtureList[0].friction
+        set(value) { body.fixtureList[0].friction = value }
 
     init {
         // Creates a default Behaviour for the Player.
@@ -102,7 +89,7 @@ open class Player(id: Int, world: World, entityType: EntityType)
             }
 
             bodyFixtureDef = FixtureDef().apply {
-                shape =  PolygonShape().apply {
+                shape = PolygonShape().apply {
                     val w = WIDTH / 2f
                     val h = HEIGHT / 2f
                     setAsBox(w, h, Vector2(w, h), 0f)

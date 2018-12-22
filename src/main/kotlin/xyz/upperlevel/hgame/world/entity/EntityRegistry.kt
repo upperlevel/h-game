@@ -1,87 +1,101 @@
 package xyz.upperlevel.hgame.world.entity
 
-import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.physics.box2d.Body
 import org.apache.logging.log4j.LogManager
-import xyz.upperlevel.hgame.event.EventChannel
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Endpoint
-import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.EntityType
+import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.character.EntityTypes
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
 import java.util.*
-import java.util.stream.Stream
+import kotlin.collections.ArrayList
 
 typealias Callback = (Entity) -> Unit
 
-class EntityRegistry(private val events: EventChannel) {
+class EntityRegistry(val world: World) {
     // TODO: use actors instead of entities
-    private val factories = ArrayList<EntityFactory>()
-    private val factoryIdByType = HashMap<Class<*>, Int>()
     private val pendingSpawns = ArrayDeque<Callback>()
 
     private val _entities = HashMap<Int, Entity>()
 
-    val entities: Stream<Entity>
-        get() = _entities.values.stream()
+    val entities: Collection<Entity>
+        get() = _entities.values
 
     private var nextId = 0
 
     private var endpoint: Endpoint? = null
 
-    private fun spawn0(type: Int, x: Float, y: Float, left: Boolean): Entity {
-        val factory = factories[type]
+    /**
+     * List of bodies that are waiting to be removed from this world.
+     * We have to do that because we can only destroy the body after physics world step.
+     */
+    private val pendingDestruction: MutableList<Body> = ArrayList()
 
-        val entity = factory(nextId++)
-        entity.body.setTransform(x, y, 0f)
-        entity.left = left
-        _entities[entity.id] = entity
-
-        events.call(EntitySpawnEvent(entity))
-
-        return entity
+    fun getEntity(entityId: Int): Entity? {
+        return _entities[entityId]
     }
 
-    fun spawn(entityType: Class<out EntityType>, x: Float, y: Float, left: Boolean, callback: Callback) {
-        val id = factoryIdByType[entityType]
-            ?: throw IllegalArgumentException("Entity $entityType not registered!")
+    private fun strictSpawn(entity: Entity) {
+        if (!entity.spawned) {
+            entity.id = nextId++
+            _entities[entity.id] = entity
 
-        endpoint!!.send(EntitySpawnPacket(id, x, y, left, false))
+            world.events.call(EntitySpawnEvent(entity))
+        }
+    }
 
-        if (endpoint!!.side === NetSide.MASTER) {
-            val actor = spawn0(id, x, y, left)
-            callback(actor)
-        } else {
-            pendingSpawns.add(callback)
+    fun spawn(entity: Entity) {
+        if (!entity.spawned) {
+            strictSpawn(entity)
+            endpoint!!.send(entity.serialize())
+        }
+    }
+
+    private fun strictDespawn(entity: Entity) {
+        if (entity.spawned) {
+            _entities.remove(entity.id)
+            entity.id = -1
+            pendingDestruction.add(entity.body)
+            logger.info("Initiated despawn process for entity: ${entity.id}")
         }
     }
 
     fun despawn(entity: Entity) {
-        _entities.remove(entity.id)
-    }
-
-    private fun onNetSpawn(typeId: Int, x: Float, y: Float, facingLeft: Boolean, isConfirm: Boolean) {
-        val entity = spawn0(typeId, x, y, facingLeft)
-
-        if (endpoint!!.side === NetSide.MASTER) {
-            endpoint!!.send(EntitySpawnPacket(typeId, x, y, facingLeft, true))
-        } else if (isConfirm) {
-            // We are the client and the server sent a confirmation to our request
-            pendingSpawns.remove()(entity)
+        if (entity.spawned) {
+            strictDespawn(entity)
+            endpoint!!.send(EntityDespawnPacket(entity.id))
+            logger.info("Despawn packet sent for entity: ${entity.id}")
         }
     }
 
-    fun registerType(type: Class<*>, actorFactory: EntityFactory) {
-        factoryIdByType[type] = factories.size
-        factories.add(actorFactory)
+    fun clearDestroyedBodies() {
+        if (pendingDestruction.size > 0) {
+            logger.info("${pendingDestruction.size} entities pending destruction will be removed.")
+        }
+        pendingDestruction.forEach { body ->
+            world.physics.destroyBody(body)
+        }
+        pendingDestruction.clear()
     }
 
     fun initEndpoint(endpoint: Endpoint) {
         this.endpoint = endpoint
 
-        endpoint.events.register(EntitySpawnPacket::class.java, { packet -> runSync { onNetSpawn(packet.entityTypeId, packet.x, packet.y, packet.isFacingLeft, packet.isConfirmation) } })
+        endpoint.events.register(EntitySpawnPacket::class.java, { packet ->
+            runSync {
+                var entity = getEntity(packet.entityId)
+
+                // The entity wasn't found, we need to spawn it.
+                if (entity == null) {
+                    entity = EntityTypes[packet.entityTypeId]!!.create(world)
+                    strictSpawn(entity)
+                }
+                entity.deserialize(packet)
+            }
+        })
         endpoint.events.register(BehaviourChangePacket::class.java, { packet ->
             runSync {
                 val res = _entities[packet.actorId]
@@ -94,7 +108,6 @@ class EntityRegistry(private val events: EventChannel) {
                 }
             }
         })
-
         endpoint.events.register(PlayerJumpPacket::class.java, { packet ->
             runSync {
                 val player = _entities[packet.entityId]
@@ -104,6 +117,9 @@ class EntityRegistry(private val events: EventChannel) {
                 }// TODO: log error
                 player.jump()
             }
+        })
+        endpoint.events.register(EntityDespawnPacket::class.java, { packet ->
+            runSync { strictDespawn(_entities[packet.entityId]!!) }
         })
     }
 

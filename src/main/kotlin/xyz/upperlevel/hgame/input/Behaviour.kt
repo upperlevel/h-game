@@ -14,10 +14,8 @@ open class Behaviour(val layer: BehaviourLayer, val id: String, val entity: Enti
     }
 
     fun resolveHooks(): Behaviour? {
-        logger.debug("Checking hooks...")
         hooks.forEach {
             if (it.key.invoke()) {
-                logger.debug("Hook verified! Setting next Behaviour to: ${it.value.id}")
                 return it.value
             }
         }

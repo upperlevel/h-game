@@ -13,16 +13,11 @@ import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.EntityType
+import xyz.upperlevel.hgame.world.character.EntityTypes
 import xyz.upperlevel.hgame.world.character.Player
-import xyz.upperlevel.hgame.world.character.impl.Mikrotik
-import xyz.upperlevel.hgame.world.character.impl.MikrotikEntity
-import xyz.upperlevel.hgame.world.character.impl.Mixter
-import xyz.upperlevel.hgame.world.character.impl.Santy
-import xyz.upperlevel.hgame.world.entity.Callback
+import xyz.upperlevel.hgame.world.character.ThrowableEntity
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
-import java.util.stream.Stream
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 class World {
@@ -34,25 +29,24 @@ class World {
 
     val events = EventChannel()
 
-    private val entityRegistry = EntityRegistry(events)
+    private val entityRegistry = EntityRegistry(this)
 
     var player: Entity? = null
         private set
 
     private var isMaster = false
 
-    val entities: Stream<Entity>
+    val entities: Collection<Entity>
         get() = entityRegistry.entities
 
     // TODO: isn't there a cleaner way to do this? like waiting in another screen
     val isReady: Boolean
         get() = player != null
 
-    // A list that contains entities that needs to remove the body.
-    private val destroyedEntities: MutableList<Entity> = ArrayList()
+    lateinit var endpoint: Endpoint
 
     init {
-        height = 5.0f
+        height = 15.0f
         groundHeight = 1.0f
         physics.setContactListener(EventContactListener(events))
 
@@ -64,8 +58,8 @@ class World {
             val entityB = event.contact.fixtureB.body.userData
 
             // If the touched entity is not the thrower then it disappears.
-            if (entityA is MikrotikEntity && entityA.thrower != entityB) despawn(entityA)
-            if (entityB is MikrotikEntity && entityB.thrower != entityA) despawn(entityB)
+            if (entityA is ThrowableEntity && entityA.thrower != entityB) despawn(entityA)
+            if (entityB is ThrowableEntity && entityB.thrower != entityA) despawn(entityB)
         })
 
         // Spawn the ground
@@ -89,21 +83,22 @@ class World {
     fun onGameStart(endpoint: Endpoint) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
-        spawn(Mixter::class.java, x.toFloat(), 0f) { spawned ->
-            player = spawned
-            // Assign the endpoint to the behaviour (to activate it)
-            spawned.behaviour?.let { it.endpoint = endpoint }
-            (spawned as Player).active = true
-        }
+
+        val entity = EntityTypes.MIXTER.create(this)
+        entity.setPosition(x.toFloat(), 0f)
+        spawn(entity)
+        player = entity
+
+        entity.behaviour?.let { it.endpoint = endpoint }
+        (entity as Player).active = true
     }
 
-    fun spawn(entityType: Class<out EntityType>, x: Float, y: Float, callback: Callback) {
-        entityRegistry.spawn(entityType, x, y, isMaster, callback)
+    fun getEntity(entityId: Int): Entity? {
+        return entityRegistry.getEntity(entityId)
     }
 
-    fun despawn(entity: Entity) {
-        entityRegistry.despawn(entity)
-        destroyedEntities.add(entity)
+    fun spawn(entity: Entity) {
+        entityRegistry.spawn(entity)
     }
 
     private fun doPhysicsStep(deltaTime: Float) {
@@ -120,9 +115,7 @@ class World {
             physicsAccumulator -= TIME_STEP
         }
 
-        // Removes all the bodies only after the world.step (otherwise box2d will crash lol).
-        destroyedEntities.forEach { entity -> entity.destroy() }
-        destroyedEntities.clear()
+        entityRegistry.clearDestroyedBodies()
     }
 
     fun update(endpoint: Endpoint) { // TODO endpoint here?
@@ -132,16 +125,13 @@ class World {
         entityRegistry.entities.forEach { e -> e.update(this) }
     }
 
+    fun despawn(entity: Entity) {
+        entityRegistry.despawn(entity)
+    }
+
     fun initEndpoint(endpoint: Endpoint) {
+        this.endpoint = endpoint
         isMaster = endpoint.side == NetSide.MASTER
-
-        // TODO: better type management
-        // Players
-        entityRegistry.registerType(Santy::class.java) { Santy().personify(it, this) }
-        entityRegistry.registerType(Mixter::class.java) { Mixter().personify(it, this) }
-
-        // Misc
-        entityRegistry.registerType(Mikrotik::class.java) { Mikrotik().personify(it, this) }
 
         entityRegistry.initEndpoint(endpoint)
 

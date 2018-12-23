@@ -88,6 +88,7 @@ class TrainScreen : ScreenAdapter() {
 
     override fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
+        renderer?.resize(width, height)
     }
 
     override fun render(delta: Float) {

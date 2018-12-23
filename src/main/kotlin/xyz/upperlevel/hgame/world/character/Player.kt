@@ -25,6 +25,8 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         get() = body.fixtureList[0].friction
         set(value) { body.fixtureList[0].friction = value }
 
+    val name = "Ulisse"
+
     init {
         // Creates a default Behaviour for the Player.
         // Each Player should have one.

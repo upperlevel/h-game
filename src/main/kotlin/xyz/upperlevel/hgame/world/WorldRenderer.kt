@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
+import xyz.upperlevel.hgame.hud.HudRenderer
 import xyz.upperlevel.hgame.world.character.Player
 
 class WorldRenderer(val world: World) {
@@ -51,5 +52,9 @@ class WorldRenderer(val world: World) {
     fun dispose() {
         spriteBatch.dispose()
         shapeRenderer.dispose()
+    }
+
+    fun resize(width: Int, height: Int) {
+        hudRenderer.resize(width, height)
     }
 }

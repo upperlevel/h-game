@@ -31,6 +31,7 @@ class GameScreen : ScreenAdapter() {
 
     override fun resize(width: Int, height: Int) {
         Conversation.resize(width, height)
+        renderer.resize(width, height)
     }
 
     override fun render(delta: Float) {

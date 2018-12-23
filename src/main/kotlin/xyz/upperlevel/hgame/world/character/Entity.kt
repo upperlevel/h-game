@@ -14,6 +14,7 @@ import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.entity.EntityImpulsePacket
 import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 
 open class Entity(val entityType: EntityType, val world: World) {
@@ -90,6 +91,13 @@ open class Entity(val entityType: EntityType, val world: World) {
         sprite.draw(renderer.spriteBatch)
     }
 
+    fun impulse(powerX: Float, powerY: Float, pointX: Float, pointY: Float, sendPacket: Boolean = true) {
+        body.applyLinearImpulse(powerX, powerY, pointX, pointY, true)
+        if (sendPacket) {
+            world.endpoint.send(EntityImpulsePacket(id, powerX, powerY, pointX, pointY))
+        }
+    }
+
     fun chuck(throwable: ThrowableEntity, power: Float, angle: Float, spawnAt: Vector2f = Vector2f(width / 2f, height / 2f)) {
         throwable.thrower = this
 
@@ -102,6 +110,13 @@ open class Entity(val entityType: EntityType, val world: World) {
         throwable.y = centerY - throwable.height / 2f
 
         world.spawn(throwable)
+
+        // After the entity has been spawned we apply the impulse.
+        var powerX = (Math.cos(angle.toDouble()) * power).toFloat()
+        val powerY = (Math.sin(angle.toDouble()) * power).toFloat()
+        powerX = if (left) -powerX else powerX
+
+        throwable.impulse(powerX, powerY, centerX, centerY)
     }
 
     open fun serialize(): EntitySpawnPacket {

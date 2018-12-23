@@ -4,6 +4,7 @@ import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Protocol
 import xyz.upperlevel.hgame.world.entity.EntityDespawnPacket
 import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
+import xyz.upperlevel.hgame.world.entity.EntityImpulsePacket
 import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 import xyz.upperlevel.hgame.world.entity.ThrowableEntitySpawnPacket
 
@@ -13,7 +14,7 @@ object GameProtocol {
             .add(EntitySpawnPacket::class.java)
             .add(ThrowableEntitySpawnPacket::class.java)
             .add(EntityDespawnPacket::class.java)
-
+            .add(EntityImpulsePacket::class.java)
 
             .add(BehaviourChangePacket::class.java)
             .add(PlayerJumpPacket::class.java)

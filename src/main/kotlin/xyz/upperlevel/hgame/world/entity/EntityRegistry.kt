@@ -121,6 +121,11 @@ class EntityRegistry(val world: World) {
                 player.jump()
             }
         })
+        endpoint.events.register(EntityImpulsePacket::class.java, { packet ->
+            runSync {
+                _entities[packet.entityId]!!.impulse(packet.powerX, packet.powerY, packet.pointX, packet.pointY, false)
+            }
+        })
     }
 
     companion object {

@@ -81,18 +81,19 @@ class World {
         ground.userData = GROUND_DATA// Used in ground touch listener
     }
 
-    fun onGameStart(endpoint: Endpoint) {
+    fun onGameStart(endpoint: Endpoint, name: String) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
 
         val entity = EntityTypes.MIXTER.create(this)
         entity.setPosition(x.toFloat(), 0f)
         entity.left = isMaster
+        entity.name = name
         spawn(entity)
         player = entity
 
         entity.behaviour?.let { it.endpoint = endpoint }
-        (entity as Player).active = true
+        entity.active = true
     }
 
     fun getEntity(entityId: Int): Entity? {
@@ -131,14 +132,14 @@ class World {
         entityRegistry.despawn(entity)
     }
 
-    fun initEndpoint(endpoint: Endpoint) {
+    fun initEndpoint(endpoint: Endpoint, username: String) {
         this.endpoint = endpoint
         isMaster = endpoint.side == NetSide.MASTER
 
         entityRegistry.initEndpoint(endpoint)
 
         endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, {
-            runSync { this.onGameStart(endpoint) }
+            runSync { this.onGameStart(endpoint, username) }
         }))
     }
 

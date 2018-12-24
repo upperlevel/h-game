@@ -19,7 +19,7 @@ class Mixter : EntityType {
         return SpriteExtractor.grid(texture, 3, 4)
     }
 
-    override fun create(world: World): Entity {
+    override fun create(world: World): Player {
         return ActorImpl(this, world)
     }
 

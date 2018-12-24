@@ -11,6 +11,9 @@ import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
+import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
+import xyz.upperlevel.hgame.world.entity.PlayerSpawnPacket
+import xyz.upperlevel.hgame.world.entity.ThrowableEntitySpawnPacket
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics
@@ -30,7 +33,7 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
 
     open val attackPower = 0.1f
 
-    val name = "Ulisse"
+    var name = "Ulisse"
 
     init {
         // Creates a default Behaviour for the Player.
@@ -43,6 +46,16 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         if (active && Gdx.input.isKeyPressed(Input.Keys.W) && isTouchingGround) {
             this.jump()
         }
+    }
+
+    override fun serialize(): EntitySpawnPacket {
+        return PlayerSpawnPacket(entityType.id, id, x, y, left, name)
+    }
+
+    override fun deserialize(packet: EntitySpawnPacket) {
+        if (packet !is PlayerSpawnPacket) throw IllegalArgumentException("Given packet is not a PlayerSpawnPacket")
+        super.deserialize(packet)
+        name = packet.name
     }
 
     fun say(text: String, audio: String, duration: Long) {

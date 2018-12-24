@@ -122,7 +122,7 @@ class MatchMakingScreen(private val discovery: UdpDiscovery, private val name: S
 
     private fun onResult(opponentIp: InetAddress, opponentNick: String, isServer: Boolean) {
         runSync {
-            val screen = GameScreen()
+            val screen = GameScreen(name)
             HGame.get().screen = screen
 
             val ep: Endpoint

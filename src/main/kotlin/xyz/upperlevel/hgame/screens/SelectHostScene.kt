@@ -22,7 +22,7 @@ import xyz.upperlevel.hgame.network.Server
 import java.net.InetAddress
 import java.net.UnknownHostException
 
-class SelectHostScene : ScreenAdapter() {
+class SelectHostScene(val username: String) : ScreenAdapter() {
     // Rendering
     private var stage: Stage = Stage(ScreenViewport())
     private var skin: Skin = Skin()
@@ -96,7 +96,7 @@ class SelectHostScene : ScreenAdapter() {
                     else -> return
                 }
 
-                val game = GameScreen()
+                val game = GameScreen(username)
                 val connScreen = WaitingConnectionScreen(endpoint, game)
 
                 game.connect(endpoint)

@@ -92,14 +92,14 @@ class LoginScreen : ScreenAdapter() {
 
         connect.addListener(object : ChangeListener() {
             override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                HGame.get().screen = SelectHostScene()
+                HGame.get().screen = SelectHostScene(username.text)
             }
         })
 
         trainButton.addListener(object : ChangeListener() {
             override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
                 if (trainButton.isPressed) {
-                    HGame.get().screen = TrainScreen()
+                    HGame.get().screen = TrainScreen(username.text)
                 }
             }
         })

@@ -18,7 +18,7 @@ import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
 
 
-class TrainScreen : ScreenAdapter() {
+class TrainScreen(val username: String) : ScreenAdapter() {
     // UI
     private var stage: Stage = Stage(ScreenViewport())
 
@@ -75,8 +75,8 @@ class TrainScreen : ScreenAdapter() {
         endpoint = DisconnectedEndpoint()
 
         world = World().also {
-            it.initEndpoint(endpoint)
-            it.onGameStart(endpoint)
+            it.initEndpoint(endpoint, username)
+            it.onGameStart(endpoint, username)
         }
 
         renderer = WorldRenderer(world!!)

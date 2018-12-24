@@ -8,7 +8,7 @@ import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
 
-class GameScreen : ScreenAdapter() {
+class GameScreen(val username: String) : ScreenAdapter() {
     private val world = World()
     private var renderer: WorldRenderer = WorldRenderer(world)
 
@@ -26,7 +26,7 @@ class GameScreen : ScreenAdapter() {
 
     fun connect(endpoint: Endpoint) {
         this.endpoint = endpoint
-        world.initEndpoint(endpoint)
+        world.initEndpoint(endpoint, username)
     }
 
     override fun resize(width: Int, height: Int) {

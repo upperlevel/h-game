@@ -63,7 +63,7 @@ class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {
         }
 
         var lifePercentage = 1f - p.life / p.maxLife
-        var energyPercentage = 0.5f//1f - player.energy
+        var energyPercentage = 1f - p.energy / p.maxEnergy
 
         if (flip) {
             lifeOffX = containerRegion.regionWidth - lifeBarRegion.regionWidth - lifeOffX

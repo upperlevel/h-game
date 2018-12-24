@@ -31,6 +31,11 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
     open val maxLife = 1.0f
     var life = maxLife
 
+    open val maxEnergy = 1.0f
+    var energy = 0f
+    var energyPerSecond = 0.05f
+
+
     open val attackPower = 0.1f
 
     var name = "Ulisse"
@@ -46,6 +51,7 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         if (active && Gdx.input.isKeyPressed(Input.Keys.W) && isTouchingGround) {
             this.jump()
         }
+        energy = Math.min(energy + energyPerSecond * Gdx.graphics.deltaTime, maxEnergy)
     }
 
     override fun serialize(): EntitySpawnPacket {

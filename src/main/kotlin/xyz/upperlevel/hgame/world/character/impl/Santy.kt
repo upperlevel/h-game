@@ -2,10 +2,12 @@ package xyz.upperlevel.hgame.world.character.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.character.EntityType
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.SpriteExtractor
+import xyz.upperlevel.hgame.world.character.CloseRangeAttack
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : EntityType {
@@ -24,11 +26,15 @@ class Santy : EntityType {
     }
 
     inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
+        val attack = CloseRangeAttack(this)
+
         init {
             jumpForce *= 0.5f
+            attack.setupFixtures()
         }
 
         override fun attack(): Sequence {
+            attack.contact?.onAttacked(this)
             return Sequence.create()
                     .act { setFrame(0, 2) }
                     .delay(200)
@@ -45,5 +51,9 @@ class Santy : EntityType {
                     .delay(2000)
                     .act { setFrame(0, 0) }
         }
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger()
     }
 }

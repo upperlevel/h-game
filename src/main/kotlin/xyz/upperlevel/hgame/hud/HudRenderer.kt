@@ -73,10 +73,7 @@ class HudRenderer(world: World) {
     }
 
     private fun onPlayerFind(p: Player) {
-        logger.info("found player: ${p.left}")
-
-        // TODO: change labels
-        if (p.left) {
+        if (!p.left) {
             leftPlayer = p
         } else {
             rightPlayer = p

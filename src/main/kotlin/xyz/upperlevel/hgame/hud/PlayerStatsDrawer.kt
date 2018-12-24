@@ -26,12 +26,12 @@ class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {
     }
 
     override fun draw(batch: Batch?, x: Float, y: Float, width: Float, height: Float) {
-        if (player == null) return
+        val p = player ?: return
         batch!!
 
         // Offsets
-        var lifeOffX = 12f
-        var energyOffX = 12f
+        var lifeOffX = barsLeftOffset
+        var energyOffX = barsLeftOffset
         val lifeOffY = 12f
         val energyOffY = 3f
 
@@ -41,28 +41,33 @@ class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {
 
 
         // Where do we need to cut with GL_STENCIL_TEST
-        // (from the start of the bars on the left to the start of the reversed bars on the right)
-        // Where is the start of the bar? at energyOffX (scale and width are multiplied to convert to screen coords)
-        val cutX: Float = x + energyOffX * scaleW
-        // Where is the end of the reversed bar? at (1.0 - energyOffX), duplicate the length (it needs to be a width)
-        // and convert it to screen coords
-        val cutW = width - energyOffX * 2 * scaleW
+        // (from the start of the bars to the end of them)
+        val cutX: Float
+        val cutW: Float
+        val dir: Float// Direction (1f if facing right -1f if facing left)
 
-        var dir = 1f// Direction (1f if facing right -1f if facing left)
+        if (!flip) {
+            // Where is the start of the bar? at energyOffX (scale is multiplied to convert to screen coords)
+            cutX = x + energyOffX * scaleW
+            // The width is at the end of the given space,
+            // and convert it to screen coords
+            cutW = width - cutX
+            dir = 1f
+        } else {
+            // When reversed we need to reverse the cut rectangle
+            // Start from the x-start
+            cutX = x
+            // End at the beginning of the reversed bars (that is width - prefix)
+            cutW = width - barsLeftOffset * scaleW
+            dir = -1f
+        }
 
-        var lifePercentage = 0.5f//player.life
-        var energyPercentage = 0.5f//player.energy
+        var lifePercentage = 1f - p.life / p.maxLife
+        var energyPercentage = 0.5f//1f - player.energy
 
         if (flip) {
-            lifeOffX = -lifeBarRegion.regionWidth - lifeOffX
-            energyOffX = -energyBarRegion.regionWidth - energyOffX
-
-            // If we draw in reverse then we need to inverse the percentages
-            // because they describe how much padding we need on the left (so the amount of empty space)
-            lifePercentage = 1f - lifePercentage
-            energyPercentage = 1f - energyPercentage
-
-            dir = -1f
+            lifeOffX = containerRegion.regionWidth - lifeBarRegion.regionWidth - lifeOffX
+            energyOffX = containerRegion.regionWidth - energyBarRegion.regionWidth - energyOffX
         }
         // Apply the percentages to the offsets
         lifeOffX -= lifePercentage * lifeBarRegion.regionWidth * dir
@@ -76,8 +81,7 @@ class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {
         batch.flush()
 
         // TODO: apply batch matrix
-        var res = ScissorStack.pushScissors(Rectangle(cutX, y, cutW, height))
-        if (!res) throw IllegalStateException("Fucking scissors")
+        ScissorStack.pushScissors(Rectangle(cutX, y, cutW, height))
         batch.draw(lifeBarRegion, x + lifeOffX * scaleW, y + lifeOffY * scaleH, lifeBarRegion.regionWidth * scaleW, lifeBarRegion.regionHeight * scaleH)
         batch.draw(energyBarRegion, x + energyOffX * scaleW, y + energyOffY * scaleH, energyBarRegion.regionWidth * scaleW, energyBarRegion.regionHeight * scaleH)
 
@@ -93,5 +97,7 @@ class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {
         private val containerRegion = TextureRegion(texture, 0, 0, 101, 27)
         private val lifeBarRegion = TextureRegion(texture, 0, 30, 82, 9)
         private val energyBarRegion = TextureRegion(texture, 0, 41, 86, 5)
+
+        private const val barsLeftOffset = 12f
     }
 }

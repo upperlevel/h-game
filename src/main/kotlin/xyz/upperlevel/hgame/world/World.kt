@@ -61,6 +61,8 @@ class World {
             if (entityB is ThrowableEntity && entityB.thrower != entityA) despawn(entityB)
         })
 
+        events.register(FixtureSensorCaller())
+
         // Spawn the ground
         val groundWidth = 20f
         val groundHeight = 10f

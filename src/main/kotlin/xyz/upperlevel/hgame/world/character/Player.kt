@@ -25,6 +25,11 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         get() = body.fixtureList[0].friction
         set(value) { body.fixtureList[0].friction = value }
 
+    open val maxLife = 1.0f
+    var life = maxLife
+
+    open val attackPower = 0.1f
+
     val name = "Ulisse"
 
     init {
@@ -73,6 +78,14 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         // By default, special attack is implemented as a normal attack.
         // The Character should override the Actor class in order to implement its own special attack.
         return attack()
+    }
+
+    fun onAttacked(player: Player) {
+        life -= player.attackPower
+        logger.info("$id Life: $life")
+        if (life < 0) {
+            // TODO: Dead
+        }
     }
 
     companion object {

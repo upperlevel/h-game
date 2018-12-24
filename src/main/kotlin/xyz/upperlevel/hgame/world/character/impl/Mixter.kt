@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.character.*
+import xyz.upperlevel.hgame.world.character.CloseRangeAttack
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Mixter : EntityType {
@@ -23,17 +24,24 @@ class Mixter : EntityType {
     }
 
     private inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
+        val attack = CloseRangeAttack(this)
+
         init {
             jumpForce *= 0.5f
+            attack.setupFixtures()
         }
 
         override fun attack(): Sequence {
+
             return Sequence.create()
                     .act { setFrame(0, 2) }
                     .delay(100)
                     .act { setFrame(1, 2) }
                     .delay(250)
-                    .act { setFrame(2, 2) }
+                    .act {
+                        attack.contact?.onAttacked(this)
+                        setFrame(2, 2)
+                    }
                     .delay(500)
         }
 

@@ -13,10 +13,8 @@ import java.net.UnknownHostException
 import java.util.concurrent.LinkedBlockingQueue
 
 class NetTest {
-    @ProtocolId(1)
     data class ExamplePacket(val text: String) : Packet
 
-    @ProtocolId(2)
     data class SecondExamplePacket(val simpleText: Int) : Packet
 
     @Test

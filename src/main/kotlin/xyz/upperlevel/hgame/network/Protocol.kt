@@ -14,14 +14,19 @@ class Protocol(private val handle: BiMap<Int, Class<out Packet>>) {
 
     class ProtocolBuilder {
         private val handle = HashBiMap.create<Int, Class<out Packet>>()
+        private var nextId = 0
 
-        fun add(clazz: Class<out Packet>): ProtocolBuilder {
-            val ann = clazz.getAnnotation(ProtocolId::class.java)
-                    ?: throw IllegalArgumentException("Cannot find @ProtocolId for class: " + clazz.name)
+        private fun findNextId(): Int {
+            while (nextId in handle) nextId++
+            return nextId++
+        }
 
-            val previous = handle.putIfAbsent(ann.value, clazz)
+        fun add(clazz: Class<out Packet>, id: Int = -1): ProtocolBuilder {
+            val typeId = if (id == -1) findNextId() else id
+
+            val previous = handle.putIfAbsent(typeId, clazz)
             if (previous != null) {
-                throw IllegalStateException("Id " + ann.value + " used for both " + previous.name + " and " + clazz.name)
+                throw IllegalStateException("Id " + typeId + " used for both " + previous.name + " and " + clazz.name)
             }
             return this
         }

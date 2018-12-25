@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.hud
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -17,6 +18,8 @@ import xyz.upperlevel.hgame.world.entity.EntitySpawnEvent
 
 class HudRenderer(world: World) {
     private var stage: Stage = Stage(ScreenViewport())
+
+    private val table: Table
 
     private val leftNameLabel: Label
     private val rightNameLabel: Label
@@ -46,17 +49,24 @@ class HudRenderer(world: World) {
             })
         }
 
-        val table = Table()
+        table = Table()
         table.setFillParent(true)
         table.align(Align.top)
 
+        val height = DefaultFont.FONT.lineHeight
+        val midWidth = Gdx.graphics.width / 2f
+
         leftNameLabel = Label("", skin)
         leftNameLabel.setAlignment(Align.topLeft)
-        table.add(leftNameLabel).growX()
+        leftNameLabel.height = height
+        leftNameLabel.setEllipsis(true)
+        table.add(leftNameLabel).width(midWidth)
 
         rightNameLabel = Label("", skin)
         rightNameLabel.setAlignment(Align.topRight)
-        table.add(rightNameLabel).growX().row()
+        rightNameLabel.height = height
+        rightNameLabel.setEllipsis(true)
+        table.add(rightNameLabel).width(midWidth).row()
 
         table.add(Image(leftStats, Scaling.fit, Align.topLeft)).growX().growY()
         table.add(Image(rightStats, Scaling.fit, Align.topRight)).growX().growY()
@@ -88,5 +98,7 @@ class HudRenderer(world: World) {
 
     fun resize(width: Int, height: Int) {
         stage.viewport.update(width, height, true)
+        // Update table cells width
+        table.cells.forEach { it.width(width / 2f) }
     }
 }

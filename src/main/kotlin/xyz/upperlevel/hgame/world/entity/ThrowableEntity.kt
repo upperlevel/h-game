@@ -1,9 +1,7 @@
-package xyz.upperlevel.hgame.world.character
+package xyz.upperlevel.hgame.world.entity
 
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
-import xyz.upperlevel.hgame.world.entity.ThrowableEntitySpawnPacket
 
 
 class ThrowableEntity(entityType: EntityType, world: World, active: Boolean) : Entity(entityType, world, active) {

@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world.character
+package xyz.upperlevel.hgame.world.entity
 
 import xyz.upperlevel.hgame.network.Packet
 import xyz.upperlevel.hgame.network.ProtocolId

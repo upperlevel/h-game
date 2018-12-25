@@ -12,10 +12,9 @@ import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.EntityTypes
-import xyz.upperlevel.hgame.world.character.Player
-import xyz.upperlevel.hgame.world.character.ThrowableEntity
+import xyz.upperlevel.hgame.world.entity.Entity
+import xyz.upperlevel.hgame.world.entity.EntityTypes
+import xyz.upperlevel.hgame.world.entity.ThrowableEntity
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
 import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld

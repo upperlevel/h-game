@@ -1,13 +1,13 @@
-package xyz.upperlevel.hgame.world.character.impl
+package xyz.upperlevel.hgame.world.entity.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.character.EntityType
-import xyz.upperlevel.hgame.world.character.Player
-import xyz.upperlevel.hgame.world.character.SpriteExtractor
-import xyz.upperlevel.hgame.world.character.CloseRangeAttack
+import xyz.upperlevel.hgame.world.entity.EntityType
+import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.entity.SpriteExtractor
+import xyz.upperlevel.hgame.world.entity.CloseRangeAttack
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : EntityType {

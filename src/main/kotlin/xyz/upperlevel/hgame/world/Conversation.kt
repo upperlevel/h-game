@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.entity.Entity
 import xyz.upperlevel.hgame.world.scheduler.Task
 
 object Conversation {

@@ -1,13 +1,13 @@
-package xyz.upperlevel.hgame.world.character.impl
+package xyz.upperlevel.hgame.world.entity.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import xyz.upperlevel.hgame.event.Listener
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.EntityType
-import xyz.upperlevel.hgame.world.character.SpriteExtractor
-import xyz.upperlevel.hgame.world.character.ThrowableEntity
+import xyz.upperlevel.hgame.world.entity.Entity
+import xyz.upperlevel.hgame.world.entity.EntityType
+import xyz.upperlevel.hgame.world.entity.SpriteExtractor
+import xyz.upperlevel.hgame.world.entity.ThrowableEntity
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 

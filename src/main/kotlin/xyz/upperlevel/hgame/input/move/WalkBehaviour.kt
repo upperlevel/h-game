@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
 import xyz.upperlevel.hgame.input.Behaviour
 import xyz.upperlevel.hgame.input.BehaviourLayer
-import xyz.upperlevel.hgame.world.character.Player
+import xyz.upperlevel.hgame.world.entity.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 open class WalkBehaviour(behaviourGraph: BehaviourLayer, id: String, val player: Player, val horizontalImpulse: Float)

@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world.character
+package xyz.upperlevel.hgame.world.entity
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -11,9 +11,6 @@ import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
-import xyz.upperlevel.hgame.world.entity.PlayerSpawnPacket
-import xyz.upperlevel.hgame.world.entity.ThrowableEntitySpawnPacket
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics

@@ -2,7 +2,7 @@ package xyz.upperlevel.hgame.world
 
 import xyz.upperlevel.hgame.event.EventHandler
 import xyz.upperlevel.hgame.event.Listener
-import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.entity.Entity
 import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
 import xyz.upperlevel.hgame.world.events.PhysicContactEndEvent
 

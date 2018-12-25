@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world.character
+package xyz.upperlevel.hgame.world.entity
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
@@ -14,8 +14,6 @@ import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.entity.EntityImpulsePacket
-import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 
 open class Entity(val entityType: EntityType, val world: World, val active: Boolean) {
     val body: Body = entityType.createBody(world.physics)

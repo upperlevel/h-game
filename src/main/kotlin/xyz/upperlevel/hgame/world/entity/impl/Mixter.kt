@@ -1,11 +1,10 @@
-package xyz.upperlevel.hgame.world.character.impl
+package xyz.upperlevel.hgame.world.entity.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.character.*
-import xyz.upperlevel.hgame.world.character.CloseRangeAttack
+import xyz.upperlevel.hgame.world.entity.*
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Mixter : EntityType {

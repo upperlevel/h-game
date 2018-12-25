@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.character.Player
+import xyz.upperlevel.hgame.world.entity.Player
 import xyz.upperlevel.hgame.world.entity.EntitySpawnEvent
 
 class HudRenderer(world: World) {
@@ -76,7 +76,7 @@ class HudRenderer(world: World) {
             if (e.entity !is Player) return@register
             onPlayerFind(e.entity)
         })
-        world.entities.filter {it is Player}
+        world.entities.filter {it is Player }
                 .forEach { onPlayerFind(it as Player) }
     }
 

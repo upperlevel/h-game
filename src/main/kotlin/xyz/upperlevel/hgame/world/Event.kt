@@ -1,6 +1,6 @@
 package xyz.upperlevel.hgame.world
 
-import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.entity.Entity
 import java.util.*
 import java.util.function.Supplier
 import kotlin.collections.Map.Entry

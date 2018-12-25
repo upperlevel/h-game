@@ -1,7 +1,7 @@
 package xyz.upperlevel.hgame.input
 
 import org.apache.logging.log4j.LogManager
-import xyz.upperlevel.hgame.world.character.Entity
+import xyz.upperlevel.hgame.world.entity.Entity
 import java.util.*
 
 class BehaviourLayer(val entity: Entity) {

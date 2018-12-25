@@ -1,8 +1,8 @@
-package xyz.upperlevel.hgame.world.character
+package xyz.upperlevel.hgame.world.entity
 
-import xyz.upperlevel.hgame.world.character.impl.Mikrotik
-import xyz.upperlevel.hgame.world.character.impl.Mixter
-import xyz.upperlevel.hgame.world.character.impl.Santy
+import xyz.upperlevel.hgame.world.entity.impl.Mikrotik
+import xyz.upperlevel.hgame.world.entity.impl.Mixter
+import xyz.upperlevel.hgame.world.entity.impl.Santy
 
 
 object EntityTypes {

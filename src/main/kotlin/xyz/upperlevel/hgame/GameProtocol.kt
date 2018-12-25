@@ -11,7 +11,6 @@ object GameProtocol {
             .add(EntitySpawnPacket::class.java)
             .add(ThrowableEntitySpawnPacket::class.java)
             .add(PlayerSpawnPacket::class.java)
-            .add(EntityDespawnPacket::class.java)
             .add(EntityImpulsePacket::class.java)
             .add(EntityResetPacket::class.java)
 

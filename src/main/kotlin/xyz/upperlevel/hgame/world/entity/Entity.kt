@@ -28,7 +28,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
 
     var x: Float
         get() = body.position.x + width / 2f
-        set(value) = body.setTransform(value, y, 0f)
+        set(value) = body.setTransform(value - width / 2f, y, 0f)
 
     var y: Float
         get() = body.position.y

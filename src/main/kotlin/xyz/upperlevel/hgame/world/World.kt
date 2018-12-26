@@ -84,7 +84,7 @@ class World {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
 
-        val entity = EntityTypes.MIXTER.create(this)
+        val entity = EntityTypes.SANTY.create(this)
         entity.setPosition(x.toFloat(), 0f)
         entity.left = isMaster
         entity.name = name

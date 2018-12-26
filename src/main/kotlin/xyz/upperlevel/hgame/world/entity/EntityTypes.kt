@@ -2,6 +2,7 @@ package xyz.upperlevel.hgame.world.entity
 
 import xyz.upperlevel.hgame.world.entity.impl.Mikrotik
 import xyz.upperlevel.hgame.world.entity.impl.Mixter
+import xyz.upperlevel.hgame.world.entity.impl.Poison
 import xyz.upperlevel.hgame.world.entity.impl.Santy
 
 
@@ -19,4 +20,5 @@ object EntityTypes {
     val MIKROTIK = Mikrotik().also { register(it) }
     val MIXTER   = Mixter().also { register(it) }
     val SANTY    = Santy().also { register(it) }
+    val POISON   = Poison().also { register(it) }
 }

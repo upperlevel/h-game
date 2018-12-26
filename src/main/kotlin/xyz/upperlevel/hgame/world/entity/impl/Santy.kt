@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.entity.EntityType
-import xyz.upperlevel.hgame.world.entity.Player
-import xyz.upperlevel.hgame.world.entity.SpriteExtractor
-import xyz.upperlevel.hgame.world.entity.CloseRangeAttack
+import xyz.upperlevel.hgame.world.entity.*
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class Santy : EntityType {
@@ -48,7 +45,14 @@ class Santy : EntityType {
                     .repeat({ _, time -> setFrame(time % 2, 3) }, 200, 15)
                     .repeat({ _, time -> setFrame(time + 2, 3) }, 500, 2)
                     .repeat({ _, time -> setFrame(time + 4, 3) }, 200, 5)
-                    .delay(2000)
+                    .act {
+                        val entity = EntityTypes.POISON.create(world)
+                        entity.x = x
+                        entity.y = y - entity.height
+                        entity.updatePos()
+                        world.spawn(entity)
+                    }
+                    .delay(500)
                     .act { setFrame(0, 0) }
         }
     }

@@ -7,14 +7,7 @@ import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.World
-import xyz.upperlevel.hgame.world.character.Entity
-import xyz.upperlevel.hgame.world.character.EntityTypes
-import xyz.upperlevel.hgame.world.character.Player
-import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
 import xyz.upperlevel.hgame.world.sequence.Sequence
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class EntityRegistry(val world: World) {
     private val _entities = HashMap<Int, Entity>()

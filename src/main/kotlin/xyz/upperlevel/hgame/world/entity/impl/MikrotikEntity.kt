@@ -6,7 +6,7 @@ import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.entity.EntityTypes
 import xyz.upperlevel.hgame.world.entity.ThrowableEntity
 
-class MikrotikEntity(world: World) : ThrowableEntity(EntityTypes.MIKROTIK, world) {
+class MikrotikEntity(world: World, active: Boolean) : ThrowableEntity(EntityTypes.MIKROTIK, world, active) {
     fun explode() {
         val effect = ParticleEffect()
         effect.load(Gdx.files.internal("particles/explosion.p"), Gdx.files.internal("particles"))

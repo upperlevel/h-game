@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
 
 
-class ThrowableEntity(entityType: EntityType, world: World, active: Boolean) : Entity(entityType, world, active) {
+open class ThrowableEntity(entityType: EntityType, world: World, active: Boolean) : Entity(entityType, world, active) {
     var thrower: Entity? = null
 
     override fun serialize(): EntitySpawnPacket {

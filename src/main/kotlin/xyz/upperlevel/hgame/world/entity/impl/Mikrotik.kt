@@ -23,7 +23,7 @@ class Mikrotik : EntityType, Listener {
     }
 
     override fun create(world: World, active: Boolean): Entity {
-        val entity = ThrowableEntity(this, world, active)
+        val entity = MikrotikEntity(world, active)
         entity.setFrame(0, 0)
         return entity
     }

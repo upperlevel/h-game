@@ -160,7 +160,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
     open fun onReset(data: Map<String, Any>) {
         val x = data["x"] as Number
         val y = data["y"] as Number
-        body.setTransform(x.toFloat(), y.toFloat(), 0f)
+        body.setTransform(x.toFloat() - width / 2f, y.toFloat(), 0f)
     }
 
     open fun render(renderer: WorldRenderer) {

@@ -19,7 +19,7 @@ class Mikrotik : EntityType, Listener {
     override val height = .5f
 
     override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
-        return SpriteExtractor.grid(texture, 1, 1)
+        return SpriteExtractor.grid(texture, 5, 1)
     }
 
     override fun create(world: World, active: Boolean): Entity {

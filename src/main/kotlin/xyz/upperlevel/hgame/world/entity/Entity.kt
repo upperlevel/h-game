@@ -72,7 +72,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         sprite.setRegion(regions[x][y])
     }
 
-    open fun update(world: World) {
+    open fun update() {
         // Updates the BehaviourLayer, needed to check hooks.
         behaviour?.update()
     }

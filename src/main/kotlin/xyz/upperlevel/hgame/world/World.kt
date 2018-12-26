@@ -56,22 +56,6 @@ class World {
         physics.setContactListener(EventContactListener(events))
 
         events.register(EntityGroundListener()) // Listen for ground contacts
-
-        // Listener used only to make Mikrotik explode when it touches the ground.
-        events.register(PhysicContactBeginEvent::class.java, { event ->
-            val entityA = event.contact.fixtureA.body.userData
-            val entityB = event.contact.fixtureB.body.userData
-
-            var collided: MikrotikEntity? = null
-            if (entityA is MikrotikEntity && entityA.thrower != entityB) collided = entityA
-            if (entityB is MikrotikEntity && entityB.thrower != entityA) collided = entityB
-
-            if (collided != null) {
-                collided.explode()
-                despawn(collided)
-            }
-        })
-
         events.register(FixtureSensorCaller())
 
         // Spawn the ground
@@ -118,7 +102,6 @@ class World {
         _effects.add(effect)
 
         effect.setPosition(x, y)
-        effect.scaleEffect(0.1f)
 
         effect.start()
     }
@@ -144,7 +127,7 @@ class World {
         if (!isReady) return
         // Updates
         doPhysicsStep(Gdx.graphics.deltaTime)
-        entityRegistry.entities.forEach { e -> e.update(this) }
+        entityRegistry.entities.forEach { e -> e.update() }
 
         _effects.removeIf { effect -> effect.isComplete }
     }

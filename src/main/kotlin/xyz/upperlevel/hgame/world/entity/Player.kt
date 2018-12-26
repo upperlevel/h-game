@@ -41,8 +41,8 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
         behaviour = BehaviourManager.createPlayerBehaviour(this)
     }
 
-    override fun update(world: World) {
-        super.update(world)
+    override fun update() {
+        super.update()
         if (active && Gdx.input.isKeyPressed(Input.Keys.W) && isTouchingGround) {
             this.jump()
         }

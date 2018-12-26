@@ -56,7 +56,7 @@ class Mixter : EntityType {
                         // Only if the behaviour system is active (meaning that is used by the current host),
                         // we spawn the Mikrotik.
                         if (behaviour!!.active) {
-                            val mikrotik = EntityTypes.MIKROTIK.create(world) as ThrowableEntity
+                            val mikrotik = EntityTypes.MIKROTIK.create(world) as MikrotikEntity
                             this.chuck(mikrotik, power, Math.toRadians(45.0).toFloat())
                         }
 

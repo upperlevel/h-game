@@ -40,8 +40,6 @@ class HudRenderer(world: World) {
             rightNameLabel?.setText(value?.name ?: "")
         }
 
-    private val logger = LogManager.getLogger()
-
     init {
         val skin = Skin().apply {
             add("default", Label.LabelStyle().apply {

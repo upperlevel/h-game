@@ -43,7 +43,7 @@ interface EntityType {
 
     fun getSprites(texture: Texture): Array<Array<TextureRegion>>
 
-    fun create(world: World): Entity
+    fun create(world: World, active: Boolean = true): Entity
 }
 
 

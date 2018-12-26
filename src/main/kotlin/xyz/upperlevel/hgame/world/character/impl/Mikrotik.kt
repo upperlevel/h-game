@@ -22,8 +22,8 @@ class Mikrotik : EntityType, Listener {
         return SpriteExtractor.grid(texture, 1, 1)
     }
 
-    override fun create(world: World): Entity {
-        val entity = ThrowableEntity(this, world)
+    override fun create(world: World, active: Boolean): Entity {
+        val entity = ThrowableEntity(this, world, active)
         entity.setFrame(0, 0)
         return entity
     }

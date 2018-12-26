@@ -47,14 +47,14 @@ abstract class Endpoint(val protocol: Protocol,
     open fun send(packet: Packet) {
         val id = protocol.fromClass(packet.javaClass)
                 ?: throw IllegalArgumentException("Packet not registered: " + packet.javaClass)
-        channel!!.writeAndFlush(PayloadPacket(id, packet))
+        channel?.writeAndFlush(PayloadPacket(id, packet))
     }
 
     abstract fun openAsync()
 
     open fun close() {
         if (!isConnected) return
-        channel?.close()!!.sync()
+        channel?.close()?.sync()
     }
 
     fun closeGracefully() {

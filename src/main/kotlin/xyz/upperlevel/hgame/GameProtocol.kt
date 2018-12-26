@@ -13,6 +13,7 @@ object GameProtocol {
             .add(PlayerSpawnPacket::class.java)
             .add(EntityDespawnPacket::class.java)
             .add(EntityImpulsePacket::class.java)
+            .add(EntityResetPacket::class.java)
 
             .add(BehaviourChangePacket::class.java)
             .add(PlayerJumpPacket::class.java)

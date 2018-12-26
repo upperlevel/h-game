@@ -17,7 +17,7 @@ import xyz.upperlevel.hgame.world.WorldRenderer
 import xyz.upperlevel.hgame.world.entity.EntityImpulsePacket
 import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 
-open class Entity(val entityType: EntityType, val world: World) {
+open class Entity(val entityType: EntityType, val world: World, val active: Boolean) {
     val body: Body = entityType.createBody(world.physics)
     val groundSensor: Fixture = body.createFixture(createSensor())
 
@@ -138,6 +138,17 @@ open class Entity(val entityType: EntityType, val world: World) {
                 setAsBox(width / 2, 0.1f, Vector2(width / 2f, 0f), 0f)
             }
         }
+    }
+
+    open fun fillResetPacket(data: MutableMap<String, Any>) {
+        data["x"] = x
+        data["y"] = y
+    }
+
+    open fun onReset(data: Map<String, Any>) {
+        val x = data["x"] as Number
+        val y = data["y"] as Number
+        body.setTransform(x.toFloat(), y.toFloat(), 0f)
     }
 
     companion object {

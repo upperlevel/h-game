@@ -19,11 +19,11 @@ class Mixter : EntityType {
         return SpriteExtractor.grid(texture, 3, 4)
     }
 
-    override fun create(world: World): Player {
-        return ActorImpl(this, world)
+    override fun create(world: World, active: Boolean): Player {
+        return ActorImpl(this, world, active)
     }
 
-    private inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
+    private inner class ActorImpl(entityType: EntityType, world: World, active: Boolean) : Player(entityType, world, active) {
         val attack = CloseRangeAttack(this)
 
         init {

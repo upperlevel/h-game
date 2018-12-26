@@ -93,7 +93,6 @@ class World {
         player = entity
 
         entity.behaviour?.let { it.endpoint = endpoint }
-        entity.active = true
     }
 
     fun getEntity(entityId: Int): Entity? {

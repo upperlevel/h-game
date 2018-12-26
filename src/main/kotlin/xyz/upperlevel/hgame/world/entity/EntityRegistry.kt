@@ -11,8 +11,10 @@ import xyz.upperlevel.hgame.world.character.Entity
 import xyz.upperlevel.hgame.world.character.EntityTypes
 import xyz.upperlevel.hgame.world.character.Player
 import xyz.upperlevel.hgame.world.character.PlayerJumpPacket
+import xyz.upperlevel.hgame.world.sequence.Sequence
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class EntityRegistry(val world: World) {
     private val _entities = HashMap<Int, Entity>()
@@ -38,6 +40,12 @@ class EntityRegistry(val world: World) {
      * We have to do that because we can only destroy the body after physics world step.
      */
     private val pendingDestruction: MutableList<Body> = ArrayList()
+
+    init {
+        Sequence.create()
+                .repeat({ sendReset() }, 1000)
+                .play()
+    }
 
     fun getEntity(entityId: Int): Entity? {
         return _entities[entityId]
@@ -87,6 +95,22 @@ class EntityRegistry(val world: World) {
         pendingDestruction.clear()
     }
 
+    private fun createResetPacket(entity: Entity): EntityResetPacket {
+        val data = HashMap<String, Any>()
+        entity.fillResetPacket(data)
+        return EntityResetPacket(entity.id, data)
+    }
+
+    fun sendReset() {
+        logger.debug("sending reset")
+        endpoint?.let { endp ->
+            _entities.map { it.value }
+                    .filter { it.active }
+                    .map { createResetPacket(it) }
+                    .forEach { endp.send(it) }
+        }
+    }
+
     fun initEndpoint(endpoint: Endpoint) {
         this.endpoint = endpoint
 
@@ -94,7 +118,7 @@ class EntityRegistry(val world: World) {
             runSync {
                 logger.info("Received entity ${packet.entityTypeId} and id=${packet.entityId}")
 
-                val entity = EntityTypes[packet.entityTypeId]!!.create(world)
+                val entity = EntityTypes[packet.entityTypeId]!!.create(world, false)
                 entity.deserialize(packet)
                 forceSpawn(entity)
             }
@@ -124,6 +148,17 @@ class EntityRegistry(val world: World) {
         endpoint.events.register(EntityImpulsePacket::class.java, { packet ->
             runSync {
                 _entities[packet.entityId]!!.impulse(packet.powerX, packet.powerY, packet.pointX, packet.pointY, false)
+            }
+        })
+        endpoint.events.register(EntityResetPacket::class.java, {packet ->
+            runSync {
+                logger.debug("received reset {}", packet.entityId)
+                val entity = _entities[packet.entityId]
+                if (entity == null) {
+                    logger.warn("Invalid reset packet: no entity with id ${packet.entityId}")
+                    return@runSync
+                }
+                entity.onReset(packet.data)
             }
         })
     }

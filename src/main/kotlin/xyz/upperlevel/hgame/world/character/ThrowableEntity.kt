@@ -6,7 +6,7 @@ import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
 import xyz.upperlevel.hgame.world.entity.ThrowableEntitySpawnPacket
 
 
-class ThrowableEntity(entityType: EntityType, world: World) : Entity(entityType, world) {
+class ThrowableEntity(entityType: EntityType, world: World, active: Boolean) : Entity(entityType, world, active) {
     var thrower: Entity? = null
 
     override fun serialize(): EntitySpawnPacket {

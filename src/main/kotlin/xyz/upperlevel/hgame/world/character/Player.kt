@@ -18,9 +18,7 @@ import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics
 
-open class Player(entityType: EntityType, world: World) : Entity(entityType, world) {
-    var active = false
-
+open class Player(entityType: EntityType, world: World, active: Boolean) : Entity(entityType, world, active) {
     private var sayTask = -1
     var jumpForce = 40f
 
@@ -62,6 +60,18 @@ open class Player(entityType: EntityType, world: World) : Entity(entityType, wor
         if (packet !is PlayerSpawnPacket) throw IllegalArgumentException("Given packet is not a PlayerSpawnPacket")
         super.deserialize(packet)
         name = packet.name
+    }
+
+    override fun fillResetPacket(data: MutableMap<String, Any>) {
+        super.fillResetPacket(data)
+        data["life"] = life
+        data["energy"] = energy
+    }
+
+    override fun onReset(data: Map<String, Any>) {
+        super.onReset(data)
+        life = (data["life"] as Number).toFloat()
+        energy = (data["energy"] as Number).toFloat()
     }
 
     fun say(text: String, audio: String, duration: Long) {

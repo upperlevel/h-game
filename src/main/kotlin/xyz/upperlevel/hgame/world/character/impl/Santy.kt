@@ -21,11 +21,11 @@ class Santy : EntityType {
         return SpriteExtractor.grid(texture, 9, 4)
     }
 
-    override fun create(world: World): ActorImpl {
-        return ActorImpl(this, world)
+    override fun create(world: World, active: Boolean): ActorImpl {
+        return ActorImpl(this, world, active)
     }
 
-    inner class ActorImpl(entityType: EntityType, world: World) : Player(entityType, world) {
+    inner class ActorImpl(entityType: EntityType, world: World, active: Boolean) : Player(entityType, world, active) {
         val attack = CloseRangeAttack(this)
 
         init {

@@ -1,6 +1,7 @@
 package xyz.upperlevel.hgame.world.entity
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -10,28 +11,34 @@ import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
-import org.lwjgl.util.vector.Vector2f
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.sequence.Sequence
 
 open class Entity(val entityType: EntityType, val world: World, val active: Boolean) {
     val body: Body = entityType.createBody(world.physics)
     val groundSensor: Fixture = body.createFixture(createSensor())
-
-    var x: Float
-        get() = body.position.x
-        set(value) = body.setTransform(value, y, 0f)
-
-    var y: Float
-        get() = body.position.y
-        set(value) = body.setTransform(x, value, 0f)
 
     val width: Float
         get() = entityType.width
 
     val height: Float
         get() = entityType.height
+
+    var x: Float
+        get() = body.position.x + width / 2f
+        set(value) = body.setTransform(value, y, 0f)
+
+    var y: Float
+        get() = body.position.y
+        set(value) = body.setTransform(x, value, 0f)
+
+    val centerX: Float
+        get() = x
+
+    val centerY: Float
+        get() = y + height / 2f
 
     var left: Boolean = false
 
@@ -48,11 +55,13 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
 
     private val sprite: Sprite
     private val regions: Array<Array<TextureRegion>>
+    var color: Color = Color.WHITE
 
     var behaviour: BehaviourManager? = null
 
     open val maxLife = 1.0f
     var life = maxLife
+    open var damageable = false
 
     private var destroyed = false
 
@@ -84,21 +93,19 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         behaviour?.onPrePhysics()
     }
 
-    open fun render(renderer: WorldRenderer) {
-        if (left != sprite.isFlipX) {
-            sprite.flip(true, false)
-        }
-        sprite.setPosition(x, y)
-        sprite.draw(renderer.spriteBatch)
-    }
-
-    open fun renderHud(renderer: WorldRenderer.UIRenderer) {
-        // No HUD is rendered for default entity.
-    }
-
     fun damage(amount: Float) {
-        life -= amount
-        world.showPopup("%.2f".format(amount), x + width / 2f, y + height / 2f)
+        if (damageable) {
+            life -= amount
+
+            val speed = 100
+            val steps = 10
+            Sequence.create()
+                    .act { world.showPopup("%.2f".format(amount), centerX, centerY) }
+                    .repeat({ _, time ->
+                        color = Color(1.0f, time / (steps - 1.0f), time / (steps - 1.0f), 1.0f)
+                    }, speed / steps.toLong(), steps)
+                    .play()
+        }
     }
 
     fun impulse(powerX: Float, powerY: Float, pointX: Float, pointY: Float, sendPacket: Boolean = true) {
@@ -108,15 +115,10 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         }
     }
 
-    fun chuck(throwable: ThrowableEntity, power: Float, angle: Float, spawnAt: Vector2f = Vector2f(width / 2f, height / 2f)) {
+    fun chuck(throwable: ThrowableEntity, power: Float, angle: Float) {
         throwable.thrower = this
 
-        // The middle of the throwable entity.
-        val centerX = x + spawnAt.x
-        val centerY = y + spawnAt.y
-
-        // Position is in the bottom left corner.
-        throwable.x = centerX - throwable.width / 2f
+        throwable.x = centerX
         throwable.y = centerY - throwable.height / 2f
 
         world.spawn(throwable)
@@ -159,6 +161,19 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         val x = data["x"] as Number
         val y = data["y"] as Number
         body.setTransform(x.toFloat(), y.toFloat(), 0f)
+    }
+
+    open fun render(renderer: WorldRenderer) {
+        sprite.color = color
+        if (left != sprite.isFlipX) {
+            sprite.flip(true, false)
+        }
+        sprite.setPosition(x - width / 2f, y)
+        sprite.draw(renderer.spriteBatch)
+    }
+
+    open fun renderHud(renderer: WorldRenderer.UIRenderer) {
+        // No HUD is rendered for default entity.
     }
 
     companion object {

@@ -32,7 +32,7 @@ class WorldRenderer(val world: World) {
         worldCamera.setToOrtho(false, worldWidth, worldHeight)
 
         // The player is in the middle of the camera frustum.
-        val camX = player.x + Player.WIDTH / 2f
+        val camX = player.centerX
         val camY = worldHeight / 2f + (player.y - groundHeight)
 
         worldCamera.position.x = camX

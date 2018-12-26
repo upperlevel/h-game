@@ -34,6 +34,8 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
 
     var name = "Ulisse"
 
+    override var damageable = true
+
     init {
         // Creates a default Behaviour for the Player.
         // Each Player should have one.
@@ -114,7 +116,7 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
 
     override fun renderHud(renderer: WorldRenderer.UIRenderer) {
         val font = DefaultFont.PLAYER_NAME_FONT
-        renderer.drawWorldText(font, name, x + width / 2f, y + height, true)
+        renderer.drawWorldText(font, name, centerX, y + height, true)
     }
 
     companion object {

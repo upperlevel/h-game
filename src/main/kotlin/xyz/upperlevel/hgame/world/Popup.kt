@@ -20,8 +20,9 @@ class Popup(val world: World, val id: Int, var text: String, var x: Float, var y
     }
 
     fun renderHud(renderer: WorldRenderer.UIRenderer) {
-        DefaultFont.DAMAGE_POPUP_FONT.color.a = fade
-        renderer.drawWorldText(DefaultFont.DAMAGE_POPUP_FONT, text, x, y)
+        val font = DefaultFont.DAMAGE_POPUP_FONT
+        font.color.a = fade
+        renderer.drawWorldText(font, text, x, y)
     }
 
     fun hide() {
@@ -29,7 +30,7 @@ class Popup(val world: World, val id: Int, var text: String, var x: Float, var y
     }
 
     companion object {
-        const val RAPTURE = 0.75f
-        const val RAPTURE_SPEED = 1.0f
+        const val RAPTURE = 1.0f
+        const val RAPTURE_SPEED = 0.8f
     }
 }

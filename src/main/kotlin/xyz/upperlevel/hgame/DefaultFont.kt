@@ -15,7 +15,7 @@ object DefaultFont {
         val generator = FreeTypeFontGenerator(Gdx.files.internal("font.ttf"))
         val parameter = FreeTypeFontGenerator.FreeTypeFontParameter()
 
-        parameter.size = 8
+        parameter.size = 12
         parameter.color = Color.RED
         parameter.borderWidth = 1f
         parameter.borderColor = Color.BLACK

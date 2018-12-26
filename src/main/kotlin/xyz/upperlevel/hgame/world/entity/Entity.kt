@@ -51,6 +51,9 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
 
     var behaviour: BehaviourManager? = null
 
+    open val maxLife = 1.0f
+    var life = maxLife
+
     private var destroyed = false
 
     init {
@@ -81,12 +84,21 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         behaviour?.onPrePhysics()
     }
 
-    fun render(renderer: WorldRenderer) {
+    open fun render(renderer: WorldRenderer) {
         if (left != sprite.isFlipX) {
             sprite.flip(true, false)
         }
         sprite.setPosition(x, y)
         sprite.draw(renderer.spriteBatch)
+    }
+
+    open fun renderHud(renderer: WorldRenderer.UIRenderer) {
+        // No HUD is rendered for default entity.
+    }
+
+    fun damage(amount: Float) {
+        life -= amount
+        world.showPopup("%.2f".format(amount), x + width / 2f, y + height / 2f)
     }
 
     fun impulse(powerX: Float, powerY: Float, pointX: Float, pointY: Float, sendPacket: Boolean = true) {

@@ -1,6 +1,7 @@
 package xyz.upperlevel.hgame.world
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -22,8 +23,8 @@ import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 class World {
-    var height = 0.0f
-    var groundHeight = 0.0f
+    var height = 15.0f
+    var groundHeight = 1.0f
 
     val physics = PhysicsWorld(Vector2(0f, -9.8f), true)
     var physicsAccumulator = 0f
@@ -35,6 +36,11 @@ class World {
     private val _effects: MutableList<ParticleEffect> = ArrayList()
     val effects: List<ParticleEffect>
         get() = _effects
+
+    private var nextPopupId = 0
+    private val _popups: MutableMap<Int, Popup> = HashMap()
+    val popups: Collection<Popup>
+        get() = ArrayList(_popups.values)
 
     var player: Entity? = null
         private set
@@ -51,8 +57,6 @@ class World {
     lateinit var endpoint: Endpoint
 
     init {
-        height = 15.0f
-        groundHeight = 1.0f
         physics.setContactListener(EventContactListener(events))
 
         events.register(EntityGroundListener()) // Listen for ground contacts
@@ -106,6 +110,16 @@ class World {
         effect.start()
     }
 
+    fun showPopup(text: String, x: Float, y: Float): Int {
+        val id = nextPopupId++
+        _popups[id] = Popup(this, id, text, x, y)
+        return id
+    }
+
+    fun hidePopup(id: Int) {
+        _popups.remove(id)
+    }
+
     private fun doPhysicsStep(deltaTime: Float) {
         // fixed time step
 
@@ -123,11 +137,19 @@ class World {
         entityRegistry.clearDestroyedBodies()
     }
 
-    fun update(endpoint: Endpoint) { // TODO endpoint here?
+    fun update() {
         if (!isReady) return
         // Updates
         doPhysicsStep(Gdx.graphics.deltaTime)
+
+        // TODO: Just to debug!!!
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            player!!.damage(0.5f)
+        }
+
         entityRegistry.entities.forEach { e -> e.update() }
+
+        popups.forEach { popup -> popup.update() }
 
         _effects.removeIf { effect -> effect.isComplete }
     }

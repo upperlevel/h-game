@@ -93,7 +93,7 @@ class TrainScreen(val username: String) : ScreenAdapter() {
 
     override fun render(delta: Float) {
         world.let {
-            world?.update(endpoint)
+            world?.update()
 
             playerPosition.setText("Position: %.2f %.2f".format(world?.player?.x, world?.player?.y))
             playerBehaviour.setText("Current behaviour: %s".format(world?.player?.behaviour?.toString()))

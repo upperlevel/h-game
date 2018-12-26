@@ -8,9 +8,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
+import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
+import xyz.upperlevel.hgame.world.WorldRenderer
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics
@@ -22,9 +24,6 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
     var friction: Float
         get() = body.fixtureList[0].friction
         set(value) { body.fixtureList[0].friction = value }
-
-    open val maxLife = 1.0f
-    var life = maxLife
 
     open val maxEnergy = 1.0f
     var energy = 0f
@@ -89,7 +88,6 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
     }
 
     open fun jump() {
-        logger.info("JUMPING")
         body.applyLinearImpulse(Vector2(0f, jumpForce), body.worldCenter, true)
         if (active) {
             behaviour?.endpoint?.send(PlayerJumpPacket(id))
@@ -112,6 +110,11 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
         if (life < 0) {
             // TODO: Dead
         }
+    }
+
+    override fun renderHud(renderer: WorldRenderer.UIRenderer) {
+        val font = DefaultFont.PLAYER_NAME_FONT
+        renderer.drawWorldText(font, name, x + width / 2f, y + height, true)
     }
 
     companion object {

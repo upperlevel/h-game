@@ -35,7 +35,7 @@ class GameScreen(val username: String) : ScreenAdapter() {
     }
 
     override fun render(delta: Float) {
-        world.update(endpoint!!)
+        world.update()
 
         // Render
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)

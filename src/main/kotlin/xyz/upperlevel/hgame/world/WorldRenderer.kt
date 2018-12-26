@@ -42,6 +42,7 @@ class WorldRenderer(val world: World) {
 
         spriteBatch.begin()
         world.entities.forEach { actor -> actor.render(this) }
+        world.effects.forEach { effect -> effect.draw(spriteBatch, Gdx.graphics.deltaTime) } // TODO use the same spriteBatch?
         spriteBatch.end()
 
         debugRenderer.render(world.physics, camera.combined)

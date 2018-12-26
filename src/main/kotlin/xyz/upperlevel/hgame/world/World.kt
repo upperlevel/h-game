@@ -1,6 +1,7 @@
 package xyz.upperlevel.hgame.world
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
@@ -16,6 +17,7 @@ import xyz.upperlevel.hgame.world.entity.Entity
 import xyz.upperlevel.hgame.world.entity.EntityTypes
 import xyz.upperlevel.hgame.world.entity.ThrowableEntity
 import xyz.upperlevel.hgame.world.entity.EntityRegistry
+import xyz.upperlevel.hgame.world.entity.impl.MikrotikEntity
 import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
@@ -29,6 +31,10 @@ class World {
     val events = EventChannel()
 
     private val entityRegistry = EntityRegistry(this)
+
+    private val _effects: MutableList<ParticleEffect> = ArrayList()
+    val effects: List<ParticleEffect>
+        get() = _effects
 
     var player: Entity? = null
         private set
@@ -56,8 +62,14 @@ class World {
             val entityA = event.contact.fixtureA.body.userData
             val entityB = event.contact.fixtureB.body.userData
 
-            if (entityA is ThrowableEntity && entityA.thrower != entityB) despawn(entityA)
-            if (entityB is ThrowableEntity && entityB.thrower != entityA) despawn(entityB)
+            var collided: MikrotikEntity? = null
+            if (entityA is MikrotikEntity && entityA.thrower != entityB) collided = entityA
+            if (entityB is MikrotikEntity && entityB.thrower != entityA) collided = entityB
+
+            if (collided != null) {
+                collided.explode()
+                despawn(collided)
+            }
         })
 
         events.register(FixtureSensorCaller())
@@ -102,6 +114,15 @@ class World {
         entityRegistry.spawn(entity)
     }
 
+    fun doEffect(effect: ParticleEffect, x: Float, y: Float) {
+        _effects.add(effect)
+
+        effect.setPosition(x, y)
+        effect.scaleEffect(0.1f)
+
+        effect.start()
+    }
+
     private fun doPhysicsStep(deltaTime: Float) {
         // fixed time step
 
@@ -124,6 +145,8 @@ class World {
         // Updates
         doPhysicsStep(Gdx.graphics.deltaTime)
         entityRegistry.entities.forEach { e -> e.update(this) }
+
+        _effects.removeIf { effect -> effect.isComplete }
     }
 
     fun despawn(entity: Entity) {

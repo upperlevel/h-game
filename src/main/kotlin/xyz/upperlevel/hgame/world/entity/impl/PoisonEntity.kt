@@ -25,7 +25,7 @@ class PoisonEntity(world: World, active: Boolean) : ThrowableEntity(EntityTypes.
             highMax = width
         }
 
-        world.doEffect(effect, x, y + height)
+        world.doEffect(effect, x - width / 2f, y + height)
 
         Sequence.create()
                 .delay(duration.toLong())
@@ -36,6 +36,6 @@ class PoisonEntity(world: World, active: Boolean) : ThrowableEntity(EntityTypes.
     }
 
     fun updatePos() {
-        effect.setPosition(x, y)
+        effect.setPosition(x - width / 2f, y)
     }
 }

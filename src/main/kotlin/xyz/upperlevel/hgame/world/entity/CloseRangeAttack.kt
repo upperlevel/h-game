@@ -29,7 +29,7 @@ class CloseRangeAttack(val player: Player) {
             shape = PolygonShape().apply {
                 val w = Player.WIDTH / 4f
                 val h = Player.HEIGHT / 2f
-                setAsBox(w, h, Vector2(w * 3, h), 0f)
+                setAsBox(w, h, Vector2(-w, h), 0f)
             }
             isSensor = true
         }

@@ -28,7 +28,7 @@ interface EntityType {
             shape = PolygonShape().apply {
                 val w = width / 2f
                 val h = height / 2f
-                setAsBox(w, h, Vector2(w, h), 0f)
+                setAsBox(w, h, Vector2(0f, h), 0f)
             }
             density = 1f
             filter.apply {

@@ -47,7 +47,7 @@ class Santy : EntityType {
                     .repeat({ _, time -> setFrame(time + 4, 3) }, 200, 5)
                     .act {
                         val entity = EntityTypes.POISON.create(world)
-                        entity.x = x
+                        entity.x = x + POISON_THROW_DISTANCE * (if (left) -1f else 1f)
                         entity.y = y - entity.height
                         entity.updatePos()
                         world.spawn(entity)
@@ -59,5 +59,7 @@ class Santy : EntityType {
 
     companion object {
         private val logger = LogManager.getLogger()
+
+        const val POISON_THROW_DISTANCE = 2.25f
     }
 }

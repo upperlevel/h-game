@@ -124,34 +124,5 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
         const val HEIGHT = 2.0f
 
         private val logger = LogManager.getLogger()
-
-        val bodyDef: BodyDef
-        val bodyFixtureDef: FixtureDef
-
-        init {
-            bodyDef = BodyDef().apply {
-                fixedRotation = true
-                type = BodyDef.BodyType.DynamicBody
-            }
-
-            bodyFixtureDef = FixtureDef().apply {
-                shape = PolygonShape().apply {
-                    val w = WIDTH / 2f
-                    val h = HEIGHT / 2f
-                    setAsBox(w, h, Vector2(w, h), 0f)
-                }
-                density = 1f
-                filter.apply {
-                    categoryBits = 0x2 // Category 0x2 (default is 0x1)
-                    maskBits = 0x2.inv()// Collides with everything but 0x2
-                }
-            }
-        }
-
-        private fun createBody(physics: Physics): Body {
-            val body = physics.createBody(bodyDef)
-            body.createFixture(bodyFixtureDef)
-            return body
-        }
     }
 }

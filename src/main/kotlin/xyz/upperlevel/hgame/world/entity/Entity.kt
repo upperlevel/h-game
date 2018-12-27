@@ -27,8 +27,8 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         get() = entityType.height
 
     var x: Float
-        get() = body.position.x + width / 2f
-        set(value) = body.setTransform(value - width / 2f, y, 0f)
+        get() = body.position.x
+        set(value) = body.setTransform(value, y, 0f)
 
     var y: Float
         get() = body.position.y
@@ -147,7 +147,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
         return FixtureDef().apply {
             isSensor = true
             shape = PolygonShape().apply {
-                setAsBox(width / 2, 0.1f, Vector2(width / 2f, 0f), 0f)
+                setAsBox(width / 2, 0.1f)
             }
         }
     }
@@ -160,7 +160,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
     open fun onReset(data: Map<String, Any>) {
         val x = data["x"] as Number
         val y = data["y"] as Number
-        body.setTransform(x.toFloat() - width / 2f, y.toFloat(), 0f)
+        body.setTransform(x.toFloat(), y.toFloat(), 0f)
     }
 
     open fun render(renderer: WorldRenderer) {

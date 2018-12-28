@@ -16,127 +16,31 @@ plugins {
 group "xyz.upperlevel.hgame"
 version "1.0"
 
-apply plugin: "idea"
-apply plugin: "distribution"
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "application"
+allprojects {
+    apply plugin: "idea"
+    apply plugin: "kotlin"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+        google()
+    }
 
-shadowJar {
-    baseName = project.name
-    classifier = null
-    version = null
-}
-project.tasks.assemble.dependsOn project.tasks.shadowJar
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    jcenter()
-    google()
-}
-
-ext {
-    appName = "my-gdx-game"
-    gdxVersion = '1.9.9'
-    roboVMVersion = '2.3.3'
-    box2DLightsVersion = '1.4'
-    ashleyVersion = '1.7.0'
-    aiVersion = '1.8.0'
-}
-
-switch (OperatingSystem.current()) {
-    case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
-        break
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = "natives-macos"
-        break
-}
-
-dependencies {
-    testCompile group: "junit", name: "junit", version: "4.12"
-
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.7"
-
-    compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
-    compile group: 'io.netty', name: 'netty-all', version: '4.1.31.Final'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
-
-    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-
-    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-
-    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-
-distributions {
-    game {
-        baseName = "game"
-        contents {
-            from {
-                project.tasks.shadowJar
-            }
-            from {
-                project.uri("src/main/dist")
-            }
-            into("resources") {
-                from {
-                    project.uri("src/main/resources")
-                }
-            }
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
         }
     }
 }
 
-task setup {
-    dependsOn "installGameDist"
+project(":game") {
 }
 
-mainClassName = "xyz.upperlevel.hgame.HGame"
-
-// The application plugin sets up some tasks not relevant to us (we don't want to run the jar directly)
-tasks.remove(tasks.run)
-tasks.remove(tasks.runShadow)
-
-task start(type: Exec, overwrite: true) {
-    dependsOn "setup"
-
-    commandLine "java", "-jar", "h-game.jar"
-}
-start.workingDir = installGameDist.destinationDir
-
-jar {
-    manifest {
-        attributes (
-                // Needed by log4j2
-                "Multi-Release": true
-        )
-    }
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}

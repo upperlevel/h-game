@@ -97,7 +97,7 @@ class SelectHostScene(val username: String) : ScreenAdapter() {
                 }
 
                 val game = GameScreen()
-                val charChoice = CharacterChoiceScreen(username, game)
+                val charChoice = CharacterChoiceScreen(username, game.world, game)
                 val connScreen = WaitingConnectionScreen(endpoint, charChoice)
 
                 game.connect(endpoint)

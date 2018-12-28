@@ -23,13 +23,15 @@ import xyz.upperlevel.hgame.event.EventListener
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
 import xyz.upperlevel.hgame.runSync
+import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.entity.EntityTypes
 import xyz.upperlevel.hgame.world.player.PlayerEntityType
 
 class CharacterChoiceScreen(
         val username: String,
-        private val nextScreen: GameScreen) : ScreenAdapter() {
+        val world: World,
+        private val nextScreen: Screen) : ScreenAdapter() {
 
     private var stage: Stage = Stage(ScreenViewport())
     private var skin: Skin = Skin()
@@ -121,7 +123,7 @@ class CharacterChoiceScreen(
         TextButton("Ok", skin).apply {
             addListener(object : ChangeListener() {
                 override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                    nextScreen.world.spawnPlayer(username, currentPlayer)
+                    world.spawnPlayer(username, currentPlayer)
                     HGame.get().screen = nextScreen
                 }
             })

@@ -19,7 +19,7 @@ import xyz.upperlevel.hgame.world.WorldRenderer
 import xyz.upperlevel.hgame.world.entity.EntityTypes
 
 
-class TrainScreen(val username: String) : ScreenAdapter() {
+class TrainScreen() : ScreenAdapter() {
     // UI
     private var stage: Stage = Stage(ScreenViewport())
 
@@ -27,9 +27,11 @@ class TrainScreen(val username: String) : ScreenAdapter() {
     private var playerBehaviour: Label
 
     // Game
+
+    // Fake endpoint. We don't need network for the training session.
     private var endpoint = DisconnectedEndpoint()
 
-    private var world: World? = null
+    var world: World = World()
     private var renderer: WorldRenderer? = null
 
     init {
@@ -67,20 +69,14 @@ class TrainScreen(val username: String) : ScreenAdapter() {
 
         table.pack()
         stage.addActor(table)
+
+        world.initEndpoint(endpoint)
     }
 
     override fun show() {
         Gdx.input.inputProcessor = stage
 
-        // Fake endpoint. We don't need network for the training session.
-        endpoint = DisconnectedEndpoint()
-
-        world = World().also {
-            it.initEndpoint(endpoint)
-            it.spawnPlayer(username, EntityTypes.MIXTER)
-        }
-
-        renderer = WorldRenderer(world!!)
+        renderer = WorldRenderer(world)
     }
 
     override fun hide() {
@@ -94,10 +90,10 @@ class TrainScreen(val username: String) : ScreenAdapter() {
 
     override fun render(delta: Float) {
         world.let {
-            world?.update()
+            world.update()
 
-            playerPosition.setText("Position: %.2f %.2f".format(world?.player?.x, world?.player?.y))
-            playerBehaviour.setText("Current behaviour: %s".format(world?.player?.behaviour?.toString()))
+            playerPosition.setText("Position: %.2f %.2f".format(world.player?.x, world.player?.y))
+            playerBehaviour.setText("Current behaviour: %s".format(world.player?.behaviour?.toString()))
 
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
             renderer?.render()

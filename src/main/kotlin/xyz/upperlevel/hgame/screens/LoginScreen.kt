@@ -99,7 +99,9 @@ class LoginScreen : ScreenAdapter() {
         trainButton.addListener(object : ChangeListener() {
             override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
                 if (trainButton.isPressed) {
-                    HGame.get().screen = TrainScreen(username.text)
+                    val train = TrainScreen()
+                    val selectChar = CharacterChoiceScreen(username.text, train.world, train)
+                    HGame.get().screen = selectChar
                 }
             }
         })

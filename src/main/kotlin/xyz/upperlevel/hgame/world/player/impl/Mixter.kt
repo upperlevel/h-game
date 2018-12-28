@@ -1,20 +1,24 @@
-package xyz.upperlevel.hgame.world.entity.impl
+package xyz.upperlevel.hgame.world.player.impl
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.entity.*
+import xyz.upperlevel.hgame.world.entity.impl.MikrotikEntity
+import xyz.upperlevel.hgame.world.player.CloseRangeAttack
+import xyz.upperlevel.hgame.world.player.Player
+import xyz.upperlevel.hgame.world.player.PlayerEntityType
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
-class Mixter : EntityType {
+class Mixter : PlayerEntityType() {
     override val id = "mixter"
     override val texturePath = "mixter.png"
 
     override val width = 2f
     override val height = 2f
 
-    override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
+    override fun createSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 3, 4)
     }
 

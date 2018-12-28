@@ -16,6 +16,7 @@ import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.network.DisconnectedEndpoint
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.entity.EntityTypes
 
 
 class TrainScreen(val username: String) : ScreenAdapter() {
@@ -75,8 +76,8 @@ class TrainScreen(val username: String) : ScreenAdapter() {
         endpoint = DisconnectedEndpoint()
 
         world = World().also {
-            it.initEndpoint(endpoint, username)
-            it.onGameStart(endpoint, username)
+            it.initEndpoint(endpoint)
+            it.spawnPlayer(username, EntityTypes.MIXTER)
         }
 
         renderer = WorldRenderer(world!!)

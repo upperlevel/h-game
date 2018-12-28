@@ -9,11 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 import xyz.upperlevel.hgame.world.entity.EntitySpawnEvent
 
 class HudRenderer(world: World) {

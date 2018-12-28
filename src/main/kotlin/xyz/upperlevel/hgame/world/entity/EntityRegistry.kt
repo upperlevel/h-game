@@ -7,6 +7,8 @@ import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
 import xyz.upperlevel.hgame.runSync
 import xyz.upperlevel.hgame.world.World
+import xyz.upperlevel.hgame.world.player.Player
+import xyz.upperlevel.hgame.world.player.PlayerJumpPacket
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class EntityRegistry(val world: World) {

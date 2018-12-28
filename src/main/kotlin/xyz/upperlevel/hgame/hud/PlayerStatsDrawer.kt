@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 
 
 class PlayerStatsDrawer(val flip: Boolean) : BaseDrawable() {

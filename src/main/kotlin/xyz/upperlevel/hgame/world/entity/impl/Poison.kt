@@ -12,14 +12,14 @@ import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.entity.SpriteExtractor
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
-class Poison : EntityType {
+class Poison : EntityType() {
     override val id = "poison"
     override val texturePath = "poison.png"
 
     override val width = 37f / 10f
     override val height = 5f / 10f
 
-    override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
+    override fun createSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 1, 1)
     }
 

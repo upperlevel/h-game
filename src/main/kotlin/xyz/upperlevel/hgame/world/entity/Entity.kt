@@ -55,6 +55,7 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
 
     private val sprite: Sprite
     private val regions: Array<Array<TextureRegion>>
+        get() = entityType.regions
     var color: Color = Color.WHITE
 
     var behaviour: BehaviourManager? = null
@@ -68,11 +69,8 @@ open class Entity(val entityType: EntityType, val world: World, val active: Bool
     init {
         body.userData = this
 
-        val texture = Texture(Gdx.files.internal("images/" + entityType.texturePath))
-
-        sprite = Sprite(texture)
+        sprite = Sprite(entityType.texture)
         sprite.setSize(width, height)
-        regions = entityType.getSprites(texture)
     }
 
     fun setPosition(x: Float, y: Float) {

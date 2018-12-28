@@ -2,7 +2,7 @@ package xyz.upperlevel.hgame
 
 import xyz.upperlevel.hgame.input.BehaviourChangePacket
 import xyz.upperlevel.hgame.network.Protocol
-import xyz.upperlevel.hgame.world.entity.PlayerJumpPacket
+import xyz.upperlevel.hgame.world.player.PlayerJumpPacket
 import xyz.upperlevel.hgame.world.entity.*
 
 object GameProtocol {

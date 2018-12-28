@@ -8,7 +8,7 @@ import xyz.upperlevel.hgame.input.move.IdleBehaviour
 import xyz.upperlevel.hgame.input.move.WalkLeftBehaviour
 import xyz.upperlevel.hgame.input.move.WalkRightBehaviour
 import xyz.upperlevel.hgame.network.Endpoint
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 
 /**
  * This class manages various BehaviourGraphs organized as layers

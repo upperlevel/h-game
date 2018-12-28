@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input
 import xyz.upperlevel.hgame.input.Behaviour
 import xyz.upperlevel.hgame.input.BehaviourLayer
 import xyz.upperlevel.hgame.world.World.Companion.TIME_STEP
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class IdleBehaviour(behaviourGraph: BehaviourLayer, val player: Player) : Behaviour(behaviourGraph, "idle", player) {

@@ -1,18 +1,18 @@
-package xyz.upperlevel.hgame.world.entity
+package xyz.upperlevel.hgame.world.player
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.FixtureDef
-import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
+import xyz.upperlevel.hgame.world.entity.Entity
+import xyz.upperlevel.hgame.world.entity.EntitySpawnPacket
+import xyz.upperlevel.hgame.world.entity.EntityType
+import xyz.upperlevel.hgame.world.entity.PlayerSpawnPacket
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
 import com.badlogic.gdx.physics.box2d.World as Physics

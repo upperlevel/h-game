@@ -2,7 +2,7 @@ package xyz.upperlevel.hgame.input.attack
 
 import xyz.upperlevel.hgame.input.Behaviour
 import xyz.upperlevel.hgame.input.BehaviourLayer
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 import xyz.upperlevel.hgame.world.sequence.Sequence
 
 class AttackBehaviour(layer: BehaviourLayer, player: Player) : Behaviour(layer, "attack", player) {

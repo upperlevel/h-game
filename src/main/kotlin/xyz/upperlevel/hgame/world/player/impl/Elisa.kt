@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.world.entity.impl
+package xyz.upperlevel.hgame.world.player.impl
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
@@ -7,19 +7,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.entity.EntityTypes
-import xyz.upperlevel.hgame.world.entity.Player
+import xyz.upperlevel.hgame.world.player.Player
 import xyz.upperlevel.hgame.world.entity.SpriteExtractor
+import xyz.upperlevel.hgame.world.player.PlayerEntityType
 import xyz.upperlevel.hgame.world.sequence.Sequence
+import java.util.*
+import javax.swing.plaf.synth.Region
 
 
-class Elisa : EntityType {
+class Elisa : PlayerEntityType() {
     override val id = "elisa"
     override val texturePath = "elisa.png"
 
     override val width = 2f
     override val height = 2f
 
-    override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
+    override fun createSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 4, 4)
     }
 

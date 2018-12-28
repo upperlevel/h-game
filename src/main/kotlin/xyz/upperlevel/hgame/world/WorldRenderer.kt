@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.hud.HudRenderer
-import xyz.upperlevel.hgame.world.entity.Player
 
 class WorldRenderer(val world: World) {
     val worldCamera: OrthographicCamera = OrthographicCamera()

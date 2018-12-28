@@ -9,17 +9,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import org.apache.logging.log4j.LogManager
 import xyz.upperlevel.hgame.event.EventChannel
-import xyz.upperlevel.hgame.event.EventListener
 import xyz.upperlevel.hgame.network.Endpoint
 import xyz.upperlevel.hgame.network.NetSide
-import xyz.upperlevel.hgame.network.events.ConnectionOpenEvent
-import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.entity.Entity
-import xyz.upperlevel.hgame.world.entity.EntityTypes
-import xyz.upperlevel.hgame.world.entity.ThrowableEntity
-import xyz.upperlevel.hgame.world.entity.EntityRegistry
-import xyz.upperlevel.hgame.world.entity.impl.MikrotikEntity
-import xyz.upperlevel.hgame.world.events.PhysicContactBeginEvent
+import xyz.upperlevel.hgame.world.entity.*
+import xyz.upperlevel.hgame.world.player.Player
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 class World {
@@ -80,11 +73,11 @@ class World {
         ground.userData = GROUND_DATA// Used in ground touch listener
     }
 
-    fun onGameStart(endpoint: Endpoint, name: String) {
+    fun spawnPlayer(name: String, type: EntityType) {
         var x = 20 / 4
         if (isMaster) x += 20 / 2
 
-        val entity = EntityTypes.SANTY.create(this)
+        val entity = type.create(this) as Player
         entity.setPosition(x.toFloat(), 0f)
         entity.left = isMaster
         entity.name = name
@@ -158,15 +151,11 @@ class World {
         entityRegistry.despawn(entity)
     }
 
-    fun initEndpoint(endpoint: Endpoint, username: String) {
+    fun initEndpoint(endpoint: Endpoint) {
         this.endpoint = endpoint
         isMaster = endpoint.side == NetSide.MASTER
 
         entityRegistry.initEndpoint(endpoint)
-
-        endpoint.events.register(EventListener.listener(ConnectionOpenEvent::class.java, {
-            runSync { this.onGameStart(endpoint, username) }
-        }))
     }
 
     companion object {

@@ -11,14 +11,14 @@ import xyz.upperlevel.hgame.world.entity.ThrowableEntity
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 
-class Mikrotik : EntityType, Listener {
+class Mikrotik : EntityType(), Listener {
     override val id = "mikrotik"
     override val texturePath = "mikrotik.png"
 
     override val width = .5f
     override val height = .5f
 
-    override fun getSprites(texture: Texture): Array<Array<TextureRegion>> {
+    override fun createSprites(texture: Texture): Array<Array<TextureRegion>> {
         return SpriteExtractor.grid(texture, 5, 1)
     }
 

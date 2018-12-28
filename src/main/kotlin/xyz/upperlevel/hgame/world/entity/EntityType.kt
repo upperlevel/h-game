@@ -1,5 +1,6 @@
 package xyz.upperlevel.hgame.world.entity
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
@@ -11,14 +12,18 @@ import xyz.upperlevel.hgame.world.World
 import com.badlogic.gdx.physics.box2d.World as PhysicsWorld
 
 
-interface EntityType {
-    val id: String
-    val texturePath: String
+abstract class EntityType {
+    abstract val id: String
+    abstract val texturePath: String
 
-    val width: Float
-    val height: Float
+    abstract val width: Float
+    abstract val height: Float
 
-    fun createBody(world: PhysicsWorld): Body {
+    val texture by lazy { Texture(Gdx.files.internal("images/$texturePath")) }
+
+    val regions by lazy { createSprites(texture) }
+
+    open fun createBody(world: PhysicsWorld): Body {
         val bodyDef = BodyDef().apply {
             fixedRotation = true
             type = BodyDef.BodyType.DynamicBody
@@ -41,9 +46,9 @@ interface EntityType {
         return body
     }
 
-    fun getSprites(texture: Texture): Array<Array<TextureRegion>>
+    abstract fun createSprites(texture: Texture): Array<Array<TextureRegion>>
 
-    fun create(world: World, active: Boolean = true): Entity
+    abstract fun create(world: World, active: Boolean = true): Entity
 }
 
 

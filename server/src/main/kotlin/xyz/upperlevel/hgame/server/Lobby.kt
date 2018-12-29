@@ -17,12 +17,15 @@ class Lobby(
     val state: LobbyState
         get() = _state
 
-    private var players = HashSet<Player>()
+    private var _players = HashSet<Player>()
+
+    val players: Set<Player>
+        get() = _players
 
     fun onQuit(player: Player) {
-        players.remove(player)
+        _players.remove(player)
 
-        if (players.isEmpty()) {
+        if (_players.isEmpty()) {
             _state = LobbyState.DONE
             registry.onLobbyDelete(this)
         }
@@ -35,24 +38,24 @@ class Lobby(
             LobbyState.PLAYING -> return "game already started"
             LobbyState.DONE -> return "lobby expired"
         }
-        if (player in players) return "player already in lobby"
-        if (players.size >= maxPlayers) return "max players reached"
+        if (player in _players) return "player already in lobby"
+        if (_players.size >= maxPlayers) return "max players reached"
 
-        players.add(player)
+        _players.add(player)
+        player.lobby = this
         return null
     }
 
     fun refreshReady() {
         if (state != LobbyState.PRE_GAME) return
-        if (players.all { it.ready }) {
+        if (_players.all { it.ready }) {
             startGame()
         }
     }
 
     fun startGame() {
-        val packet = MatchBeginPacket(id)
-        players.forEach {
-            it.channel.writeAndFlush(packet)
+        _players.forEachIndexed { index, player ->
+            player.channel.writeAndFlush(MatchBeginPacket(player.name!!, index))
         }
     }
 
@@ -60,7 +63,7 @@ class Lobby(
         return CurrentLobbyInfoPacket(
                 id,
                 name,
-                players.map { it.name!! },
+                _players.map { it.name!! },
                 maxPlayers
         )
     }

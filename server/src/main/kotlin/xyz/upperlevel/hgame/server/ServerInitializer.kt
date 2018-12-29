@@ -2,11 +2,10 @@ package xyz.upperlevel.hgame.server
 
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.socket.SocketChannel
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
-import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler
 import io.netty.handler.codec.http.HttpObjectAggregator
 import io.netty.handler.codec.http.HttpServerCodec
-import xyz.upperlevel.hgame.matchmaking.MatchMakingCodec
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler
 
 
 class ServerInitializer(
@@ -19,7 +18,6 @@ class ServerInitializer(
                 .addLast(HttpObjectAggregator(65536))
                 .addLast(WebSocketServerCompressionHandler())
                 .addLast(WebSocketServerProtocolHandler("/", null, true))
-                .addLast(MatchMakingCodec())
-                .addLast(MatchMakingMessageHandler(playerRegistry, lobbyRegistry))
+                .addLast(ConnectionHandshakeHandler(playerRegistry, lobbyRegistry))
     }
 }

@@ -13,9 +13,9 @@ class MatchMakingMessageHandler(
 
     lateinit var player: Player
 
-    override fun channelActive(ctx: ChannelHandlerContext) {
-        super.channelActive(ctx)
+    override fun handlerAdded(ctx: ChannelHandlerContext) {
         player = playerRegistry.onConnect(ctx.channel())
+        super.handlerAdded(ctx)
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext, packet: MatchMakingPacket) {
@@ -24,11 +24,13 @@ class MatchMakingMessageHandler(
 
         if (player.name == null) {
             // Login needed
-            if (packet !is LoginPacket) {
-                ctx.writeAndFlush(OperationResultPacket("Login needed"))
-            } else {
-                player.name = packet.name
-                ctx.writeAndFlush(OperationResultPacket(null))
+            when {
+                packet !is LoginPacket -> ctx.writeAndFlush(OperationResultPacket("Login needed"))
+                !playerRegistry.onLogin(player, packet.name) -> ctx.writeAndFlush(OperationResultPacket("Name already taken"))
+                else -> {
+                    player.name = packet.name
+                    ctx.writeAndFlush(OperationResultPacket(null))
+                }
             }
             return
         }

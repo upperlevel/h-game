@@ -29,7 +29,7 @@ class MatchMakingCodec : MessageToMessageCodec<WebSocketFrame, MatchMakingPacket
         val content = text.substring(separator + 1)
 
         val payloadClass = MatchMakingPackets.nameToPacket[name]
-                ?: throw RuntimeException("Unknown packet name: $name")
+                ?: throw RuntimeException("Unknown packet name: '$name'")
 
         val payload = json.readValue(content, payloadClass)
         out.add(payload)

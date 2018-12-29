@@ -28,7 +28,17 @@ allprojects {
         jcenter()
         google()
     }
+    
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
 
+        compile group: 'io.netty', name: 'netty-all', version: '4.1.31.Final'
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
+        compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.7"
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    }
     compileKotlin {
         kotlinOptions {
             jvmTarget = "1.8"
@@ -39,8 +49,5 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
-}
-
-project(":game") {
 }
 

@@ -1,6 +1,6 @@
 package xyz.upperlevel.hgame.server
 
-import xyz.upperlevel.hgame.matchmaking.CurrenLobbyInfoPacket
+import xyz.upperlevel.hgame.matchmaking.CurrentLobbyInfoPacket
 import xyz.upperlevel.hgame.matchmaking.MatchBeginPacket
 
 class Lobby(
@@ -56,8 +56,8 @@ class Lobby(
         }
     }
 
-    fun toInfoPacket(): CurrenLobbyInfoPacket {
-        return CurrenLobbyInfoPacket(
+    fun toInfoPacket(): CurrentLobbyInfoPacket {
+        return CurrentLobbyInfoPacket(
                 id,
                 name,
                 players.map { it.name!! },

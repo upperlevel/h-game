@@ -39,7 +39,7 @@ data class LobbyDiscoverResponsePacket(val lobbies: List<LobbyDiscoverInfo>) : M
 
 data class MatchBeginPacket(val id: Long) : MatchMakingPacket()
 
-data class CurrenLobbyInfoPacket(
+data class CurrentLobbyInfoPacket(
         val id: Long,
         val name: String,
         val players: List<String>,
@@ -59,7 +59,7 @@ object MatchMakingPackets {
             ReadyToPlayPacket::class.java to "ready",
             // server -> client
             MatchBeginPacket::class.java to "match_begin",
-            CurrenLobbyInfoPacket::class.java to "current_lobby",
+            CurrentLobbyInfoPacket::class.java to "current_lobby",
             OperationResultPacket::class.java to "result"
     )
     val nameToPacket = packetToName.entries.associate { (k, v) -> v to k }

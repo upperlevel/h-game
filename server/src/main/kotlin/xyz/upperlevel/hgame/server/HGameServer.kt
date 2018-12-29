@@ -11,7 +11,7 @@ object HGameServer {
     val port: Int = Integer.getInteger("port", 9080)
 
     val playerRegistry = PlayerRegistry()
-    val roomRegistry = RoomRegistry()
+    val lobbyRegistry = LobbyRegistry()
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -22,7 +22,7 @@ object HGameServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel::class.java)
                     .handler(LoggingHandler(LogLevel.INFO))
-                    .childHandler(ServerInitializer(playerRegistry, roomRegistry))
+                    .childHandler(ServerInitializer(playerRegistry, lobbyRegistry))
 
             val ch = b.bind(port).sync().channel()
             ch.closeFuture().sync()

@@ -12,6 +12,6 @@ class PlayerRegistry {
     fun onDisconnect(channel: Channel) {
         val player = playersByChannel.remove(channel) ?: return
 
-        player.room?.onQuit(player)
+        player.lobby?.onQuit(player)
     }
 }

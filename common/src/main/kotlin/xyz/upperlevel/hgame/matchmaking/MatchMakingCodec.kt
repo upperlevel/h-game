@@ -11,11 +11,9 @@ class MatchMakingCodec : MessageToMessageCodec<WebSocketFrame, MatchMakingPacket
     val json = jacksonObjectMapper()
 
     override fun encode(ctx: ChannelHandlerContext, msg: MatchMakingPacket, out: MutableList<Any>) {
-        val name = when (msg) {
-            is CreateRoomPacket -> "create_room"
-            is JoinRoomPacket -> "join_room"
-            else -> throw IllegalStateException("Unknown MatchMakingPacket: ${msg.javaClass}")
-        }
+        val name = MatchMakingPackets.packetToName[msg.javaClass]
+                ?: throw IllegalStateException("Unknown MatchMakingPacket: ${msg.javaClass}")
+
         val data = json.writeValueAsString(msg)
         out.add(TextWebSocketFrame(name + "\n" + data))
     }
@@ -30,13 +28,10 @@ class MatchMakingCodec : MessageToMessageCodec<WebSocketFrame, MatchMakingPacket
         val name = text.substring(0, separator)
         val content = text.substring(separator + 1)
 
-        val payloadClass = when(name) {
-            "create_room" -> CreateRoomPacket::class
-            "join_room" -> JoinRoomPacket::class
-            else -> throw RuntimeException("Unknown packet name: $name")
-        }
+        val payloadClass = MatchMakingPackets.nameToPacket[name]
+                ?: throw RuntimeException("Unknown packet name: $name")
 
-        val payload = json.readValue(content, payloadClass.java)
+        val payload = json.readValue(content, payloadClass)
         out.add(payload)
     }
 }

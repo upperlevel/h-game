@@ -11,7 +11,7 @@ import xyz.upperlevel.hgame.matchmaking.MatchMakingCodec
 
 class ServerInitializer(
         val playerRegistry: PlayerRegistry,
-        val roomRegistry: RoomRegistry) : ChannelInitializer<SocketChannel>() {
+        val lobbyRegistry: LobbyRegistry) : ChannelInitializer<SocketChannel>() {
     override fun initChannel(channel: SocketChannel) {
         val pipeline = channel.pipeline()
 
@@ -20,6 +20,6 @@ class ServerInitializer(
                 .addLast(WebSocketServerCompressionHandler())
                 .addLast(WebSocketServerProtocolHandler("/", null, true))
                 .addLast(MatchMakingCodec())
-                .addLast(MatchMakingMessageHandler(playerRegistry, roomRegistry))
+                .addLast(MatchMakingMessageHandler(playerRegistry, lobbyRegistry))
     }
 }

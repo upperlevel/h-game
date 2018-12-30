@@ -74,6 +74,7 @@ class MatchMakingMessageHandler(
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
+        player.invalidateSentInvites()
         playerRegistry.onDisconnect(ctx.channel())
         super.channelInactive(ctx)
     }

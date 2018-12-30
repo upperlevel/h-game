@@ -3,7 +3,6 @@ package xyz.upperlevel.hgame.server
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import xyz.upperlevel.hgame.matchmaking.*
-import java.lang.RuntimeException
 
 
 class MatchMakingMessageHandler(
@@ -28,7 +27,6 @@ class MatchMakingMessageHandler(
                 packet !is LoginPacket -> ctx.writeAndFlush(OperationResultPacket("Login needed"))
                 !playerRegistry.onLogin(player, packet.name) -> ctx.writeAndFlush(OperationResultPacket("Name already taken"))
                 else -> {
-                    player.name = packet.name
                     ctx.writeAndFlush(OperationResultPacket(null))
                 }
             }
@@ -36,48 +34,42 @@ class MatchMakingMessageHandler(
         }
 
         when (packet) {
-            is CreateLobbyPacket -> synchronized(lobbyRegistry) {
-                if (lobbyRegistry.getFromName(packet.name) != null) {
-                    ctx.writeAndFlush(OperationResultPacket("Lobby name already taken"))
-                    return
-                } else {
-                    ctx.writeAndFlush(OperationResultPacket(null))
-                }
-
-                val lobby = lobbyRegistry.create(
-                        player,
-                        packet.name,
-                        packet.private,
-                        packet.password,
-                        packet.maxPlayers
-                )
-                ctx.writeAndFlush(lobby.toInfoPacket())
-            }
-            is JoinLobbyPacket -> synchronized(lobbyRegistry) {
-                val lobby = lobbyRegistry.getFromName(packet.name)
-
-                if (lobby == null) {
-                    ctx.writeAndFlush(OperationResultPacket("Lobby not found"))
-                    return
-                }
-                val error = lobby.onJoin(player, packet.password)
-                ctx.writeAndFlush(OperationResultPacket(error))
-
-                if (error != null) {
-                    ctx.writeAndFlush(lobby.toInfoPacket())
-                }
-            }
-            is ReadyToPlayPacket -> {
-                val lobby = player.lobby
-                if (lobby == null) {
-                    ctx.writeAndFlush(OperationResultPacket("No lobby joined"))
-                    return
-                }
+            is PlayerLobbyInfoChangePacket -> synchronized(lobbyRegistry) {
+                player.character = packet.character
                 player.ready = packet.ready
+                // TODO: if player ready but no lobby joined then join a casual match
+
                 ctx.writeAndFlush(OperationResultPacket(null))
-                lobby.refreshReady()
+                player.lobby?.broadcastLobbyInfo()
             }
-            else -> throw RuntimeException("Invalid packet: $packet")
+            is InvitePacket -> synchronized(lobbyRegistry) {
+                val packetPlayer = playerRegistry.getByName(packet.player)
+                if (packetPlayer == null) {
+                    ctx.writeAndFlush(OperationResultPacket("Player not found"))
+                    return
+                }
+                when (packet.type) {
+                    InvitePacketType.INVITE_PLAYER -> {
+                        player.sendInvite(packetPlayer)
+                        // This can't fail (for now)
+                        ctx.writeAndFlush(OperationResultPacket(null))
+                        Unit
+                    }
+                    InvitePacketType.ACCEPT_INVITE -> {
+                        val error = player.acceptInvite(packetPlayer, lobbyRegistry)
+                        ctx.writeAndFlush(OperationResultPacket(error))
+                        if (error == null) {
+                            // Notify the other players of the new friend in the lobby
+                            player.lobby?.broadcastLobbyInfo()
+                        }
+                    }
+                    else -> {
+                        ctx.writeAndFlush(OperationResultPacket("Invalid invite type"))
+                        return
+                    }
+                }
+            }
+            else -> ctx.writeAndFlush(OperationResultPacket("Invalid packet type: ${packet.javaClass}"))
         }
     }
 

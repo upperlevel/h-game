@@ -11,7 +11,11 @@ class PlayerRegistry {
     }
 
     fun onLogin(player: Player, name: String): Boolean {
-        return playersByName.putIfAbsent(name, player) != null
+        if (playersByName.putIfAbsent(name, player) != null) {
+            return false
+        }
+        player.onLogin(name)
+        return true
     }
 
     fun onDisconnect(channel: Channel) {

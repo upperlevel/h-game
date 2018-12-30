@@ -24,19 +24,8 @@ open class MatchMakingPacket
 
 data class LoginPacket(val name: String) : MatchMakingPacket()
 
-data class CreateLobbyPacket(
-        val name: String,
-        val private: Boolean,
-        val password: String,
-        val maxPlayers: Int
-) : MatchMakingPacket()
-
-data class JoinLobbyPacket(
-        val name: String,
-        val password: String?
-) : MatchMakingPacket()
-
-data class ReadyToPlayPacket(
+data class PlayerLobbyInfoChangePacket(
+        val character: String,
         val ready: Boolean
 ) : MatchMakingPacket()
 
@@ -55,19 +44,55 @@ data class LobbyDiscoverResponsePacket(val lobbies: List<LobbyDiscoverInfo>) : M
 // -------- RESPONSES --------
 
 // The token is needed by the new connection to start a relay
+
 data class MatchBeginPacket(
         val token: String,
         val playerIndex: Int
 ) : MatchMakingPacket()
 
-data class CurrentLobbyInfoPacket(
-        val id: Long,
+data class LobbyPlayerInfo(
         val name: String,
-        val players: List<String>,
-        val maxPlayers: Int
+        val character: String?,
+        val ready: Boolean
+)
+
+/**
+ * Sends all the info about the current lobby
+ * The admin is encoded as the index of the previous list
+ */
+data class CurrentLobbyInfoPacket(
+        val players: List<LobbyPlayerInfo>,
+        var admin: Int
 ) : MatchMakingPacket()
 
 data class OperationResultPacket(val error: String?) : MatchMakingPacket()
+
+
+// -------- REQUEST/RESPONSES --------
+
+enum class InvitePacketType {
+    /**
+     * Client -> Server
+     * Invite player with that name (a response will be sent after this).
+     */
+    INVITE_PLAYER,
+    /**
+     * Server -> Client
+     * You have received an invite from "player".
+     */
+    INVITE_RECEIVED,
+    /**
+     * Client -> Server
+     * I (client) accept the invite from "player".
+     * Note that there's no packet for invite rejection
+     */
+    ACCEPT_INVITE,
+}
+
+data class InvitePacket(
+        val type: InvitePacketType,
+        val player: String
+) : MatchMakingPacket()
 
 // -------- PROTOCOL NAMES --------
 
@@ -75,13 +100,13 @@ object MatchMakingPackets {
     val packetToName = hashMapOf(
             // client ->  server
             LoginPacket::class.java to "login",
-            CreateLobbyPacket::class.java to "create_lobby",
-            JoinLobbyPacket::class.java to "join_lobby",
-            ReadyToPlayPacket::class.java to "ready",
+            PlayerLobbyInfoChangePacket::class.java to "lobby_update",
             // server -> client
             MatchBeginPacket::class.java to "match_begin",
-            CurrentLobbyInfoPacket::class.java to "current_lobby",
-            OperationResultPacket::class.java to "result"
+            CurrentLobbyInfoPacket::class.java to "lobby_info",
+            OperationResultPacket::class.java to "result",
+            // client <-> server
+            InvitePacket::class.java to "invite"
     )
     val nameToPacket = packetToName.entries.associate { (k, v) -> v to k }
 }

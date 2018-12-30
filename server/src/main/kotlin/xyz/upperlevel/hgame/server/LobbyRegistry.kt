@@ -4,41 +4,22 @@ class LobbyRegistry {
     private var nextId = 0L
 
     private val lobbiesById = HashMap<Long, Lobby>()
-    private val lobbiesByName = HashMap<String, Lobby>()
 
-
-    fun getFromName(name: String): Lobby? {
-        return lobbiesByName["name"]
-    }
 
     fun getFromId(id: Long): Lobby? {
         return lobbiesById[id]
     }
 
-    fun create(
-            creator: Player,
-            name: String,
-            private: Boolean,
-            password: String?,
-            maxPlayers: Int): Lobby {
+    fun create(creator: Player): Lobby {
         creator.lobby?.onQuit(creator)
 
         val lobby = Lobby(
                 this,
                 nextId++,
-                name,
-                false,
-                private,
-                password,
-                maxPlayers
+                creator
         )
 
-        if (lobbiesByName.putIfAbsent(name, lobby) != null) {
-            throw IllegalArgumentException("name already in use!")
-        }
         lobbiesById[lobby.id] = lobby
-
-        lobby.onJoin(creator, password)
 
         return lobby
     }
@@ -48,7 +29,6 @@ class LobbyRegistry {
         // simply delete the lobby
         synchronized(this) {
             lobbiesById.remove(lobby.id)
-        lobbiesByName.remove(lobby.name)
         }
     }
 }

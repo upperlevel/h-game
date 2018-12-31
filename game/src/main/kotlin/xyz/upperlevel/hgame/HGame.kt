@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import org.apache.logging.log4j.core.config.Configurator
 import xyz.upperlevel.hgame.network.discovery.UdpDiscovery
-import xyz.upperlevel.hgame.screens.lobby.LoginScreen
+import xyz.upperlevel.hgame.screens.lobby.ConnectionScreen
 import xyz.upperlevel.hgame.world.Event
 import xyz.upperlevel.hgame.world.scheduler.Scheduler
 import xyz.upperlevel.hgame.world.sequence.Sequence
@@ -27,7 +27,7 @@ class HGame : Game() {
             throw RuntimeException(e)
         }
 
-        setScreen(LoginScreen())
+        setScreen(ConnectionScreen())
     }
 
     override fun render() {

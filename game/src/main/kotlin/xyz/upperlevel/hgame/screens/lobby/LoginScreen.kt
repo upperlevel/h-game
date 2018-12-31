@@ -1,4 +1,4 @@
-package xyz.upperlevel.hgame.screens
+package xyz.upperlevel.hgame.screens.lobby
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
@@ -30,7 +30,6 @@ class LoginScreen : ScreenAdapter() {
         pixmap.setColor(Color.WHITE)
         pixmap.fill()
         skin.add("white", Texture(pixmap))
-
         skin.add("default", DefaultFont.FONT)
 
         // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
@@ -58,50 +57,25 @@ class LoginScreen : ScreenAdapter() {
         username.messageText = "Username"
         username.setAlignment(Align.center)
         username.maxLength = 50
-        username.setTextFieldFilter { _, c -> c in ACCEPTED_NAME_CHARS }
+        username.setTextFieldFilter { _, char -> char in ACCEPTED_NAME_CHARS }
         table.add(username).growX().row()
 
-        val lanParty = TextButton("LAN Party", skin)
-        lanParty.isDisabled = true
-        table.add(lanParty).pad(5.0f).width(100f).row()
-
-        val connect = TextButton("Connect", skin)
-        connect.isDisabled = true
-        table.add(connect).pad(5.0f).width(100f).row()
-
-        val trainButton = TextButton("Train", skin)
-        trainButton.isDisabled = true
-        table.add(trainButton).pad(5.0f).width(100f).row()
+        val playButton = TextButton("Play", skin).apply {
+            isDisabled = true
+            table.add(this).pad(5.0f).width(100f).row()
+        }
 
         username.addListener(object : ChangeListener() {
             override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
                 val invalid = username.text.isEmpty()
-                lanParty.isDisabled = invalid
-                connect.isDisabled = invalid
-                trainButton.isDisabled = invalid
+                playButton.isDisabled = invalid
             }
         })
 
-        lanParty.addListener(object : ChangeListener() {
+        playButton.addListener(object : ChangeListener() {
             override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                if (lanParty.isPressed) {
-                    HGame.get().screen = MatchMakingScreen(HGame.get().discovery, username.text)
-                }
-            }
-        })
-
-        connect.addListener(object : ChangeListener() {
-            override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                HGame.get().screen = SelectHostScene(username.text)
-            }
-        })
-
-        trainButton.addListener(object : ChangeListener() {
-            override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                if (trainButton.isPressed) {
-                    val train = TrainScreen()
-                    val selectChar = CharacterChoiceScreen(username.text, train.world, train)
-                    HGame.get().screen = selectChar
+                if (playButton.isPressed) {
+                    HGame.get().screen = LobbyScreen(User(username.text))
                 }
             }
         })

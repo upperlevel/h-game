@@ -1,15 +1,11 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id "com.github.johnrengelman.shadow"
+    id "distribution"
+    id "application"
 }
 
-
-apply plugin: "distribution"
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "application"
-
 ext {
-    appName = "my-gdx-game"
     gdxVersion = '1.9.9'
     roboVMVersion = '2.3.3'
     box2DLightsVersion = '1.4'

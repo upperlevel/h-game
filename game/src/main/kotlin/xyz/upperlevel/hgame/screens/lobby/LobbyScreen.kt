@@ -7,25 +7,29 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.screens.lobby.comp.GuestComponent
 import xyz.upperlevel.hgame.screens.lobby.comp.PlayerComponent
 import xyz.upperlevel.hgame.screens.lobby.comp.UserComponent
+import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.entity.EntityTypes
 import java.util.*
 import kotlin.streams.asSequence
 
-class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashSet()) : ScreenAdapter() {
+class LobbyScreen(private val player: User, private val guests: MutableSet<User> = HashSet()) : ScreenAdapter() {
     private val stage: Stage = Stage(ScreenViewport())
 
     private lateinit var playersTable: Table
 
-    private val usersComponents: MutableMap<User, UserComponent> = HashMap()
-    private val playerComponent: PlayerComponent
+    val usersComponents: MutableMap<User, UserComponent> = HashMap()
+    val playerComponent: PlayerComponent
         get() = usersComponents[player]!! as PlayerComponent
 
     private lateinit var readyButton: TextButton
@@ -66,9 +70,14 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
             container.setFillParent(true)
 
             playersTable = Table().also { players ->
-                val component =  PlayerComponent(player, UI.skin)
-                usersComponents[player] = component
-                players.add(component).bottom()
+                val playerComp =  PlayerComponent(player, UI.skin)
+                usersComponents[player] = playerComp
+                players.add(playerComp).bottom()
+                playerComp.addListener(object : ClickListener() {
+                    override fun clicked(event: InputEvent, x: Float, y: Float) {
+                        HGame.get().screen = CharacterChoiceScreen(this@LobbyScreen)
+                    }
+                })
 
                 container.add(players).row()
             }

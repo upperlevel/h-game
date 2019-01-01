@@ -18,6 +18,6 @@ class PlayerComponent(user: User, skin: Skin) : UserComponent(user, skin) {
             fontColor = Color.GREEN
         }
 
-        previewComponentCell.size(250f, 250f)
+        previewCell.size(250f, 250f)
     }
 }

@@ -5,19 +5,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import xyz.upperlevel.hgame.screens.lobby.User
+import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.player.PlayerEntityType
 
 open class UserComponent(val user: User, skin: Skin) : Table() {
     protected var nameLabel: Label  = Label(user.name, skin)
     protected var readyLabel: Label = Label(getReadyText(), skin)
 
-    protected var previewComponent: UserPreviewComponent = UserPreviewComponent(user.entityType as PlayerEntityType)
-    protected var previewComponentCell: Cell<UserPreviewComponent>
+    protected var preview: CharacterPreview = CharacterPreview(user.entityType as PlayerEntityType)
+    protected var previewCell: Cell<CharacterPreview>
 
     init {
         this.add(nameLabel).row()
         this.add(readyLabel).row()
-        previewComponentCell = this.add(previewComponent).also { it.row() }
+        previewCell = this.add(preview).also { it.row() }
     }
 
     private fun getReadyText(): String {
@@ -25,11 +26,16 @@ open class UserComponent(val user: User, skin: Skin) : Table() {
     }
 
     fun update(delta: Float) {
-        previewComponent.update(delta)
+        preview.update(delta)
     }
 
     fun setReady(ready: Boolean) {
         user.ready = ready
         readyLabel.setText(getReadyText())
+    }
+
+    fun setCharacter(character: PlayerEntityType) {
+        user.entityType = character
+        preview.character = character
     }
 }

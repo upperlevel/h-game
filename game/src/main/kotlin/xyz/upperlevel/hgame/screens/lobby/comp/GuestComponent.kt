@@ -22,11 +22,11 @@ class GuestComponent(user: User, skin: Skin) : UserComponent(user, skin) {
             fontColor = Color.GREEN
         }
 
-        previewComponentCell.size(175f, 175f)
+        previewCell.size(175f, 175f)
 
         addListener(object : ClickListener() {
             override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
-                previewComponent.color = Color.RED
+                preview.color = Color.RED
             }
 
             override fun clicked(event: InputEvent, x: Float, y: Float) {
@@ -34,7 +34,7 @@ class GuestComponent(user: User, skin: Skin) : UserComponent(user, skin) {
             }
 
             override fun exit(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
-                previewComponent.color = Color.WHITE
+                preview.color = Color.WHITE
             }
         })
     }

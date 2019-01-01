@@ -4,9 +4,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import xyz.upperlevel.hgame.world.player.PlayerEntityType
 
-class UserPreviewComponent(var character: PlayerEntityType) : Image() {
+class CharacterPreview(character: PlayerEntityType) : Image() {
     private var time: Float = 0f
     private var idleFrameIndex: Int = 0
+
+    var character: PlayerEntityType = character
+        set(value) {
+            field = value
+            setFrame(0)
+        }
 
     init {
         setFrame(0)

@@ -11,8 +11,7 @@ class Player(val channel: Channel) {
 
     val name: String
         get() {
-            if (_name == null) throw RuntimeException("Login not done yet")
-            return name
+            return _name ?: throw RuntimeException("Login not done yet")
         }
 
     val isLoginDone: Boolean

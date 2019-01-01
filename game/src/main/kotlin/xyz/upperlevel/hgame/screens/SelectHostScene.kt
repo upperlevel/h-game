@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.GameProtocol
 import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.network.Client
@@ -34,7 +34,7 @@ class SelectHostScene(val username: String) : ScreenAdapter() {
         pixmap.fill()
         skin.add("white", Texture(pixmap))
 
-        skin.add("default", DefaultFont.FONT)
+        skin.add("default", UI.FONT_32)
 
         // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
         val textButtonStyle = TextButton.TextButtonStyle()

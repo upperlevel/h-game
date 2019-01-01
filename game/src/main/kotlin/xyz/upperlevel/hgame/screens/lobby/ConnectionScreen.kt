@@ -16,7 +16,7 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.network.WebSocketClient
 import xyz.upperlevel.hgame.runSync
@@ -25,39 +25,10 @@ import java.util.concurrent.CompletableFuture
 
 class ConnectionScreen : ScreenAdapter() {
     private val stage: Stage = Stage(ScreenViewport())
-    private val skin: Skin = Skin()
 
     private val client: WebSocketClient = WebSocketClient("ws://localhost:9080")
 
     init {
-        // Generate a 1x1 white texture and store it in the skin named "white".
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(Color.WHITE)
-        pixmap.fill()
-        skin.add("white", Texture(pixmap))
-        skin.add("default", DefaultFont.FONT)
-
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        val textButtonStyle = TextButton.TextButtonStyle()
-        textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY)
-        textButtonStyle.down = skin.newDrawable("white", Color.NAVY)
-        textButtonStyle.disabled = skin.newDrawable("white", Color.RED)
-        textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY)
-        textButtonStyle.font = skin.getFont("default")
-        skin.add("default", textButtonStyle)
-
-        val labelStyle = Label.LabelStyle()
-        labelStyle.font = skin.getFont("default")
-        labelStyle.background = skin.newDrawable("white", Color.CLEAR)
-        skin.add("default", labelStyle)
-
-        val textFieldStyle = TextField.TextFieldStyle()
-        textFieldStyle.font = skin.getFont("default")
-        textFieldStyle.fontColor = Color.SKY
-        textFieldStyle.cursor = skin.newDrawable("white", Color.GRAY)
-
-        skin.add("default", textFieldStyle)
-
         tryConnect()
     }
 
@@ -126,7 +97,7 @@ class ConnectionScreen : ScreenAdapter() {
             Table().apply {
                 setFillParent(true)
                 add(
-                        Label("Connecting...", this@ConnectionScreen.skin).apply {
+                        Label("Connecting...", UI.skin).apply {
                             setAlignment(Align.center)
                         }
                 ).growX().row()
@@ -137,14 +108,14 @@ class ConnectionScreen : ScreenAdapter() {
             Table().apply {
                 setFillParent(true)
                 add(
-                        Label("Can't connect to the server :(", this@ConnectionScreen.skin).apply {
+                        Label("Can't connect to the server :(", UI.skin).apply {
                             color = Color.RED
                             setAlignment(Align.center)
                         }
                 ).growX().row()
 
                 add(
-                        TextButton("Retry", this@ConnectionScreen.skin).apply {
+                        TextButton("Retry", UI.skin).apply {
                             color = Color.RED
 
                             addListener(object : ClickListener() {
@@ -161,11 +132,11 @@ class ConnectionScreen : ScreenAdapter() {
             Table().apply {
                 setFillParent(true)
                 add(
-                        Label("Connected!", this@ConnectionScreen.skin)
+                        Label("Connected!", UI.skin)
                 ).row()
 
                 add(
-                        Label("Doing app handshake...", this@ConnectionScreen.skin)
+                        Label("Doing app handshake...", UI.skin)
                 ).row()
             }
 }

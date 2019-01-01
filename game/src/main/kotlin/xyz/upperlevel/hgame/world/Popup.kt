@@ -1,7 +1,7 @@
 package xyz.upperlevel.hgame.world
 
 import com.badlogic.gdx.Gdx
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 
 class Popup(val world: World, val id: Int, var text: String, var x: Float, var y: Float) {
     private val maxY = y + RAPTURE
@@ -20,7 +20,7 @@ class Popup(val world: World, val id: Int, var text: String, var x: Float, var y
     }
 
     fun renderHud(renderer: WorldRenderer.UIRenderer) {
-        val font = DefaultFont.DAMAGE_POPUP_FONT
+        val font = UI.DAMAGE_POPUP_FONT
         font.color.a = fade
         renderer.drawWorldText(font, text, x, y)
     }

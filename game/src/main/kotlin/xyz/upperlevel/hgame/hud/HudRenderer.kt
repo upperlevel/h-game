@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
 import xyz.upperlevel.hgame.world.player.Player
@@ -42,7 +42,7 @@ class HudRenderer(world: World) {
     init {
         val skin = Skin().apply {
             add("default", Label.LabelStyle().apply {
-                font = DefaultFont.FONT
+                font = UI.FONT_32
             })
         }
 
@@ -50,7 +50,7 @@ class HudRenderer(world: World) {
         table.setFillParent(true)
         table.align(Align.top)
 
-        val height = DefaultFont.FONT.lineHeight
+        val height = UI.FONT_32.lineHeight
         val midWidth = Gdx.graphics.width / 2f
 
         leftNameLabel = Label("", skin)

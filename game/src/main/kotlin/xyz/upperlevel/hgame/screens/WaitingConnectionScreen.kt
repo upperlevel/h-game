@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import org.apache.logging.log4j.LogManager
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.event.EventListener
 import xyz.upperlevel.hgame.network.Endpoint
@@ -44,7 +44,7 @@ class WaitingConnectionScreen(
         pixmap.fill()
         skin.add("white", Texture(pixmap))
 
-        skin.add("default", DefaultFont.FONT)
+        skin.add("default", UI.FONT_32)
 
         val labelStyle = Label.LabelStyle()
         labelStyle.font = skin.getFont("default")

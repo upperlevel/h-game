@@ -12,11 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.network.DisconnectedEndpoint
 import xyz.upperlevel.hgame.world.World
 import xyz.upperlevel.hgame.world.WorldRenderer
-import xyz.upperlevel.hgame.world.entity.EntityTypes
 
 
 class TrainScreen() : ScreenAdapter() {
@@ -42,7 +41,7 @@ class TrainScreen() : ScreenAdapter() {
             pixmap.fill()
 
             add("white", Texture(pixmap))
-            add("default", DefaultFont.FONT)
+            add("default", UI.FONT_32)
         }
 
         Label.LabelStyle().apply {

@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.screens.lobby.comp.GuestComponent
 import xyz.upperlevel.hgame.screens.lobby.comp.PlayerComponent
 import xyz.upperlevel.hgame.screens.lobby.comp.UserComponent
@@ -20,7 +20,6 @@ import java.util.*
 import kotlin.streams.asSequence
 
 class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashSet()) : ScreenAdapter() {
-    private val skin: Skin = Skin()
     private val stage: Stage = Stage(ScreenViewport())
 
     private lateinit var playersTable: Table
@@ -43,7 +42,7 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
 
         guests.add(guest)
 
-        val comp = GuestComponent(guest, skin)
+        val comp = GuestComponent(guest, UI.skin)
         usersComponents[guest] = comp
         playersTable.add(comp).bottom()
 
@@ -63,39 +62,11 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
     }
 
     init {
-        // Generate a 1x1 white texture and store it in the skin named "white".
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(Color.WHITE)
-        pixmap.fill()
-        skin.add("white", Texture(pixmap))
-        skin.add("default", DefaultFont.FONT)
-
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        val textButtonStyle = TextButton.TextButtonStyle()
-        textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY)
-        textButtonStyle.down = skin.newDrawable("white", Color.NAVY)
-        textButtonStyle.disabled = skin.newDrawable("white", Color.RED)
-        textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY)
-        textButtonStyle.font = skin.getFont("default")
-        skin.add("default", textButtonStyle)
-
-        val labelStyle = Label.LabelStyle()
-        labelStyle.font = skin.getFont("default")
-        labelStyle.background = skin.newDrawable("white", Color.CLEAR)
-        skin.add("default", labelStyle)
-
-        val textFieldStyle = TextField.TextFieldStyle()
-        textFieldStyle.font = skin.getFont("default")
-        textFieldStyle.fontColor = Color.SKY
-        textFieldStyle.cursor = skin.newDrawable("white", Color.GRAY)
-
-        skin.add("default", textFieldStyle)
-
         Table().also { container ->
             container.setFillParent(true)
 
             playersTable = Table().also { players ->
-                val component =  PlayerComponent(player, skin)
+                val component =  PlayerComponent(player, UI.skin)
                 usersComponents[player] = component
                 players.add(component).bottom()
 
@@ -103,7 +74,7 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
             }
 
 
-            readyButton = TextButton("", skin).apply {
+            readyButton = TextButton("", UI.skin).apply {
                 container.add(this).width(175f).height(65f).padTop(25f).row()
 
                 addListener(object : ChangeListener() {
@@ -119,7 +90,7 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
                 setText(getReadyText())
             }
 
-            inviteButton = TextButton("Invite", skin).apply {
+            inviteButton = TextButton("Invite", UI.skin).apply {
                 container.add(this).width(175f).height(65f).padTop(25f).row()
 
                 addListener(object : ChangeListener() {

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
 import org.apache.logging.log4j.LogManager
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.input.BehaviourManager
 import xyz.upperlevel.hgame.world.Conversation
 import xyz.upperlevel.hgame.world.World
@@ -115,7 +115,7 @@ open class Player(entityType: EntityType, world: World, active: Boolean) : Entit
     }
 
     override fun renderHud(renderer: WorldRenderer.UIRenderer) {
-        val font = DefaultFont.PLAYER_NAME_FONT
+        val font = UI.PLAYER_NAME_FONT
         renderer.drawWorldText(font, name, centerX, y + height, true)
     }
 

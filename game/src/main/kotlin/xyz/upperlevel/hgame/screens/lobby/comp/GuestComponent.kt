@@ -6,19 +6,19 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.screens.lobby.User
 
 
 class GuestComponent(user: User, skin: Skin) : UserComponent(user, skin) {
     init {
         nameLabel.style = Label.LabelStyle().apply {
-            font = DefaultFont.SMALL_FONT
+            font = UI.FONT_16
             fontColor = Color.LIGHT_GRAY
         }
 
         readyLabel.style = Label.LabelStyle().apply {
-            font = DefaultFont.SMALL_FONT
+            font = UI.FONT_16
             fontColor = Color.GREEN
         }
 

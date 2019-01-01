@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.GameProtocol
 import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.event.EventHandler
@@ -54,7 +54,7 @@ class MatchMakingScreen(private val discovery: UdpDiscovery, private val name: S
         pixmap.fill()
         skin.add("white", Texture(pixmap))
 
-        skin.add("default", DefaultFont.FONT)
+        skin.add("default", UI.FONT_32)
 
         val style = List.ListStyle()
         style.font = skin.getFont("default")

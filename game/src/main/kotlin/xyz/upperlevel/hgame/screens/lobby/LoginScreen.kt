@@ -4,19 +4,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import xyz.upperlevel.hgame.DefaultFont
+import xyz.upperlevel.hgame.UI
 import xyz.upperlevel.hgame.HGame
 import xyz.upperlevel.hgame.matchmaking.LoginPacket
 import xyz.upperlevel.hgame.matchmaking.MatchMakingCodec
@@ -26,48 +22,17 @@ import xyz.upperlevel.hgame.runSync
 
 class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
     private var stage: Stage = Stage(ScreenViewport())
-    private var skin: Skin = Skin()
 
     init {
-
-        // Generate a 1x1 white texture and store it in the skin named "white".
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(Color.WHITE)
-        pixmap.fill()
-        skin.add("white", Texture(pixmap))
-        skin.add("default", DefaultFont.FONT)
-
-        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
-        val textButtonStyle = TextButtonStyle()
-        textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY)
-        textButtonStyle.down = skin.newDrawable("white", Color.NAVY)
-        textButtonStyle.disabled = skin.newDrawable("white", Color.RED)
-        textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY)
-        textButtonStyle.font = skin.getFont("default")
-        skin.add("default", textButtonStyle)
-
-        val labelStyle = Label.LabelStyle()
-        labelStyle.font = skin.getFont("default")
-        labelStyle.background = skin.newDrawable("white", Color.CLEAR)
-        skin.add("default", labelStyle)
-
-        val textFieldStyle = TextFieldStyle()
-        textFieldStyle.font = skin.getFont("default")
-        textFieldStyle.fontColor = Color.SKY
-        textFieldStyle.cursor = skin.newDrawable("white", Color.GRAY)
-
-        skin.add("default", textFieldStyle)
-
-        // Create a table that fills the screen. Everything else will go inside this table.
         val table = Table()
         table.setFillParent(true)
         stage.addActor(table)
 
-        val hint = Label("Insert your username:", skin)
+        val hint = Label("Insert your username:", UI.skin)
         hint.setAlignment(Align.center)
         table.add(hint).growX().row()
 
-        val username = TextField("", skin).apply {
+        val username = TextField("", UI.skin).apply {
             messageText = "Username"
 
             maxLength = 50
@@ -77,7 +42,7 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
         }
         table.add(username).padTop(25f).growX().row()
 
-        val playButton = TextButton("Play", skin).apply {
+        val playButton = TextButton("Play", UI.skin).apply {
             isDisabled = true
 
             username.addListener(object : ChangeListener() {
@@ -89,7 +54,7 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
         }
         table.add(playButton).padTop(25f).width(175f).height(65f).row()
 
-        val feedback = Label("", Label.LabelStyle().apply { font = DefaultFont.SMALL_FONT })
+        val feedback = Label("", Label.LabelStyle().apply { font = UI.FONT_16 })
         feedback.setAlignment(Align.center)
         table.add(feedback).padTop(25f).growX().row()
 
@@ -142,7 +107,7 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
 
     override fun dispose() {
         stage.dispose()
-        skin.dispose()
+        UI.skin.dispose()
     }
 
     companion object {

@@ -21,7 +21,7 @@ class MatchMakingMessageHandler(
         // TODO: real packet listener
         // this is just an echo server
 
-        if (player.name == null) {
+        if (!player.isLoginDone) {
             // Login needed
             when {
                 packet !is LoginPacket -> ctx.writeAndFlush(OperationResultPacket("Login needed."))

@@ -154,7 +154,7 @@ class LobbyScreen(val player: User, private val guests: MutableSet<User> = HashS
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         for (component in usersComponents.values) {
-            component.update(Gdx.graphics.deltaTime)
+            component.update(delta)
         }
 
         stage.act(delta)

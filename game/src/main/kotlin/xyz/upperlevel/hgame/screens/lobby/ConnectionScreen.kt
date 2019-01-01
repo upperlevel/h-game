@@ -12,12 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import io.netty.channel.Channel
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.SimpleChannelInboundHandler
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import xyz.upperlevel.hgame.DefaultFont
-import xyz.upperlevel.hgame.GameProtocol
 import xyz.upperlevel.hgame.HGame
-import xyz.upperlevel.hgame.network.Client
+import xyz.upperlevel.hgame.network.WebSocketClient
 import xyz.upperlevel.hgame.runSync
-import xyz.upperlevel.hgame.world.sequence.Sequence
 import java.net.InetAddress
 import java.util.concurrent.CompletableFuture
 
@@ -25,7 +27,7 @@ class ConnectionScreen : ScreenAdapter() {
     private val stage: Stage = Stage(ScreenViewport())
     private val skin: Skin = Skin()
 
-    private val client: Client = Client(GameProtocol.PROTOCOL, SERVER_ADDRESS, SERVER_PORT)
+    private val client: WebSocketClient = WebSocketClient("ws://localhost:9080")
 
     init {
         // Generate a 1x1 white texture and store it in the skin named "white".
@@ -59,31 +61,41 @@ class ConnectionScreen : ScreenAdapter() {
         tryConnect()
     }
 
-    fun tryConnect() {
+    private fun initInboundHandler(channel: Channel) {
+        // When we connect we send the version/purpose packet.
+        // After we've sent this packet, if the purpose is "matchmaking" (and it is), we should receive an "ok" response.
+        // When we've received it, we can go on to the next screen.
+        channel.pipeline()
+                .addLast(object : SimpleChannelInboundHandler<TextWebSocketFrame>() {
+                    override fun channelRead0(ctx: ChannelHandlerContext, msg: TextWebSocketFrame) {
+                        if (msg.text() == "ok") {
+                            ctx.pipeline().remove(this)
+                            runSync { HGame.get().screen = LoginScreen(client) }
+                        }
+                    }
+                })
+    }
+
+    private fun tryConnect() {
         stage.clear()
         stage.addActor(connectingTable)
 
         CompletableFuture.supplyAsync {
-            client.runCatching { openAsync() }
-                    .onFailure {
-                        runSync {
-                            stage.clear()
-                            stage.addActor(noConnectionTable)
-                        }
-                    }
-                    .onSuccess {
-                        runSync {
-                            stage.clear()
-                            stage.addActor(connectedTable)
-
-                            // After a delay switches to the next screen.
-                            // That's only done to show the "Connected" message (lol).
-                            Sequence.create()
-                                    .delay(1500)
-                                    .act { HGame.get().screen = LoginScreen() }
-                                    .play()
-                        }
-                    }
+            client.runCatching {
+                connectAndDoHandshake()
+                initInboundHandler(channel)
+                send(TextWebSocketFrame("version A0.1\nmatchmaking"))
+            }.onFailure {
+                runSync {
+                    stage.clear()
+                    stage.addActor(noConnectionTable)
+                }
+            }.onSuccess {
+                runSync {
+                    stage.clear()
+                    stage.addActor(connectedTable)
+                }
+            }
         }
     }
 
@@ -148,7 +160,13 @@ class ConnectionScreen : ScreenAdapter() {
         get() =
             Table().apply {
                 setFillParent(true)
-                add(Label("Connected!", this@ConnectionScreen.skin))
+                add(
+                        Label("Connected!", this@ConnectionScreen.skin)
+                ).row()
+
+                add(
+                        Label("Doing app handshake...", this@ConnectionScreen.skin)
+                ).row()
             }
 }
 

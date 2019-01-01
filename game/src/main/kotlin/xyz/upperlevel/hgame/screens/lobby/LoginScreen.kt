@@ -8,23 +8,28 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.SimpleChannelInboundHandler
 import xyz.upperlevel.hgame.DefaultFont
 import xyz.upperlevel.hgame.HGame
+import xyz.upperlevel.hgame.matchmaking.LoginPacket
+import xyz.upperlevel.hgame.matchmaking.MatchMakingCodec
+import xyz.upperlevel.hgame.matchmaking.OperationResultPacket
+import xyz.upperlevel.hgame.network.WebSocketClient
+import xyz.upperlevel.hgame.runSync
 
-class LoginScreen : ScreenAdapter() {
+class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
     private var stage: Stage = Stage(ScreenViewport())
     private var skin: Skin = Skin()
 
     init {
+
         // Generate a 1x1 white texture and store it in the skin named "white".
         val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
         pixmap.setColor(Color.WHITE)
@@ -41,6 +46,11 @@ class LoginScreen : ScreenAdapter() {
         textButtonStyle.font = skin.getFont("default")
         skin.add("default", textButtonStyle)
 
+        val labelStyle = Label.LabelStyle()
+        labelStyle.font = skin.getFont("default")
+        labelStyle.background = skin.newDrawable("white", Color.CLEAR)
+        skin.add("default", labelStyle)
+
         val textFieldStyle = TextFieldStyle()
         textFieldStyle.font = skin.getFont("default")
         textFieldStyle.fontColor = Color.SKY
@@ -53,32 +63,54 @@ class LoginScreen : ScreenAdapter() {
         table.setFillParent(true)
         stage.addActor(table)
 
-        val username = TextField("", skin)
-        username.messageText = "Username"
-        username.setAlignment(Align.center)
-        username.maxLength = 50
-        username.setTextFieldFilter { _, char -> char in ACCEPTED_NAME_CHARS }
+        val username = TextField("", skin).apply {
+            messageText = "Username"
+
+            maxLength = 50
+            setTextFieldFilter { _, char -> char in ACCEPTED_NAME_CHARS }
+
+            setAlignment(Align.center)
+        }
         table.add(username).growX().row()
+
+        val feedback = Label("", skin).apply {
+            setAlignment(Align.center)
+        }
+        table.add(feedback).growX().row()
 
         val playButton = TextButton("Play", skin).apply {
             isDisabled = true
-            table.add(this).pad(5.0f).width(100f).row()
-        }
 
-        username.addListener(object : ChangeListener() {
-            override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                val invalid = username.text.isEmpty()
-                playButton.isDisabled = invalid
-            }
-        })
-
-        playButton.addListener(object : ChangeListener() {
-            override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                if (playButton.isPressed) {
-                    HGame.get().screen = LobbyScreen(User(username.text))
+            username.addListener(object : ChangeListener() {
+                override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
+                    val empty = username.text.isEmpty()
+                    isDisabled = empty
                 }
-            }
-        })
+            })
+
+            addListener(object : ChangeListener() {
+                override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
+                    if (isPressed) {
+                        client.send(LoginPacket(username.text))
+                        feedback.setText("Packet sent...")
+                    }
+                }
+            })
+        }
+        table.add(playButton).pad(5.0f).width(100f).row()
+
+        val pipe = client.channel.pipeline()
+        pipe.addLast(MatchMakingCodec())
+                .addLast(object : SimpleChannelInboundHandler<OperationResultPacket>() {
+                    override fun channelRead0(ctx: ChannelHandlerContext, msg: OperationResultPacket) {
+                        if (msg.error == null) {
+                            pipe.remove(this)
+                            runSync { HGame.get().screen = LobbyScreen(User(username.text)) }
+                        } else {
+                            feedback.setText(msg.error)
+                        }
+                    }
+                })
     }
 
     override fun show() {

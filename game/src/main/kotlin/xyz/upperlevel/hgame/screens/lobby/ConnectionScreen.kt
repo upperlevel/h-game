@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture
 class ConnectionScreen : ScreenAdapter() {
     private val stage: Stage = Stage(ScreenViewport())
 
-    private val client: WebSocketClient = WebSocketClient("ws://localhost:9080")
+    private val client: WebSocketClient = WebSocketClient(SERVER_URI)
 
     init {
         tryConnect()
@@ -86,12 +86,6 @@ class ConnectionScreen : ScreenAdapter() {
         stage.draw()
     }
 
-    companion object {
-        // TODO: Currently the server address is set to localhost.
-        val SERVER_ADDRESS = InetAddress.getByName("localhost")!!
-        const val SERVER_PORT = 9080
-    }
-
     val connectingTable: Table
         get() =
             Table().apply {
@@ -139,5 +133,10 @@ class ConnectionScreen : ScreenAdapter() {
                         Label("Doing app handshake...", UI.skin)
                 ).row()
             }
+
+    companion object {
+        // TODO: currently is set to localhost, planning to be our VPS address.
+        private const val SERVER_URI = "ws://localhost:9080"
+    }
 }
 

@@ -7,10 +7,16 @@ import java.lang.IllegalStateException
 import java.lang.RuntimeException
 
 class Player(val channel: Channel) {
-    var name: String? = null
+    private var _name: String? = null
+
+    val name: String
+        get() {
+            if (_name == null) throw RuntimeException("Login not done yet")
+            return name
+        }
 
     val isLoginDone: Boolean
-        get() = name != null
+        get() = _name != null
 
     var lobby: Lobby? = null
     var character: String? = null
@@ -33,7 +39,7 @@ class Player(val channel: Channel) {
 
     fun onLogin(name: String) {
         if (isLoginDone) throw IllegalStateException("Login already succeed")
-        this.name = name
+        this._name = name
     }
 
     fun sendInvite(to: Player) {
@@ -43,7 +49,7 @@ class Player(val channel: Channel) {
 
     fun onInviteReceived(inviter: Player) {
         receivedInvites.add(inviter)
-        channel.writeAndFlush(InvitePacket(InvitePacketType.INVITE_RECEIVED, inviter.name!!))
+        channel.writeAndFlush(InvitePacket(InvitePacketType.INVITE_RECEIVED, inviter.name))
     }
 
     fun acceptInvite(from: Player, lobbyRegistry: LobbyRegistry): String? {

@@ -68,7 +68,7 @@ class Lobby(
 
     fun startGame() {
         _players.forEachIndexed { index, player ->
-            player.channel.writeAndFlush(MatchBeginPacket(player.name!!, index))
+            player.channel.writeAndFlush(MatchBeginPacket(player.name, index))
         }
     }
 
@@ -76,7 +76,7 @@ class Lobby(
         var adminIndex = -1
         val players = players.mapIndexed { index, player ->
             if (player == admin) adminIndex = index
-            LobbyPlayerInfo(player.name!!, player.character, player.ready)
+            LobbyPlayerInfo(player.name, player.character, player.ready)
         }
 
         return CurrentLobbyInfoPacket(

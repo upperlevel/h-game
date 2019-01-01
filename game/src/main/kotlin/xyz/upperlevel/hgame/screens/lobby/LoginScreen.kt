@@ -63,6 +63,10 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
         table.setFillParent(true)
         stage.addActor(table)
 
+        val hint = Label("Insert your username:", skin)
+        hint.setAlignment(Align.center)
+        table.add(hint).growX().row()
+
         val username = TextField("", skin).apply {
             messageText = "Username"
 
@@ -71,12 +75,7 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
 
             setAlignment(Align.center)
         }
-        table.add(username).growX().row()
-
-        val feedback = Label("", skin).apply {
-            setAlignment(Align.center)
-        }
-        table.add(feedback).growX().row()
+        table.add(username).padTop(25f).growX().row()
 
         val playButton = TextButton("Play", skin).apply {
             isDisabled = true
@@ -87,17 +86,26 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
                     isDisabled = empty
                 }
             })
+        }
+        table.add(playButton).padTop(25f).width(175f).height(65f).row()
 
-            addListener(object : ChangeListener() {
-                override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                    if (isPressed) {
-                        client.send(LoginPacket(username.text))
+        val feedback = Label("", Label.LabelStyle().apply { font = DefaultFont.SMALL_FONT })
+        feedback.setAlignment(Align.center)
+        table.add(feedback).padTop(25f).growX().row()
+
+        playButton.addListener(object : ChangeListener() {
+            override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
+                if (playButton.isPressed) {
+                    playButton.isDisabled = true
+                    client.send(LoginPacket(username.text))
+
+                    feedback.apply {
+                        color = Color.CLEAR
                         feedback.setText("Packet sent...")
                     }
                 }
-            })
-        }
-        table.add(playButton).pad(5.0f).width(100f).row()
+            }
+        })
 
         val pipe = client.channel.pipeline()
         pipe.addLast(MatchMakingCodec())
@@ -107,7 +115,11 @@ class LoginScreen(val client: WebSocketClient) : ScreenAdapter() {
                             pipe.remove(this)
                             runSync { HGame.get().screen = LobbyScreen(User(username.text)) }
                         } else {
-                            feedback.setText(msg.error)
+                            playButton.isDisabled = false
+                            feedback.apply {
+                                color = Color.RED
+                                feedback.setText(msg.error)
+                            }
                         }
                     }
                 })

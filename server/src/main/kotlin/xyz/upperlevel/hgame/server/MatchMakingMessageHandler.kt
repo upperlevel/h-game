@@ -24,8 +24,8 @@ class MatchMakingMessageHandler(
         if (player.name == null) {
             // Login needed
             when {
-                packet !is LoginPacket -> ctx.writeAndFlush(OperationResultPacket("Login needed"))
-                !playerRegistry.onLogin(player, packet.name) -> ctx.writeAndFlush(OperationResultPacket("Name already taken"))
+                packet !is LoginPacket -> ctx.writeAndFlush(OperationResultPacket("Login needed."))
+                !playerRegistry.onLogin(player, packet.name) -> ctx.writeAndFlush(OperationResultPacket("Name already taken."))
                 else -> {
                     ctx.writeAndFlush(OperationResultPacket(null))
                 }

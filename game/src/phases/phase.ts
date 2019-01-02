@@ -1,29 +1,34 @@
+import {ConnectingPhase} from "../connecting/connecting";
+import {NoConnectionPhase} from "../connecting/no_connection";
 import {LoginPhase} from "./login"
 import {LobbyPhase} from "./lobby"
 import {GamePhase} from "./game"
 
 export namespace Phases {
-    export const LOGIN: Phase = new LoginPhase();
-    export const LOBBY: Phase = new LobbyPhase();
-    export const GAME:  Phase = new GamePhase();
+    export const CONNECTING: Phase    = new ConnectingPhase();
+    export const NO_CONNECTION: Phase = new NoConnectionPhase();
+
+    export const LOGIN:      Phase = new LoginPhase();
+    export const LOBBY:      Phase = new LobbyPhase();
+    export const GAME:       Phase = new GamePhase();
 }
 
-export interface Phase {
-    show(): void;
+export abstract class Phase {
+    abstract show(): void;
 
-    dismiss(): void;
+    abstract dismiss(): void;
 }
 
-export namespace PhaseManager {
-    let current: Phase = null;
+export class PhaseManager {
+    private current: Phase | undefined = undefined;
 
-    export function show(phase: Phase) {
-        if (current) {
-            current.dismiss();
+    show(phase: Phase) {
+        if (this.current) {
+            this.current.dismiss();
         }
-        current = phase;
-        if (current) {
-            current.show();
+        this.current = phase;
+        if (this.current) {
+            this.current.show();
         }
     }
 }

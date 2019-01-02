@@ -3,9 +3,10 @@
     "outDir": "./dist/",
     "module": "commonjs",
     "target": "es5",
-    "jsx": "react",
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
   },
   "include": [
     "src/**/*"

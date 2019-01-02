@@ -2,11 +2,12 @@ import {PhaseManager, Phases} from "./phases/phase";
 
 export class HGame {
     static instance: HGame = new HGame();
-    socket: WebSocket;
+
+    phaseManager: PhaseManager = new PhaseManager();
+    socket: WebSocket | undefined = undefined;
 
     start() {
-        const phase = Phases.LOGIN;
-        PhaseManager.show(phase);
+        this.phaseManager.show(Phases.CONNECTING);
     }
 
     dismiss() {

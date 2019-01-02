@@ -8,10 +8,19 @@
 </head>
 <body>
 
+<div id="connecting-overlay" class="overlay">
+    <h1 id="connecting-label">Connecting...</h1>
+</div>
+
+<div id="no-connection-overlay" class="overlay">
+    <h6>Can't establish a connection with the server... :(</h6>
+    <button id="connection-retry-btn" style="margin-top: 25px">Retry</button>
+</div>
+
 <div id="login-overlay" class="overlay">
     <h1>Login</h1>
     <p>Insert your temporary username down here:</p>
-    <input id="login-username" type="text" />
+    <input id="login-username" type="text"/>
     <button id="login-button">Login</button>
 </div>
 

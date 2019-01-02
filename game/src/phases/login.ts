@@ -1,17 +1,30 @@
-import {Phase} from "./phase";
+import {Phase, Phases} from "./phase";
+import {HGame} from "../index";
 
 export class LoginPhase implements Phase {
     overlay: HTMLDivElement;
 
-    show() {
+    constructor() {
         this.overlay = document.getElementById("login-overlay") as HTMLDivElement;
-        this.overlay.style.display = "block";
 
         const button = document.getElementById("login-button") as HTMLButtonElement;
-        button.onclick = function () {
+        button.onclick = () => {
             const username = document.getElementById("login-username") as HTMLInputElement;
-            console.log("You chose the username: " + username)
+            HGame.instance.socket!.send(JSON.stringify({
+                type: "login",
+                name: username.value
+            }))
         }
+    }
+
+    show() {
+        this.overlay.style.display = "block";
+
+        HGame.instance.socket!.addEventListener("message", (event) => {
+            if (event.data == "ok") {
+                HGame.instance.phaseManager.show(Phases.LOBBY)
+            }
+        })
     }
 
     dismiss() {

@@ -3,8 +3,11 @@ import {Phase} from "./phase";
 export class GamePhase implements Phase {
     overlay: HTMLDivElement;
 
-    show() {
+    constructor() {
         this.overlay = document.getElementById("game-overlay") as HTMLDivElement;
+    }
+
+    show() {
         this.overlay.style.display = "block";
     }
 

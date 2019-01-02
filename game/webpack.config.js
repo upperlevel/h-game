@@ -1,5 +1,6 @@
 const path = require("path");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
@@ -11,25 +12,6 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: "ts-loader",
                 exclude: /node_modules/
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    "style-loader",
-                    "css-loader"
-                ]
-            },
-            {
-                test: /\.(png|svg|jpg|gif)$/,
-                use: [
-                    "file-loader"
-                ]
-            },
-            {
-                test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: [
-                    "file-loader"
-                ]
             }
         ]
     },
@@ -42,7 +24,12 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "H-Game"
-        })
+            title: "H-Game",
+            filename: "index.html",
+            template: "src/index.html"
+        }),
+        new CopyWebpackPlugin([{
+            from: "assets", to: "assets"
+        }])
     ]
 };

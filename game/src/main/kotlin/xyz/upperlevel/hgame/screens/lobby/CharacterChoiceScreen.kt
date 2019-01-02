@@ -92,7 +92,7 @@ class CharacterChoiceScreen(val caller: LobbyScreen) : ScreenAdapter() {
                             TextButton("OK", UI.skin).apply {
                                 addListener(object : ClickListener() {
                                     override fun clicked(event: InputEvent, x: Float, y: Float) {
-                                        caller.playerComponent.setCharacter(getSelection())
+                                        caller.playerComponent.character = getSelection()
                                         HGame.get().screen = caller
                                     }
                                 })
@@ -100,7 +100,7 @@ class CharacterChoiceScreen(val caller: LobbyScreen) : ScreenAdapter() {
                     ).padTop(25f).row()
                 }
         )
-        selection = 0
+        selection = EntityTypes.playable.indexOf(caller.playerComponent.character)
     }
 
     override fun show() {

@@ -88,10 +88,10 @@ class LobbyScreen(private val player: User, private val guests: MutableSet<User>
 
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeListener.ChangeEvent, actor: Actor) {
-                        val ready = !player.ready
-                        playerComponent.setReady(ready)
-
                         if (isPressed) {
+                            val ready = !player.ready
+                            playerComponent.ready = ready
+
                             setText(if (ready) "Cancel" else getReadyText())
                         }
                     }

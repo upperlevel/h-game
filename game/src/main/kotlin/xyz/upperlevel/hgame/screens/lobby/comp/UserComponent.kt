@@ -9,11 +9,30 @@ import xyz.upperlevel.hgame.world.entity.EntityType
 import xyz.upperlevel.hgame.world.player.PlayerEntityType
 
 open class UserComponent(val user: User, skin: Skin) : Table() {
-    protected var nameLabel: Label  = Label(user.name, skin)
+    protected var nameLabel: Label = Label(user.name, skin)
     protected var readyLabel: Label = Label(getReadyText(), skin)
 
     protected var preview: CharacterPreview = CharacterPreview(user.entityType as PlayerEntityType)
     protected var previewCell: Cell<CharacterPreview>
+
+    var ready: Boolean
+        get() {
+            return user.ready
+        }
+        set(value) {
+            user.ready = value
+            readyLabel.setText(getReadyText())
+        }
+
+    var character: EntityType
+        get() {
+            return user.entityType
+        }
+
+        set(value) {
+            user.entityType = value
+            preview.character = value as PlayerEntityType
+        }
 
     init {
         this.add(nameLabel).row()
@@ -27,15 +46,5 @@ open class UserComponent(val user: User, skin: Skin) : Table() {
 
     fun update(delta: Float) {
         preview.update(delta)
-    }
-
-    fun setReady(ready: Boolean) {
-        user.ready = ready
-        readyLabel.setText(getReadyText())
-    }
-
-    fun setCharacter(character: PlayerEntityType) {
-        user.entityType = character
-        preview.character = character
     }
 }

@@ -5,8 +5,8 @@ import * as path from "path";
 import * as logger from "morgan";
 
 import * as indexRouter from "./routes";
-import * as matchmaker from "./routes/matchmaking";
-import * as gameRelay from "./routes/gamerelay";
+const matchmaker = require("./routes/matchmaking");
+const gameRelay = require("./routes/gamerelay");
 
 const app = express();
 

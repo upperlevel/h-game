@@ -17,11 +17,9 @@
     "require": "^2.4.20"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.1",
     "@types/express-ws": "^3.0.0",
     "@types/http-errors": "^1.6.1",
     "@types/morgan": "^1.7.35",
-    "@types/node-sass-middleware": "0.0.30",
     "typescript": "^3.2.2"
   }
 }

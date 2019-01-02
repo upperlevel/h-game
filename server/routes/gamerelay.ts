@@ -10,4 +10,4 @@ class MatchMaker {
   }
 }
 
-export = new MatchMaker()
+export = new MatchMaker();

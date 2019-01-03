@@ -4,7 +4,6 @@ import * as enableWs from "express-ws";
 import * as path from "path";
 import * as logger from "morgan";
 
-import * as indexRouter from "./routes/home";
 import {MatchMaker} from "./routes/matchmaking";
 import {GameRelay} from "./routes/gamerelay";
 import {PlayerRegistry} from "./player";
@@ -23,9 +22,11 @@ const gameRelay = new GameRelay(playerRegistry);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(rootDir, 'public')));
 
-app.use("/", indexRouter);
+const gameDir = path.join(rootDir, "../../game/dist");
+console.log("Game directory at: " + gameDir);
+app.use("/", express.static(gameDir));
+
 app.ws("/api/matchmaking", matchMaker.connectionHandler.bind(matchMaker));
 app.ws("/api/game", gameRelay.connectionHandler.bind(gameRelay));
 app.ws("/api/echo", (ws) => {

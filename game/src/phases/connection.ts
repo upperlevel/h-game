@@ -1,4 +1,4 @@
-import {Phase, Phases} from "../phases/phase";
+import {Phase, Phases} from "./phase";
 import {HGame} from "../index";
 
 export class ConnectingPhase implements Phase {
@@ -15,17 +15,7 @@ export class ConnectingPhase implements Phase {
     show() {
         this.overlay.style.display = "block";
 
-        const socket = new WebSocket("ws://localhost:80");
-
-        socket.addEventListener("open", () => {
-            HGame.instance.phaseManager.show(Phases.LOGIN);
-        });
-
-        socket.addEventListener("close", () => {
-            HGame.instance.phaseManager.show(Phases.NO_CONNECTION);
-        });
-
-        HGame.instance.socket = socket;
+        HGame.instance.reconnect();
 
         let timer = 0;
         this.labelTimer = setInterval(() => {
@@ -37,6 +27,28 @@ export class ConnectingPhase implements Phase {
 
     dismiss() {
         clearInterval(this.labelTimer);
+        this.overlay.style.display = "none";
+    }
+}
+
+export class NoConnectionPhase implements Phase {
+    overlay: HTMLDivElement;
+    retryButton: HTMLButtonElement;
+
+    constructor() {
+        this.overlay = document.getElementById("no-connection-overlay") as HTMLDivElement;
+
+        this.retryButton = document.getElementById("connection-retry-btn") as HTMLButtonElement;
+        this.retryButton.onclick = () => {
+            HGame.instance.phaseManager.show(Phases.CONNECTING)
+        }
+    }
+
+    show() {
+        this.overlay.style.display = "block";
+    }
+
+    dismiss() {
         this.overlay.style.display = "none";
     }
 }

@@ -3,9 +3,11 @@ import {HGame} from "../index";
 
 export class LoginPhase implements Phase {
     overlay: HTMLDivElement;
+    feedback: HTMLDivElement;
 
     constructor() {
         this.overlay = document.getElementById("login-overlay") as HTMLDivElement;
+        this.feedback = document.getElementById("login-feedback") as HTMLDivElement;
 
         const button = document.getElementById("login-button") as HTMLButtonElement;
         button.onclick = () => {
@@ -21,7 +23,13 @@ export class LoginPhase implements Phase {
         this.overlay.style.display = "block";
 
         HGame.instance.socket!.addEventListener("message", (event) => {
-            if (event.data == "ok") {
+            if (event.data.error) {
+                this.feedback.style.color = "red";
+                this.feedback.innerText = event.data.error;
+            } else {
+                this.feedback.style.color = "green";
+                this.feedback.innerText = "Username accepted";
+
                 HGame.instance.phaseManager.show(Phases.LOBBY)
             }
         })

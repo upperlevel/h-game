@@ -9,19 +9,39 @@
 <body>
 
 <div id="connecting-overlay" class="overlay">
-    <h1 id="connecting-label">Connecting...</h1>
+    <div class="center">
+        <h1 id="connecting-label">Connecting...</h1>
+    </div>
 </div>
 
 <div id="no-connection-overlay" class="overlay">
-    <h6>Can't establish a connection with the server... :(</h6>
-    <button id="connection-retry-btn" style="margin-top: 25px">Retry</button>
+    <div class="center">
+        <h1>No connection</h1>
+        <div style="margin-top: 25px">
+            <p>We don't have enough money to keep it on :(</p>
+        </div>
+        <div style="margin-top: 25px">
+            <button id="connection-retry-btn" style="margin-top: 25px">Retry</button>
+        </div>
+    </div>
 </div>
 
 <div id="login-overlay" class="overlay">
-    <h1>Login</h1>
-    <p>Insert your temporary username down here:</p>
-    <input id="login-username" type="text"/>
-    <button id="login-button">Login</button>
+    <div class="center">
+        <h1>Login</h1>
+        <div style="margin-top: 25px">
+            <p>Insert your temporary username down here:</p>
+        </div>
+        <div style="margin-top: 25px">
+            <input id="login-username" type="text" spellcheck="false"/>
+        </div>
+        <div style="margin-top: 25px">
+            <button id="login-button">Play</button>
+        </div>
+        <div style="margin-top: 25px">
+            <small id="login-feedback"></small>
+        </div>
+    </div>
 </div>
 
 <div id="lobby-overlay" class="overlay">

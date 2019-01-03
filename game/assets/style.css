@@ -12,9 +12,29 @@
     -webkit-font-smoothing: none;
 }
 
+body {
+    background-color: #37474F;
+}
+
+h1{
+    font-size: 128px;
+}
+
+h3 {
+    font-size: 98px;
+}
+
+p {
+    font-size: 32px;
+}
+
+small {
+    font-size: 16px;
+}
+
 button {
     color: white;
-    background-color: #455A64;
+    background-color: #263238;
     padding: 16px;
     border-radius: 10px;
     font-size: 24px;
@@ -23,10 +43,21 @@ button {
 
 button:hover {
     cursor: pointer;
-    background-color: #607D8B;
+    background-color: #455A64;
 }
 
 button:focus {
+    outline: 0;
+}
+
+input {
+    padding: 25px;
+    border-radius: 10px;
+    border: 0;
+    font-size: 24px;
+}
+
+input:focus {
     outline: 0;
 }
 
@@ -40,18 +71,23 @@ button:focus {
     overflow: hidden;
 
     color: white;
-    background-color: #546E7A;
     font-size: 32px;
     -webkit-font-smoothing: none;
 }
 
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 #connecting-overlay {
-    padding-top: 25%;
     text-align: center;
 }
 
 #no-connection-overlay {
-    padding-top: 25%;
     text-align: center;
     font-size: 64px;
 }

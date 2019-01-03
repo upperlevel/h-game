@@ -18,7 +18,7 @@ const playerRegistry = new PlayerRegistry();
 const lobbyRegistry = new LobbyRegistry();
 
 const matchMaker = new MatchMaker(playerRegistry, lobbyRegistry);
-const gameRelay = new GameRelay();
+const gameRelay = new GameRelay(playerRegistry);
 
 app.use(logger('dev'));
 app.use(express.json());

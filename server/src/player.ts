@@ -36,7 +36,7 @@ export class Player {
     onLogin(name: string): boolean {
         if (!this.playerRegistry.onLogin(this, name)) return false;
 
-        if (this.isLoginDone) throw new Error("Login already succeded");
+        if (this.isLoginDone) throw new Error("Login already succeeded");
 
         this._name = name;
         return true;
@@ -106,7 +106,7 @@ export class PlayerRegistry {
     }
 
     onDisconnect(player: Player) {
-        if (player.name != null) return;
+        if (!player.isLoginDone) return;
 
         delete this.players[player.name];
     }

@@ -29,6 +29,7 @@ export class Lobby {
 
     constructor(admin: Player) {
         this.admin = admin;
+        this.onJoin(admin, false)
     }
 
     onQuit(player: Player) {
@@ -46,7 +47,7 @@ export class Lobby {
         this.broadcastLobbyInfo()
     }
 
-    onJoin(player: Player): string | undefined {
+    onJoin(player: Player, invalidateInvites: boolean = true): string | undefined {
         switch (this.state) {
             case "PRE_GAME": break;
             case "PLAYING": return "game already started";
@@ -74,7 +75,10 @@ export class Lobby {
 
     startGame() {
         let i = 0;
-        this.players.forEach((player, index) => {
+
+        this._state = "PLAYING";
+
+        this.players.forEach((player) => {
             player.sendPacket({
                 type: "match_begin",
                 token: player.name,

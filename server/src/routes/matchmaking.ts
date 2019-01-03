@@ -68,16 +68,15 @@ class ConnectionHandler {
 
     onPlayerInfoChangePacket(packet: proto.PlayerLobbyInfoChangePacket) {
         this.player.character = packet.character;
-
-        if (this.player.ready != packet.ready) {
-            this.player.ready = packet.ready;
-            if (this.player.lobby) {
-                this.player.lobby.refreshReady();
-            }
-            // TODO: if player ready but no lobby joined then join a casual match
-        }
+        // TODO: if player ready but no lobby joined then join a casual match
 
         this.sendResult(); // Ok
+
+        if (this.player.lobby != null && this.player.ready != packet.ready) {
+            this.player.ready = packet.ready;
+
+            this.player.lobby.refreshReady();
+        }
 
         if (this.player.lobby != null && this.player.lobby.state == "PRE_GAME") {
             // If the lobby hasn't started the game yet refresh the lobby info

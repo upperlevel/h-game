@@ -1,7 +1,7 @@
 import * as ws from 'ws';
 import * as express from "express";
 
-class MatchMaker {
+export class GameRelay {
   connectionHandler(ws: ws, req: express.Request): void {
     ws.on("message", msg => {
       ws.send(msg)
@@ -9,5 +9,3 @@ class MatchMaker {
     console.log(req)
   }
 }
-
-export = new MatchMaker();

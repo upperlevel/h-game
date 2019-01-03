@@ -4,7 +4,10 @@
     "module": "commonjs",
     "target": "es6",
     "sourceMap": true,
+    "strict": true,
     "noImplicitAny": true,
-    "allowJs": true
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   }
 }

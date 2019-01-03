@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "tsc; node dist/app.js"
+    "start": "tsc; node dist/server/src/app.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",

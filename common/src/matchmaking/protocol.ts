@@ -1,7 +1,7 @@
 /**
  *
  * the "matchmaking" protocol sends in the first line the packet type and in the second line the packet json-serialized
- * every client request is followed by an OperationResultPacket stating the error (or null if there wasn't any).
+ * every client request is followed by an OperationResultPacket stating the error (or undefined if there wasn't any).
  * The first packet should be a LoginPacket (and it receives the OperationResultPacket too)
  */
 
@@ -27,13 +27,13 @@ export interface PlayerLobbyInfoChangePacket {
  */
 export interface MatchBeginPacket {
     type: "match_begin";
-    token: number;
+    token: string;
     playerIndex: number;
 }
 
 export interface LobbyPlayerInfo {
     name: string;
-    character: string | null;
+    character?: string;
     ready: boolean;
 }
 
@@ -49,7 +49,7 @@ export interface CurrentLobbyInfoPacket {
 
 export interface OperationResultPacket {
     type: "result";
-    error: string | null;
+    error?: string;
 }
 
 // -------- REQUEST/RESPONSES --------
@@ -83,6 +83,7 @@ export type MatchmakingPacket =
     | PlayerLobbyInfoChangePacket
     | MatchBeginPacket
     | CurrentLobbyInfoPacket
-    | OperationResultPacket;
+    | OperationResultPacket
+    | InvitePacket;
 
 

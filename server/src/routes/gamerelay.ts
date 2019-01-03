@@ -17,18 +17,32 @@ class ConnectionHandler {
   onMessage(msg: string) {
     if (this.player == null) {
       let player = this.playerRegistry.getByName(msg);
-      if (player != null && player.relaySocket == null) {
+      if (player != null
+          && player.relaySocket == null
+          && player.lobby != null
+          && player.lobby.state == "CONNECTION_WAIT") {
         this.player = player;
         this.player.relaySocket = this.socket;
 
         this.socket.send("ok");
+
+        this.player.ready = true;
+        this.player.lobby!.refreshReady()
       } else {
         this.socket.send("error: invalid token")
       }
       return
     }
 
-    if (this.player.lobby == null) return;
+    if (this.player.lobby == null) {
+      this.socket.send("error: no lobby joined");
+      return
+    }
+
+    if (this.player.lobby.state != "PLAYING") {
+      this.socket.send("error: wrong lobby state");
+      return
+    }
 
     let other: Player;
     for (other of this.player.lobby.players) {

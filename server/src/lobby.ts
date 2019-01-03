@@ -7,6 +7,10 @@ type LobbyState =
      */
     "PRE_GAME"
     /**
+     * Waiting for the players to initialize the other websocket connection
+     */
+    | "CONNECTION_WAIT"
+    /**
      * The players are playing
      */
     | "PLAYING"
@@ -65,12 +69,18 @@ export class Lobby {
     }
 
     refreshReady() {
-        if (this.state != "PRE_GAME") return;
+        if (this.state != "PRE_GAME" && this.state != "CONNECTION_WAIT") return;
         for (let player of this.players.values()) {
             if (!player.ready) return;
         }
+        for (let player of this.players.values()) {
+            player.ready = false
+        }
         // Everyone's ready, start the game
-        this.startGame()
+        switch (this.state) {
+            case "PRE_GAME": this.startGame(); break;
+            case "CONNECTION_WAIT":  this.notifyConnectionReady(); break;
+        }
     }
 
     startGame() {
@@ -86,6 +96,13 @@ export class Lobby {
             });
             i++
         })
+    }
+
+    notifyConnectionReady() {
+        this.players.forEach(player => {
+            player.relaySocket!.send("ready")
+        });
+        status = "PLAYING";
     }
 
     // TODO: onJoin, refreshReady, startGame

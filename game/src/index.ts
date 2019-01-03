@@ -1,4 +1,5 @@
 import {PhaseManager, Phases} from "./phases/phase";
+import * as Phaser from "phaser";
 
 export class HGame {
     static instance: HGame = new HGame();

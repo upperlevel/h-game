@@ -1,5 +1,6 @@
 import {Phase, Phases} from "./phase";
 import {HGame} from "../index";
+import {LoginPacket, OperationResultPacket} from "@common/matchmaking/protocol";
 
 export class LoginPhase implements Phase {
     overlay: HTMLDivElement;
@@ -12,10 +13,12 @@ export class LoginPhase implements Phase {
         const button = document.getElementById("login-button") as HTMLButtonElement;
         button.onclick = () => {
             const username = document.getElementById("login-username") as HTMLInputElement;
-            HGame.instance.socket!.send(JSON.stringify({
+            const packet = {
                 type: "login",
                 name: username.value
-            }))
+            } as LoginPacket;
+
+            HGame.instance.socket!.send(JSON.stringify(packet));
         }
     }
 
@@ -23,9 +26,11 @@ export class LoginPhase implements Phase {
         this.overlay.style.display = "block";
 
         HGame.instance.socket!.addEventListener("message", (event) => {
-            if (event.data.error) {
+            const packet = JSON.parse(event.data) as OperationResultPacket;
+
+            if (packet.error) {
                 this.feedback.style.color = "red";
-                this.feedback.innerText = event.data.error;
+                this.feedback.innerText = packet.error;
             } else {
                 this.feedback.style.color = "green";
                 this.feedback.innerText = "Username accepted";

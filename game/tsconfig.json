@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./@types/*", "./node_modules/@types/*"],
+
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./@types/*", "./node_modules/@types/*"],
+      "@common/*": ["../common/src/*"]
+    },
+
     "outDir": "./dist/",
     "module": "commonjs",
     "target": "es5",
@@ -7,12 +15,5 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  }
 }

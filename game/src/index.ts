@@ -1,31 +1,34 @@
-import {PhaseManager, Phases} from "./phases/phase";
-import * as Phaser from "phaser";
+import {PhaseManager, Phases} from "./ui/phase";
+import {Graphics} from "./game/graphics";
 
-export class HGame {
-    static instance: HGame = new HGame();
-
+class HGame {
     phaseManager: PhaseManager = new PhaseManager();
-    socket: WebSocket | undefined = undefined;
+    graphics: Graphics = new Graphics();
+
+    socket: WebSocket | undefined  = undefined;
 
     reconnect() {
+        if (this.socket) {
+            this.socket.onclose = null;
+            this.socket!.close();
+        }
+
         this.socket = new WebSocket("ws://localhost:8080/api/matchmaking");
-
-        this.socket!.addEventListener("open", () => {
-            HGame.instance.phaseManager.show(Phases.LOGIN);
-        });
-
-        this.socket!.addEventListener("close", () => {
-            HGame.instance.phaseManager.show(Phases.NO_CONNECTION);
-        });
+        this.socket.onopen = () => {
+            this.phaseManager.show(Phases.LOGIN);
+        };
+        this.socket.onclose = () => {
+            this.phaseManager.show(Phases.NO_CONNECTION);
+        };
     }
 
     start() {
-        HGame.instance.phaseManager.show(Phases.CONNECTING);
-        this.reconnect();
+        this.phaseManager.show(Phases.CONNECTING);
     }
 
     dismiss() {
     }
 }
 
-HGame.instance.start();
+export const hgame = new HGame();
+window.addEventListener("load", () => hgame.start());

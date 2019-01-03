@@ -1,21 +1,25 @@
 import {Phase, Phases} from "./phase";
-import {HGame} from "../index";
+import {hgame} from "../index";
 
-export class ConnectingPhase implements Phase {
+export class ConnectingPhase extends Phase {
+    name = "connecting";
+
     overlay: HTMLDivElement;
     label: HTMLDivElement;
 
     labelTimer: number = -1;
 
     constructor() {
+        super();
+
         this.overlay = document.getElementById("connecting-overlay") as HTMLDivElement;
         this.label = document.getElementById("connecting-label") as HTMLDivElement;
     }
 
-    show() {
+    onShow() {
         this.overlay.style.display = "block";
 
-        HGame.instance.reconnect();
+        hgame.reconnect();
 
         let timer = 0;
         this.labelTimer = setInterval(() => {
@@ -25,30 +29,40 @@ export class ConnectingPhase implements Phase {
         }, 500)
     }
 
-    dismiss() {
+    onMessage(packet: any) {
+    }
+
+    onDismiss() {
         clearInterval(this.labelTimer);
         this.overlay.style.display = "none";
     }
 }
 
-export class NoConnectionPhase implements Phase {
+export class NoConnectionPhase extends Phase {
+    name = "no_connection";
+
     overlay: HTMLDivElement;
     retryButton: HTMLButtonElement;
 
     constructor() {
+        super();
+
         this.overlay = document.getElementById("no-connection-overlay") as HTMLDivElement;
 
         this.retryButton = document.getElementById("connection-retry-btn") as HTMLButtonElement;
         this.retryButton.onclick = () => {
-            HGame.instance.phaseManager.show(Phases.CONNECTING)
+            hgame.phaseManager.show(Phases.CONNECTING)
         }
     }
 
-    show() {
+    onShow() {
         this.overlay.style.display = "block";
     }
 
-    dismiss() {
+    onMessage(packet: any) {
+    }
+
+    onDismiss() {
         this.overlay.style.display = "none";
     }
 }

@@ -61,7 +61,7 @@ input:focus {
     outline: 0;
 }
 
-.overlay {
+.screen {
     display: none;
     position: fixed;
     top: 0;
@@ -73,6 +73,10 @@ input:focus {
     color: white;
     font-size: 32px;
     -webkit-font-smoothing: none;
+}
+
+.overlay {
+    z-index: 1
 }
 
 .center {
@@ -92,14 +96,15 @@ input:focus {
     font-size: 64px;
 }
 
-#connection-retry-btn {
-}
-
 #login-overlay {
     text-align: center;
 }
 
 #lobby-overlay {
+}
+
+#ready-btn {
+    background-color: red;
 }
 
 #game-overlay {

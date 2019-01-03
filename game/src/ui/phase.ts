@@ -3,6 +3,8 @@ import {LoginPhase} from "./login"
 import {LobbyPhase} from "./lobby"
 import {GamePhase} from "./game"
 
+import {hgame} from "../index";
+
 export namespace Phases {
     export const CONNECTING:    Phase = new ConnectingPhase();
     export const NO_CONNECTION: Phase = new NoConnectionPhase();
@@ -12,9 +14,27 @@ export namespace Phases {
 }
 
 export abstract class Phase {
-    abstract show(): void;
+    abstract name: string;
 
-    abstract dismiss(): void;
+    show() {
+        if (hgame.socket) {
+            hgame.socket.onmessage = event => this.onMessage(JSON.parse(event.data))
+        }
+        this.onShow();
+    }
+
+    protected abstract onShow(): void;
+
+    protected abstract onMessage(packet: any): void;
+
+    dismiss() {
+        if (hgame.socket) {
+            hgame.socket.onmessage = null;
+        }
+        this.onDismiss();
+    }
+
+    protected abstract onDismiss(): void;
 }
 
 export class PhaseManager {
@@ -23,11 +43,12 @@ export class PhaseManager {
     show(phase: Phase) {
         if (this.current) {
             this.current.dismiss();
+            console.log(`Disabled phase: ${this.current.name}`);
         }
         this.current = phase;
         if (this.current) {
             this.current.show();
+            console.log(`Shown phase: ${this.current.name}`);
         }
     }
 }
-

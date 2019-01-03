@@ -8,13 +8,15 @@
 </head>
 <body>
 
-<div id="connecting-overlay" class="overlay">
+<div id="game"></div>
+
+<div id="connecting-overlay" class="overlay screen">
     <div class="center">
         <h1 id="connecting-label">Connecting...</h1>
     </div>
 </div>
 
-<div id="no-connection-overlay" class="overlay">
+<div id="no-connection-overlay" class="overlay screen">
     <div class="center">
         <h1>No connection</h1>
         <div style="margin-top: 25px">
@@ -26,7 +28,7 @@
     </div>
 </div>
 
-<div id="login-overlay" class="overlay">
+<div id="login-overlay" class="overlay screen">
     <div class="center">
         <h1>Login</h1>
         <div style="margin-top: 25px">
@@ -44,10 +46,18 @@
     </div>
 </div>
 
-<div id="lobby-overlay" class="overlay">
+<div id="lobby-overlay" class="overlay screen">
+    <div class="center">
+        <div style="padding: 25px">
+            <button id="ready-btn" style="padding: 50px">Ready</button>
+        </div>
+        <div style="padding: 25px">
+            <button id="invite-btn" style="padding: 50px">Invite</button>
+        </div>
+    </div>
 </div>
 
-<div id="game-overlay" class="overlay"></div>
+<div id="game-overlay" class="overlay screen"></div>
 
 </body>
 </html>

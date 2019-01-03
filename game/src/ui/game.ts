@@ -1,17 +1,24 @@
 import {Phase} from "./phase";
 
-export class GamePhase implements Phase {
+export class GamePhase extends Phase {
+    name = "game";
+
     overlay: HTMLDivElement;
 
     constructor() {
+        super();
+
         this.overlay = document.getElementById("game-overlay") as HTMLDivElement;
     }
 
-    show() {
+    onShow() {
         this.overlay.style.display = "block";
     }
 
-    dismiss() {
+    onMessage(packet: any) {
+    }
+
+    onDismiss() {
         this.overlay.style.display = "none"
     }
 }

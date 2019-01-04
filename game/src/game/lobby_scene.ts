@@ -2,7 +2,6 @@ import * as Phaser from "phaser"
 
 export class LobbyScene extends Phaser.Scene {
     preload(): void {
-        this.load.image("sky", "assets/game/sky.png");
         this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
     }
 

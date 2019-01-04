@@ -4,7 +4,7 @@ import {Graphics} from "./game/graphics";
 
 class HGame {
     phaseManager: PhaseManager = new PhaseManager();
-    graphics: Graphics = new Graphics();
+    graphics?: Graphics = undefined;
 
     socket?: WebSocket;
 
@@ -23,13 +23,14 @@ class HGame {
         };
     }
 
-    start() {
+    onLoad() {
+        this.graphics = new Graphics();
         this.phaseManager.show(Phases.CONNECTING);
     }
 
-    dismiss() {
+    onDismiss() {
     }
 }
 
 export const hgame = new HGame();
-window.addEventListener("load", () => hgame.start());
+window.addEventListener("load", () => hgame.onLoad());

@@ -1,13 +1,12 @@
 import * as Phaser from "phaser"
 
-import {LobbyScene} from "./lobby"
+import {LobbyScene} from "./lobby_scene"
 
 export class Graphics extends Phaser.Game {
     constructor() {
         super({
             title: "H-Game",
             url: "http://github.com/upperlevel/h-game",
-            parent: "game",
             width: 720,
             height: 720,
             type: Phaser.AUTO,
@@ -21,6 +20,7 @@ export class Graphics extends Phaser.Game {
         this.scene.add("lobby", LobbyScene);
         this.scene.start("lobby");
 
+        this.canvas = document.getElementsByTagName("canvas")[0];
         this.customizeCanvas();
 
         this.updateSize();
@@ -38,5 +38,6 @@ export class Graphics extends Phaser.Game {
     updateSize() {
         const canvas = this.canvas;
         this.resize(canvas.clientWidth, canvas.clientHeight);
+        console.log(`Resizing game: w=${canvas.clientWidth} h=${canvas.clientHeight}`)
     }
 }

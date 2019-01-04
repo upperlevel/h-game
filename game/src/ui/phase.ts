@@ -1,17 +1,4 @@
-import {ConnectingPhase, NoConnectionPhase} from "./connection";
-import {LoginPhase} from "./login"
-import {LobbyPhase} from "./lobby"
-import {GamePhase} from "./game"
-
 import {hgame} from "../index";
-
-export namespace Phases {
-    export const CONNECTING:    Phase = new ConnectingPhase();
-    export const NO_CONNECTION: Phase = new NoConnectionPhase();
-    export const LOGIN:         Phase = new LoginPhase();
-    export const LOBBY:         Phase = new LobbyPhase();
-    export const GAME:          Phase = new GamePhase();
-}
 
 export abstract class Phase {
     abstract name: string;

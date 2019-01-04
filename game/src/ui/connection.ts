@@ -1,5 +1,6 @@
-import {Phase, Phases} from "./phase";
+import {Phase} from "./phase";
 import {hgame} from "../index";
+import {Phases} from "./phases";
 
 export class ConnectingPhase extends Phase {
     name = "connecting";

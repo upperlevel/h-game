@@ -1,11 +1,12 @@
-import {PhaseManager, Phases} from "./ui/phase";
+import {Phases} from "./ui/phases";
+import {PhaseManager} from "./ui/phase";
 import {Graphics} from "./game/graphics";
 
 class HGame {
     phaseManager: PhaseManager = new PhaseManager();
     graphics: Graphics = new Graphics();
 
-    socket: WebSocket | undefined  = undefined;
+    socket?: WebSocket;
 
     reconnect() {
         if (this.socket) {

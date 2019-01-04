@@ -1,4 +1,5 @@
-import {Phase, Phases} from "./phase";
+import {Phase} from "./phase";
+import {Phases} from "./phases"
 import {LoginPacket} from "@common/matchmaking/protocol";
 
 import {hgame} from "../index";

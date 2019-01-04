@@ -1,8 +1,5 @@
 import {Phase} from "./phase";
 
-import {LobbyScene} from "../game/lobby"
-import {Graphics} from "../game/graphics";
-
 import {hgame} from "../index";
 
 

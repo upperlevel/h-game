@@ -1,5 +1,5 @@
 import {Player} from "./player";
-import {CurrentLobbyInfoPacket, LobbyPlayerInfo} from "../../common/src/matchmaking/protocol"
+import {CurrentLobbyInfoPacket, LobbyPlayerInfo} from "@common/matchmaking/protocol"
 
 type LobbyState =
     /**

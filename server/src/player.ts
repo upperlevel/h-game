@@ -1,4 +1,4 @@
-import {MatchmakingPacket} from "../../common/src/matchmaking/protocol"
+import {MatchmakingPacket} from "@common/matchmaking/protocol"
 import * as ws from 'ws';
 import {Lobby, LobbyRegistry} from "./lobby";
 

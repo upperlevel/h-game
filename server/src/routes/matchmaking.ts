@@ -1,5 +1,5 @@
 import * as ws from 'ws';
-import * as proto from "../../../common/src/matchmaking/protocol";
+import * as proto from "@common/matchmaking/protocol";
 import {Player, PlayerRegistry} from '../player';
 import {LobbyRegistry} from "../lobby";
 

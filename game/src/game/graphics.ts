@@ -1,6 +1,7 @@
 import * as Phaser from "phaser"
 
 import {LobbyScene} from "./lobby_scene"
+import {GameScene} from "./game_scene";
 
 export class Graphics extends Phaser.Game {
     constructor() {
@@ -18,6 +19,7 @@ export class Graphics extends Phaser.Game {
         });
 
         this.scene.add("lobby", LobbyScene);
+        this.scene.add("game", GameScene);
         this.scene.start("lobby");
 
         this.canvas = document.getElementsByTagName("canvas")[0];

@@ -1,10 +1,13 @@
 import {Phases} from "./ui/phases";
 import {PhaseManager} from "./ui/phase";
 import {Graphics} from "./game/graphics";
+import {Keyboard} from "./actions";
 
 class HGame {
     phaseManager: PhaseManager = new PhaseManager();
-    graphics?: Graphics = undefined;
+    graphics?: Graphics;
+
+    actions?: Keyboard;
 
     socket?: WebSocket;
 

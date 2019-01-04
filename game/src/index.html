@@ -49,12 +49,24 @@
 <div id="lobby-overlay" class="overlay screen">
     <div class="center">
         <div style="padding: 25px">
-            <button id="ready-btn" style="padding: 50px">Ready</button>
+            <button id="ready-btn" class="red-button" style="padding: 50px">Ready</button>
         </div>
         <div style="padding: 25px">
-            <button id="invite-btn" style="padding: 50px">Invite</button>
+            <button id="invite-button" style="padding: 50px">Invite</button>
         </div>
     </div>
+</div>
+
+<div id="invite-overlay" class="overlay modal">
+    <h6>Who are you going to invite?</h6>
+    <div style="margin-top: 25px; text-align: center">
+        <input id="invited-player" type="text" spellcheck="false"/>
+    </div>
+    <div style="margin-top: 25px; text-align: right">
+        <button id="invite-cancel-button" class="red-button">Cancel</button>
+        <button id="invite-send-button" class="green-button">Send</button>
+    </div>
+    <small id="invite-feedback" style="float: left"></small>
 </div>
 
 <div id="game-overlay" class="overlay screen"></div>

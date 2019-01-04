@@ -8,15 +8,17 @@
     padding: 0;
     user-select: none;
 
+    color: white;
+
     font-family: "pixeled", sans-serif;
     -webkit-font-smoothing: none;
 }
 
 body {
-    background-color: #37474F;
+    background-color: black;
 }
 
-h1{
+h1 {
     font-size: 128px;
 }
 
@@ -24,8 +26,12 @@ h3 {
     font-size: 98px;
 }
 
-p {
+h6 {
     font-size: 32px;
+}
+
+p {
+    font-size: 24px;
 }
 
 small {
@@ -50,11 +56,29 @@ button:focus {
     outline: 0;
 }
 
-input {
+.green-button {
+    background-color: lime;
+}
+
+.green-button:hover {
+    background-color: lightgreen;
+}
+
+.red-button {
+    background-color: red;
+}
+
+.red-button:hover {
+    background-color: lightcoral;
+}
+
+input[type=text] {
     padding: 25px;
     border-radius: 10px;
     border: 0;
     font-size: 24px;
+
+    color: black;
 }
 
 input:focus {
@@ -72,7 +96,18 @@ input:focus {
 
     color: white;
     font-size: 32px;
-    -webkit-font-smoothing: none;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #37474F;
+    padding: 25px;
+    border-radius: 20px;
 }
 
 .overlay {
@@ -103,8 +138,11 @@ input:focus {
 #lobby-overlay {
 }
 
+#invite-feedback {
+    float: left;
+}
+
 #ready-btn {
-    background-color: red;
 }
 
 #game-overlay {

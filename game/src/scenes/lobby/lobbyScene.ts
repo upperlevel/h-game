@@ -21,8 +21,10 @@ export class LobbyScene extends SceneWrapper {
         const player = this.add.container(400, 300);
 
         const sprite = this.add.sprite(0, 0, "santy").setDisplaySize(250, 250);
-        sprite.anims.load("idle");
-        sprite.anims.play("idle");
+
+        // TODO: play idle animation.
+        //sprite.anims.load("idle");
+        //sprite.anims.play("idle");
 
         const name = this.add.text(0, 0, playerName, {
             fontFamily: "pixeled",
@@ -45,6 +47,8 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onCreate() {
+        this.addPlayer("You");
+
         this.overlay.show();
     }
 

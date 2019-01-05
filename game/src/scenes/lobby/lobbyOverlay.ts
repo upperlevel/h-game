@@ -37,7 +37,24 @@ export class LobbyOverlay extends Overlay {
         };
     }
 
+    onMessage(packet: any) {
+        switch (packet) {
+            case "invite":
+                if (packet.kind == "INVITE_RECEIVED") {
+                    // TODO: show invite received
+                    console.log(`You received an invite from ${packet.player}`);
+                }
+                break;
+        }
+    }
+
+    onShow() {
+        hgame.events.on("message", this.onMessage, this);
+    }
+
     onHide() {
+        hgame.events.removeListener("message", this.onMessage, this, false);
+
         this.inviteOverlay.hide();
     }
 }

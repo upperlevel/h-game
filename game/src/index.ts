@@ -1,11 +1,11 @@
 import * as Phaser from "phaser";
 import Game = Phaser.Game;
 
-import {ConnectingScene} from "./ui/connectingScene";
-import {DisconnectedScene} from "./ui/disconnectedScene";
-import {LoginScene} from "./ui/loginScene";
-import {LobbyScene} from "./ui/lobby/lobbyScene";
-import {GameScene} from "./ui/gameScene";
+import {ConnectingScene} from "./scenes/connectingScene";
+import {DisconnectedScene} from "./scenes/disconnectedScene";
+import {LoginScene} from "./scenes/loginScene";
+import {LobbyScene} from "./scenes/lobby/lobbyScene";
+import {GameScene} from "./scenes/gameScene";
 
 import {Keyboard} from "./actions";
 
@@ -69,13 +69,24 @@ class HGame extends Game {
         this.socket = new WebSocket("ws://localhost:8080/api/matchmaking");
 
         this.socket.onmessage = event => {
-            const packet = JSON.parse(event.data);
-            this.events.emit("message", packet);
+            const raw = event.data;
+            console.log(`Web-socket received: ${raw}`);
+
+            this.events.emit("message", JSON.parse(raw));
         };
 
         this.socket.onclose = () => {
             // TODO: find a way to stop all running scenes (may be one) and run DisconnectedScene.
             console.log("Disconnected :(");
+        }
+    }
+
+    send(packet: any) {
+        const raw = JSON.stringify(packet);
+        console.log(`Web-socket sent: ${raw}`);
+
+        if (this.socket != null) {
+            this.socket.send(raw);
         }
     }
 

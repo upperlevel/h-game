@@ -1,18 +1,18 @@
 import {Overlay} from "../overlay";
-
-import {hgame} from "../../index";
-import {OperationResultPacket} from "@common/matchmaking/protocol";
+import {LobbyScene} from "./lobbyScene";
 
 export class InviteOverlay extends Overlay {
+    scene: LobbyScene;
+
     username: HTMLInputElement;
     sendButton: HTMLButtonElement;
     cancelButton: HTMLButtonElement;
     feedback: HTMLElement;
 
-    shown: boolean = false;
-
-    constructor() {
+    constructor(scene: LobbyScene) {
         super("invite-overlay");
+
+        this.scene = scene;
 
         this.feedback = document.getElementById("invite-feedback") as HTMLElement;
 
@@ -24,7 +24,7 @@ export class InviteOverlay extends Overlay {
 
         this.sendButton = document.getElementById("invite-send-button") as HTMLButtonElement;
         this.sendButton.onclick = () => {
-            hgame.send({
+            this.scene.game.send({
                 type: "invite",
                 kind: "INVITE_PLAYER",
                 player: this.username.value
@@ -57,14 +57,10 @@ export class InviteOverlay extends Overlay {
 
     onShow() {
         this.reset();
-        this.shown = true;
-
-        hgame.events.on("message", this.onMessage, this);
+        this.scene.game.events.on("message", this.onMessage, this);
     }
 
     onHide() {
-        hgame.events.removeListener("message", this.onMessage, this, false);
-
-        this.shown = false;
+        this.scene.game.events.removeListener("message", this.onMessage, this, false);
     }
 }

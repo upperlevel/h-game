@@ -2,8 +2,6 @@ import {SceneWrapper} from "./sceneWrapper";
 
 import {Overlay} from "./overlay";
 
-import {hgame} from "../index";
-
 class DisconnectedOverlay extends Overlay {
     scene: DisconnectedScene;
 

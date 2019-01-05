@@ -1,6 +1,5 @@
 import {SceneWrapper} from "./sceneWrapper"
 
-import {hgame} from "../index";
 import {Keyboard} from "../actions";
 
 export class GameScene extends SceneWrapper {
@@ -13,7 +12,7 @@ export class GameScene extends SceneWrapper {
     }
 
     onCreate() {
-        hgame.actions = new Keyboard(this);
+        this.game.actions = new Keyboard(this);
 
         this.anims.create({
             key: "santy_idle",

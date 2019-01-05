@@ -1,18 +1,22 @@
 import {Overlay} from "../overlay";
 import {InviteOverlay} from "./inviteOverlay";
 
-import {hgame} from "../../index";
+import {RequestsOverlay} from "./requestsOverlay";
+import {LobbyScene} from "./lobbyScene";
 
 export class LobbyOverlay extends Overlay {
-    inviteOverlay: InviteOverlay;
+    scene: LobbyScene;
 
     readyButton: HTMLButtonElement;
     inviteButton: HTMLButtonElement;
 
-    constructor() {
+    inviteOverlay: InviteOverlay;
+    requestsOverlay: RequestsOverlay;
+
+    constructor(scene: LobbyScene) {
         super("lobby-overlay");
 
-        this.inviteOverlay = new InviteOverlay();
+        this.scene = scene;
 
         this.readyButton = document.getElementById("lobby-ready-button") as HTMLButtonElement;
         this.readyButton.onclick = () => {
@@ -24,37 +28,28 @@ export class LobbyOverlay extends Overlay {
                 this.readyButton.className = "red-button";
             }
 
-            hgame.socket!.send(JSON.stringify({
+            this.scene.game.send({
                 type: "lobby_update",
                 character: "santy",
                 ready: notReady
-            }));
+            });
         };
 
         this.inviteButton = document.getElementById("lobby-invite-button") as HTMLButtonElement;
         this.inviteButton.onclick = () => {
             this.inviteOverlay.show();
         };
-    }
 
-    onMessage(packet: any) {
-        switch (packet) {
-            case "invite":
-                if (packet.kind == "INVITE_RECEIVED") {
-                    // TODO: show invite received
-                    console.log(`You received an invite from ${packet.player}`);
-                }
-                break;
-        }
+        this.inviteOverlay = new InviteOverlay(scene);
+        this.requestsOverlay = new RequestsOverlay(scene);
     }
 
     onShow() {
-        hgame.events.on("message", this.onMessage, this);
+        this.requestsOverlay.show();
     }
 
     onHide() {
-        hgame.events.removeListener("message", this.onMessage, this, false);
-
+        this.requestsOverlay.hide();
         this.inviteOverlay.hide();
     }
 }

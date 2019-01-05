@@ -2,9 +2,6 @@ import {SceneWrapper} from "./sceneWrapper";
 
 import {Overlay} from "./overlay";
 
-import {hgame} from "../index";
-import {OperationResultPacket} from "@common/matchmaking/protocol";
-
 class LoginOverlay extends Overlay {
     scene: LoginScene;
 
@@ -20,7 +17,7 @@ class LoginOverlay extends Overlay {
         this.submit.onclick = () => {
             const username = document.getElementById("login-username") as HTMLInputElement;
 
-            hgame.send({
+            this.scene.game.send({
                 type: "login",
                 name: username.value
             });
@@ -42,11 +39,11 @@ class LoginOverlay extends Overlay {
     }
 
     onShow() {
-        hgame.events.on("message", this.onMessage, this);
+        this.scene.game.events.on("message", this.onMessage, this);
     }
 
     onHide() {
-        hgame.events.removeListener("message", this.onMessage, this, false);
+        this.scene.game.events.removeListener("message", this.onMessage, this, false);
     }
 }
 

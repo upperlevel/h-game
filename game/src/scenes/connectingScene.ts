@@ -2,8 +2,6 @@ import {SceneWrapper} from "./sceneWrapper"
 
 import {Overlay} from "./overlay";
 
-import {hgame} from "../index";
-
 class ConnectingOverlay extends Overlay {
     label: HTMLDivElement;
     labelTimer: number = -1;
@@ -39,11 +37,11 @@ export class ConnectingScene extends SceneWrapper {
     }
 
     onCreate() {
-        hgame.reconnect();
+        this.game.reconnect();
 
         this.overlay.show();
 
-        hgame.getChannel().onopen  = () => this.changeScene("login");
+        this.game.getChannel().onopen  = () => this.changeScene("login");
     }
 
     onUpdate() {

@@ -9,7 +9,7 @@ import {GameScene} from "./scenes/gameScene";
 
 import {Keyboard} from "./actions";
 
-class HGame extends Game {
+export class HGame extends Game {
     actions?: Keyboard;
     socket?: WebSocket;
 
@@ -21,7 +21,7 @@ class HGame extends Game {
             height: 720,
             type: Phaser.AUTO,
             scene: [
-                // The first scene is always started!
+                // The first scene is always started -_-
                 ConnectingScene,
 
                 DisconnectedScene,
@@ -34,6 +34,14 @@ class HGame extends Game {
                 antialias: false,
                 autoResize: false
             }
+        });
+
+        this.canvas = document.getElementsByTagName("canvas")[0];
+        this.customizeCanvas();
+
+        this.updateSize();
+        window.addEventListener("resize", () => {
+            this.updateSize();
         });
     }
 
@@ -48,16 +56,6 @@ class HGame extends Game {
     private updateSize() {
         const canvas = this.canvas;
         this.resize(canvas.clientWidth, canvas.clientHeight);
-    }
-
-    load() {
-        this.canvas = document.getElementsByTagName("canvas")[0];
-        this.customizeCanvas();
-
-        this.updateSize();
-        window.addEventListener("resize", () => {
-            this.updateSize();
-        });
     }
 
     reconnect() {
@@ -95,7 +93,4 @@ class HGame extends Game {
     }
 }
 
-export const hgame = new HGame();
-window.addEventListener("load", () => {
-    hgame.load();
-});
+window.addEventListener("load", () => new HGame());

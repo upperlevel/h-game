@@ -3,6 +3,9 @@ export class Overlay {
 
     constructor(id: string) {
         this.container = document.getElementById(id) as HTMLElement;
+        if (this.container == undefined) {
+            throw `Overlay container is null: ${id}`;
+        }
     }
 
     show() {

@@ -4,7 +4,6 @@ import * as Phaser from "phaser";
 import Container = Phaser.GameObjects.Container;
 
 import {LobbyOverlay} from "./lobbyOverlay";
-import {hgame} from "../../index";
 
 
 export class LobbyScene extends SceneWrapper {
@@ -14,7 +13,7 @@ export class LobbyScene extends SceneWrapper {
     constructor() {
         super("lobby");
 
-        this.overlay = new LobbyOverlay();
+        this.overlay = new LobbyOverlay(this);
     }
 
     addPlayer(playerName: string) {
@@ -54,7 +53,7 @@ export class LobbyScene extends SceneWrapper {
 
     onUpdate(): void {
         const padding = 100;
-        const width = hgame.canvas.clientWidth - padding * 2;
+        const width = this.game.canvas.clientWidth - padding * 2;
         const step = Math.floor(width / (this.players.length + 1));
 
         let distance = padding + step;

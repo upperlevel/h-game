@@ -1,13 +1,18 @@
-import * as Phaser from "phaser"
+import {SceneWrapper} from "./sceneWrapper"
+
 import {hgame} from "../index";
 import {Keyboard} from "../actions";
 
-export class GameScene extends Phaser.Scene {
-    preload(): void {
+export class GameScene extends SceneWrapper {
+    constructor() {
+        super("game");
+    }
+
+    onPreload() {
         this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
     }
 
-    create(): void {
+    onCreate() {
         hgame.actions = new Keyboard(this);
 
         this.anims.create({
@@ -24,5 +29,11 @@ export class GameScene extends Phaser.Scene {
         const santy = this.add.sprite(400, 300, "santy").setScale(4);
         santy.anims.load("idle");
         santy.anims.play("idle");
+    }
+
+    onUpdate() {
+    }
+
+    onShutdown() {
     }
 }

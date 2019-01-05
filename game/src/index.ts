@@ -67,6 +67,12 @@ class HGame extends Game {
         }
 
         this.socket = new WebSocket("ws://localhost:8080/api/matchmaking");
+
+        this.socket.onmessage = event => {
+            const packet = JSON.parse(event.data);
+            this.events.emit("message", packet);
+        };
+
         this.socket.onclose = () => {
             // TODO: find a way to stop all running scenes (may be one) and run DisconnectedScene.
             console.log("Disconnected :(");
@@ -75,14 +81,6 @@ class HGame extends Game {
 
     getChannel() {
         return this.socket!;
-    }
-
-    setJsonChannel(onMessage: (packet: any) => void) {
-        this.socket!.onmessage = packet => onMessage(JSON.parse(packet.data));
-    }
-
-    dropJsonChannel() {
-        this.socket!.onmessage = null;
     }
 }
 

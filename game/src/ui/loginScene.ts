@@ -3,6 +3,7 @@ import {SceneWrapper} from "./sceneWrapper";
 import {Overlay} from "./overlay";
 
 import {hgame} from "../index";
+import {OperationResultPacket} from "@common/matchmaking/protocol";
 
 class LoginOverlay extends Overlay {
     scene: LoginScene;
@@ -23,23 +24,23 @@ class LoginOverlay extends Overlay {
                 name: username.value
             };
 
+            hgame.events.once("message", (packet: OperationResultPacket) => {
+                if (packet.error) {
+                    this.feedback.style.color = "red";
+                    this.feedback.innerText = packet.error;
+                } else {
+                    this.feedback.style.color = "green";
+                    this.feedback.innerText = "Username accepted";
+
+                    this.scene.changeScene("lobby");
+                }
+            });
+
             hgame.socket!.send(JSON.stringify(packet));
             console.log("Login packet sent: " + JSON.stringify(packet));
         };
 
         this.feedback = document.getElementById("login-feedback") as HTMLDivElement;
-    }
-
-    onResponse(error: string | null) {
-        if (error) {
-            this.feedback.style.color = "red";
-            this.feedback.innerText = error;
-        } else {
-            this.feedback.style.color = "green";
-            this.feedback.innerText = "Username accepted";
-
-            this.scene.changeScene("lobby");
-        }
     }
 }
 
@@ -57,14 +58,12 @@ export class LoginScene extends SceneWrapper {
 
     onCreate() {
         this.overlay.show();
-        hgame.setJsonChannel(packet => this.overlay.onResponse(packet.error));
     }
 
     onUpdate() {
     }
 
     onShutdown() {
-        hgame.dropJsonChannel();
         this.overlay.hide();
     }
 }

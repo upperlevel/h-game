@@ -1,6 +1,7 @@
 import {Overlay} from "../overlay";
 
 import {hgame} from "../../index";
+import {OperationResultPacket} from "@common/matchmaking/protocol";
 
 export class InviteOverlay extends Overlay {
     username: HTMLInputElement;
@@ -24,6 +25,16 @@ export class InviteOverlay extends Overlay {
         this.sendButton.onclick = () => {
             this.sendButton.disabled = true;
 
+            hgame.events.once("message", (packet: OperationResultPacket) => {
+                if (packet.type == "result") {
+                    const error = packet.error;
+                    this.feedback.innerText = error ? error : "Invite sent";
+                    this.feedback.style.color = error ? "red" : "white";
+
+                    this.sendButton.disabled = false;
+                }
+            });
+
             hgame.socket!.send(JSON.stringify({
                 type: "invite",
                 kind: "INVITE_PLAYER",
@@ -46,17 +57,6 @@ export class InviteOverlay extends Overlay {
     onShow() {
         this.reset();
         this.shown = true;
-    }
-
-    // TODO
-    onMessage(packet: any) {
-        if (packet.type == "result") {
-            const error = packet.error;
-            this.feedback.innerText = error ? error : "Invite sent";
-            this.feedback.style.color = error ? "red" : "white";
-
-            this.sendButton.disabled = false;
-        }
     }
 
     onHide() {

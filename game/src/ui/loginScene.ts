@@ -44,19 +44,20 @@ class LoginOverlay extends Overlay {
 }
 
 export class LoginScene extends SceneWrapper {
-    overlay?: LoginOverlay;
+    overlay: LoginOverlay;
 
     constructor() {
         super("login");
-    }
 
-    onPreload() {
         this.overlay = new LoginOverlay(this);
     }
 
+    onPreload() {
+    }
+
     onCreate() {
-        this.overlay!.show();
-        hgame.setJsonChannel(packet => this.overlay!.onResponse(packet.error));
+        this.overlay.show();
+        hgame.setJsonChannel(packet => this.overlay.onResponse(packet.error));
     }
 
     onUpdate() {
@@ -64,6 +65,6 @@ export class LoginScene extends SceneWrapper {
 
     onShutdown() {
         hgame.dropJsonChannel();
-        this.overlay!.hide();
+        this.overlay.hide();
     }
 }

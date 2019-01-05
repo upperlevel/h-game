@@ -8,11 +8,13 @@ import {hgame} from "../../index";
 
 
 export class LobbyScene extends SceneWrapper {
-    overlay?: LobbyOverlay;
+    overlay: LobbyOverlay;
     players: Container[] = [];
 
     constructor() {
         super("lobby");
+
+        this.overlay = new LobbyOverlay();
     }
 
     addPlayer(playerName: string) {
@@ -39,13 +41,11 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onPreload() {
-        this.overlay = new LobbyOverlay();
-
         this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
     }
 
     onCreate() {
-        this.overlay!.show();
+        this.overlay.show();
     }
 
     onUpdate(): void {
@@ -61,6 +61,6 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onShutdown() {
-        this.overlay!.hide();
+        this.overlay.hide();
     }
 }

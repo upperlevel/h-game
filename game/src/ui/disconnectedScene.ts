@@ -22,24 +22,25 @@ class DisconnectedOverlay extends Overlay {
 }
 
 export class DisconnectedScene extends SceneWrapper {
-    overlay?: DisconnectedOverlay;
+    overlay: DisconnectedOverlay;
 
     constructor() {
         super("disconnected");
-    }
 
-    onPreload() {
         this.overlay = new DisconnectedOverlay(this);
     }
 
+    onPreload() {
+    }
+
     onCreate() {
-        this.overlay!.show();
+        this.overlay.show();
     }
 
     onUpdate() {
     }
 
     onShutdown() {
-        this.overlay!.hide();
+        this.overlay.hide();
     }
 }

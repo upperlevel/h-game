@@ -27,20 +27,21 @@ class ConnectingOverlay extends Overlay {
 }
 
 export class ConnectingScene extends SceneWrapper {
-    overlay?: ConnectingOverlay;
+    overlay: ConnectingOverlay;
 
     constructor() {
         super("connecting");
+
+        this.overlay = new ConnectingOverlay();
     }
 
     onPreload() {
-        this.overlay = new ConnectingOverlay();
     }
 
     onCreate() {
         hgame.reconnect();
 
-        this.overlay!.show();
+        this.overlay.show();
 
         hgame.getChannel().onopen  = () => this.changeScene("login");
     }
@@ -49,6 +50,6 @@ export class ConnectingScene extends SceneWrapper {
     }
 
     onShutdown() {
-        this.overlay!.hide();
+        this.overlay.hide();
     }
 }

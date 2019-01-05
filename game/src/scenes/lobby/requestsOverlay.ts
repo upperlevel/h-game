@@ -38,14 +38,14 @@ export class RequestsOverlay extends Overlay {
         decline.innerText = "Decline";
         decline.className = "red-button";
         decline.onclick = () => {
-            super.container.removeChild(request);
+            this.container.removeChild(request);
             console.log(`You declined the invite of: ${player}`);
         };
         buttonsBar.appendChild(decline);
 
         request.appendChild(buttonsBar);
 
-        super.container.appendChild(request);
+        this.container.appendChild(request);
     }
 
     onMessage(packet: any) {

@@ -63,4 +63,13 @@ export namespace EntityTypes {
             type.loader(scene);
         }
     }
+
+    export function fromId(id: string): EntityType | undefined {
+        for (let type of types) {
+            if (type.id == id) {
+                return type;
+            }
+        }
+        return undefined;
+    }
 }

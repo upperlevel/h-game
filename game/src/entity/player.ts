@@ -5,10 +5,9 @@ import {BehaviourManager} from "../behaviour/behaviour";
 import {GameScene} from "../scenes/gameScene";
 import Scene = Phaser.Scene;
 import Sprite = Phaser.GameObjects.Sprite;
+import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";
 
 export abstract class Player extends Entity {
-    scene: GameScene;
-
     maxEnergy = 1.0;
     energy = 1.0;
     energyGainPerSecond = 0.05;
@@ -23,8 +22,7 @@ export abstract class Player extends Entity {
     private behaviour: BehaviourManager;
 
     protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
-        super(sprite, active, type);
-        this.scene = scene;
+        super(scene, sprite, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
     }
 
@@ -40,10 +38,29 @@ export abstract class Player extends Entity {
         this.energy = Math.min(this.energy + this.energyGainPerSecond * deltatime, this.maxEnergy);
     }
 
+    createSpawnMeta(): EntitySpawnMeta | undefined {
+        const meta: PlayerEntitySpawnMeta = {
+            type: "player",
+            name: this.name,
+        };
+        return meta;
+    }
+
+    loadSpawnMeta(meta: PlayerEntitySpawnMeta) {
+        if (meta.type != "player") {
+            console.log("Error: invalid player meta type");
+            return;
+        }
+        this.name = meta.name;
+    }
+
     jump() {
         console.log("Jumping");
         this.body.setVelocityY(-this.jumpForce);
-        // TODO: send packet
+        this.scene.sendPacket({
+            type: "player_jump",
+            entityId: this.id,
+        })
     }
 
     attack(callBack: any) {

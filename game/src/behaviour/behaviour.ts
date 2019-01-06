@@ -95,7 +95,6 @@ export class BehaviourLayer {
             this._active.onEnable();
         }
         this.parent!.onBehaviourChange(this, previous, this._active);
-        //parent.endpoint?.send(BehaviourChangePacket(this.entity.id, this.index, this._active?.id))
     }
 
     get active(): Behaviour {
@@ -154,16 +153,12 @@ export class BehaviourManager {
 
     private _currentAnimated?: Behaviour;
 
-
-    endpoint?: WebSocket;
-
     /**
      * Is true only when the current behaviour system is active (so it needs to check hooks and send states)
      * If it's passive it doesn't need to check for behaviour changes as they will be sent from the other endpoint
      */
     get active(): boolean {
-        return true;
-        //return this.endpoint != null;
+        return this.player.active;
     }
 
 
@@ -220,6 +215,12 @@ export class BehaviourManager {
         let current = this.currentAnimated;
 
         console.log("Behaviour change: layer ", layer.index, " prev: ", previous, "next: ", next);
+        this.player.scene.sendPacket({
+            type: "behaviour_change",
+            actorId: this.player.id,
+            layerIndex: layer.index,
+            behaviour: layer.active.id
+        });
 
         if (current == null) {
             // The current one is null

@@ -16,7 +16,6 @@ export class SpecialAttackBehaviour extends Behaviour {
     animated = true;
 
     onAnimationEnable() {
-        // TODO
         this.player.specialAttack(() => this.layer.active = this.layer.behaviours.get("none")!)
     }
 

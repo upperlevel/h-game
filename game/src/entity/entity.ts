@@ -1,4 +1,4 @@
-import {EntityResetPacket} from "../protocol"
+import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
 import {GameScene} from "../scenes/gameScene";
 import Sprite = Phaser.GameObjects.Sprite;
 
@@ -6,6 +6,8 @@ import Sprite = Phaser.GameObjects.Sprite;
 export abstract class Entity {
     id = -1;
     type: EntityType;
+
+    scene: GameScene;
 
     sprite: Sprite;
 
@@ -17,7 +19,8 @@ export abstract class Entity {
 
     active = false;
 
-    constructor(sprite: Sprite, active: boolean, type: EntityType) {
+    constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
+        this.scene = scene;
         this.sprite = sprite;
         this.active = active;
         this.type = type;
@@ -40,7 +43,11 @@ export abstract class Entity {
 
     // TODO: throw
 
-    // TODO: spawnmeta
+    createSpawnMeta(): EntitySpawnMeta | undefined {
+        return undefined;
+    }
+
+    loadSpawnMeta(meta: EntitySpawnMeta) {}
 
     fillResetPacket(packet: EntityResetPacket) {
         packet.x = this.body.x;
@@ -50,60 +57,6 @@ export abstract class Entity {
     onReset(packet: EntityResetPacket) {
         this.body.x = packet.x;
         this.body.y = packet.y;
-    }
-}
-
-export class EntityRegistry {
-    entities = new Map<number, Entity>();
-
-    private playerCount = 2;
-    private localOffset = 0;
-
-    private localId = 0;
-
-    private socket?: WebSocket;
-
-    private timerId: any;
-
-    onEnable() {
-        this.timerId = window.setTimeout(this.sendReset.bind(this), 1000);
-    }
-
-    sendReset() {
-        if (this.socket == null) return;
-        for (let [id, entity] of this.entities) {
-            if (!entity.active) continue;
-            //TODO: this.socket.send(JSON.stringify(createResetPacket(entity)));
-        }
-    }
-
-    onDisable() {
-        window.clearTimeout(this.timerId);
-    }
-
-    getEntity(id: number): Entity | undefined {
-        return this.entities.get(id);
-    }
-
-    forceSpawn(entity: Entity) {
-        if (entity.id == -1) {
-            entity.id = this.localId++ * this.playerCount + this.localOffset;
-        }
-
-        this.entities.set(entity.id, entity);
-    }
-
-    spawn(entity: Entity) {
-        if (entity.id != -1) return;
-        this.forceSpawn(entity);
-        //TODO: notify other clients
-    }
-
-
-    onUpdate(timedelta: number): any {
-        for (let [id, entity] of this.entities) {
-            entity.update(timedelta);
-        }
     }
 }
 

@@ -30,7 +30,7 @@ export class InviteOverlay extends Overlay {
                 player: this.username.value
             });
 
-            this.sendButton.disabled = true;
+            this.hide();
         };
 
         this.cancelButton = document.getElementById("invite-cancel-button") as HTMLButtonElement;

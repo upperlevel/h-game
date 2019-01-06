@@ -42,10 +42,19 @@ class ConnectionHandler {
                 this.sendResult("Login needed");
             } else if (!this.player.onLogin(packet.name)) {
                 // Login error: name taken
-                this.sendResult("Name already taken")
+                this.sendResult("Name already taken");
             } else {
                 // Login succeeded
-                this.sendResult()
+                this.sendResult();
+
+                let packet: proto.CurrentLobbyInfoPacket = {
+                    type: "lobby_info",
+                    players: [
+                        {name: this.player.name, ready: false}
+                    ],
+                    admin: 0
+                };
+                this.sendPacket(packet);
             }
             return
         }

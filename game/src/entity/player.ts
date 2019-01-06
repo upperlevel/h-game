@@ -1,28 +1,32 @@
-import * as Phaser from "phaser";
-import {Entity} from "./entity";
-import {Behaviour, BehaviourManager} from "../behaviour/behaviour";
-import {hgame} from "../index";
+import {Entity, EntityType} from "./entity";
+import {createPlayerBehaviour} from "../behaviour/behaviours";
+import {EntityTypes} from "./entities";
+import {BehaviourManager} from "../behaviour/behaviour";
+import {GameScene} from "../scenes/gameScene";
+import Scene = Phaser.Scene;
+import Sprite = Phaser.GameObjects.Sprite;
 
 export abstract class Player extends Entity {
-    behaviour = BehaviourManager.createPlayerBehaviour(this);
+    scene: GameScene;
 
     maxEnergy = 1.0;
     energy = 1.0;
     energyGainPerSecond = 0.05;
 
     attackPower = 0.1;
-    jumpForce = 100;
+    jumpForce = 300;
 
     name = "Ulisse";
 
     // override
     damageable = true;
+    private behaviour: BehaviourManager;
 
-    abstract attackAnimationId: string;
-    abstract specialAttackAnimationId: string;
-    abstract idleAnimationId: string;
-    abstract walkLeftTextureId: string;
-    abstract walkRightTextureId: string;
+    protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
+        super(sprite, active, type);
+        this.scene = scene;
+        this.behaviour = createPlayerBehaviour(scene, this);
+    }
 
 
     update(deltatime: number) {
@@ -30,29 +34,30 @@ export abstract class Player extends Entity {
 
         this.behaviour.update();
 
-        if (hgame.actions!.JUMP.isDown && this.sprite.body.onFloor()) {
+        if (this.scene.actions.JUMP.isDown && this.body.onFloor()) {
             this.jump();
         }
         this.energy = Math.min(this.energy + this.energyGainPerSecond * deltatime, this.maxEnergy);
     }
 
     jump() {
-        this.sprite.body.velocity.y += this.jumpForce;
+        console.log("Jumping");
+        this.body.setVelocityY(-this.jumpForce);
         // TODO: send packet
     }
 
     attack(callBack: any) {
-        this.sprite.anims.play(this.attackAnimationId);
+        this.sprite.anims.play(this.type.animations["attack"]);
         this.sprite.once("animationcomplete", callBack);
     }
 
     specialAttack(callBack: any) {
-        this.sprite.anims.play(this.specialAttackAnimationId);
+        this.sprite.anims.play(this.type.animations["special_attack"]);
         this.sprite.once("animationcomplete", callBack);
     }
 
     idle() {
-        this.sprite.anims.play(this.idleAnimationId)
+        this.sprite.anims.play(this.type.animations["idle"])
     }
 
     onAttacked(player: Player) {
@@ -67,19 +72,15 @@ export abstract class Player extends Entity {
     }
 }
 
-class Santy extends Player {
-    attackAnimationId = "santy_attack";
-    specialAttackAnimationId = "santy_special_attack";
-    idleAnimationId = "santy_idle";
-    walkLeftTextureId = "santy_left";
-    walkRightTextureId = "walk_right";
-
-    type = "santy";
-
-    sprite: Phaser.Physics.Arcade.Sprite;
-
-    constructor(physics: Phaser.Physics.Arcade) {
-        super();
-        this.sprite = physics.add.sprite(200, 200, "");
+export class Santy extends Player {
+    constructor(scene: GameScene, active: boolean) {
+        super(scene, Santy.createSprite(scene), active, EntityTypes.SANTY);
     }
+
+    static createSprite(scene: Scene): Sprite {
+        let sprite = scene.physics.add.sprite(200, 200, "santy").setScale(4);
+        sprite.setCollideWorldBounds(true);
+        return sprite;
+    }
+
 }

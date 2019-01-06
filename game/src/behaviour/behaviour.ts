@@ -1,6 +1,5 @@
 import {Player} from "../entity/player";
-import * as attack from "./attack";
-import * as move from "./move";
+import {GameScene} from "../scenes/gameScene";
 
 export type Trigger = () => boolean
 
@@ -65,38 +64,43 @@ export class BehaviourLayer {
 
     initialized = false;
 
-    set active(value: Behaviour | undefined) {
+    set active(value: Behaviour) {
         let previous = this._active;
 
         if (this._active != null) {
+            console.log("Disabling ", this._active.id);
             this._active.onDisable()
         }
 
         let active = this.parent!.active;
+        let val: Behaviour | undefined = value;
 
         do {
-            this._active = value;
-            if (value != null) {
+            this._active = val;
+            if (val != null) {
+                console.log("Resolving: ", val.id);
                 // If the behaviour system is active try to resolve the hooks
                 // Otherwise just assign null to newVal then go on
-                if (active && value.instantHookCheck) {
-                    value = value.resolveHooks()
+                if (active && val.instantHookCheck) {
+                    val = val.resolveHooks()
                 } else {
-                    value = undefined;
+                    val = undefined;
                 }
             }
-        } while (value != null);
+        } while (val != null);
 
         // Now we have the new State, so we can enable and send the change.
         if (this._active != null) {
+            console.log("Enabling ", this._active.id);
             this._active.onEnable();
         }
         this.parent!.onBehaviourChange(this, previous, this._active);
         //parent.endpoint?.send(BehaviourChangePacket(this.entity.id, this.index, this._active?.id))
     }
 
-    get active(): Behaviour | undefined {
-        return this._active;
+    get active(): Behaviour {
+        if (!this.initialized) throw new Error("Not initialized yet");
+        return this._active!;
     }
 
     setActive(behaviourId: string) {
@@ -108,6 +112,10 @@ export class BehaviourLayer {
 
     get player(): Player {
         return this.parent!.player;
+    }
+
+    get scene(): GameScene {
+        return this.parent!.scene;
     }
 
     register(behaviour: Behaviour): this {
@@ -142,6 +150,7 @@ export class BehaviourLayer {
 export class BehaviourManager {
     layers: BehaviourLayer[];
     player: Player;
+    scene: GameScene;
 
     private _currentAnimated?: Behaviour;
 
@@ -153,13 +162,15 @@ export class BehaviourManager {
      * If it's passive it doesn't need to check for behaviour changes as they will be sent from the other endpoint
      */
     get active(): boolean {
-      return this.endpoint != null;
+        return true;
+        //return this.endpoint != null;
     }
 
 
-    constructor(layers: BehaviourLayer[], player: Player) {
+    constructor(scene: GameScene, layers: BehaviourLayer[], player: Player) {
         this.layers = layers;
         this.player = player;
+        this.scene = scene;
 
         this.layers.forEach((layer, index) => {
             layer.parent = this;
@@ -174,10 +185,12 @@ export class BehaviourManager {
 
     set currentAnimated(value: Behaviour | undefined) {
         if (this._currentAnimated != null) {
+            console.log("Disabling animation: ", this._currentAnimated.id);
             this._currentAnimated.onAnimationDisable();
         }
         this._currentAnimated = value;
         if (value != null) {
+            console.log("Enabling animation: ", value.id);
             value.onAnimationEnable();
         }
     }
@@ -225,21 +238,5 @@ export class BehaviourManager {
             // the next is at an higher layer than the current one (and it is animated)
             this.currentAnimated = next;
         }
-    }
-
-
-    static createPlayerBehaviour(entity: Player): BehaviourManager {
-
-        let moveLayer = new BehaviourLayer();
-        moveLayer.register(new move.IdleBehaviour(moveLayer));
-        moveLayer.register(new move.WalkLeftBehaviour(moveLayer));
-        moveLayer.register(new move.WalkRightBehaviour(moveLayer));
-
-        let attackLayer = new BehaviourLayer();
-        attackLayer.register(new attack.NoAttackBehaviour(attackLayer));
-        attackLayer.register(new attack.AttackBehaviour(attackLayer));
-        attackLayer.register(new attack.SpecialAttackBehaviour(attackLayer));
-
-        return new BehaviourManager([moveLayer, attackLayer], entity);
     }
 }

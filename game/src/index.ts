@@ -10,7 +10,6 @@ import {GameScene} from "./scenes/gameScene";
 import {Keyboard} from "./actions";
 
 export class HGame extends Game {
-    actions?: Keyboard;
     socket?: WebSocket;
 
     constructor() {
@@ -20,6 +19,13 @@ export class HGame extends Game {
             width: 720,
             height: 720,
             type: Phaser.AUTO,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 600 },
+                    debug: false
+                }
+            },
             scene: [
                 // The first scene is always started -_-
                 ConnectingScene,

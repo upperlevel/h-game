@@ -1,36 +1,37 @@
 import {SceneWrapper} from "./sceneWrapper"
 
 import {Keyboard} from "../actions";
+import {EntityRegistry} from "../entity/entity";
+import {EntityTypes} from "../entity/entities";
 
 export class GameScene extends SceneWrapper {
+    // @ts-ignore
+    entityRegistry: EntityRegistry;
+    // @ts-ignore
+    actions: Keyboard;
+
     constructor() {
         super("game");
     }
 
     onPreload() {
-        this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
+        EntityTypes.preload(this);
     }
 
     onCreate() {
-        this.game.actions = new Keyboard(this);
+        this.actions = new Keyboard(this);
 
-        this.anims.create({
-            key: "santy_idle",
-            frames: this.anims.generateFrameNumbers("santy", {start: 0, end: 1}),
-            frameRate: 6,
-            repeat: -1
-        });
-        this.anims.create({
-            key: "santy_left",
-            frames: this.anims.generateFrameNumbers("santy", {start: 0, end: 2})
-        });
+        EntityTypes.load(this);
 
-        const santy = this.add.sprite(400, 300, "santy").setScale(4);
-        santy.anims.load("idle");
-        santy.anims.play("idle");
+
+        this.entityRegistry = new EntityRegistry();
+
+        let santy = EntityTypes.SANTY.create(this);
+        this.entityRegistry.spawn(santy);
     }
 
-    onUpdate() {
+    onUpdate(time: number, delta: number) {
+        this.entityRegistry!.onUpdate(delta);
     }
 
     onShutdown() {

@@ -1,13 +1,13 @@
 import {EntityResetPacket} from "../protocol"
-import {Behaviour} from "../behaviour/behaviour";
-import Sprite = Phaser.Physics.Arcade.Sprite;
+import {GameScene} from "../scenes/gameScene";
+import Sprite = Phaser.GameObjects.Sprite;
 
 
 export abstract class Entity {
     id = -1;
-    abstract type: string;
+    type: EntityType;
 
-    abstract sprite: Sprite;
+    sprite: Sprite;
 
     maxLife = 1.0;
     life = this.maxLife;
@@ -17,7 +17,19 @@ export abstract class Entity {
 
     active = false;
 
+    constructor(sprite: Sprite, active: boolean, type: EntityType) {
+        this.sprite = sprite;
+        this.active = active;
+        this.type = type;
+    }
+
     update(deltatime: number) {
+    }
+
+    get body(): Phaser.Physics.Arcade.Body {
+        if (this.sprite == null) throw new Error("sprite is null");
+        if (this.sprite.body == null) throw new Error("body is null");
+        return this.sprite.body as Phaser.Physics.Arcade.Body;
     }
 
     damage(amount: number) {
@@ -31,17 +43,17 @@ export abstract class Entity {
     // TODO: spawnmeta
 
     fillResetPacket(packet: EntityResetPacket) {
-        packet.x = this.sprite.body.x;
-        packet.y = this.sprite.body.y;
+        packet.x = this.body.x;
+        packet.y = this.body.y;
     }
 
     onReset(packet: EntityResetPacket) {
-        this.sprite.body.x = packet.x;
-        this.sprite.body.y = packet.y;
+        this.body.x = packet.x;
+        this.body.y = packet.y;
     }
 }
 
-class EntityRegistry {
+export class EntityRegistry {
     entities = new Map<number, Entity>();
 
     private playerCount = 2;
@@ -86,29 +98,44 @@ class EntityRegistry {
         this.forceSpawn(entity);
         //TODO: notify other clients
     }
+
+
+    onUpdate(timedelta: number): any {
+        for (let [id, entity] of this.entities) {
+            entity.update(timedelta);
+        }
+    }
 }
 
-class EntityType {
+export class EntityType {
     id: string;
-    texturePath: string;
 
-    creator: (active: boolean) => Entity;
+    preloader: (scene: GameScene) => void;
+    loader: (scene: GameScene) => void;
 
-    constructor(id: string, texturePath: string, creator: () => Entity) {
+    animations: { [key: string]: string };
+
+
+    creator: (scene: GameScene, active: boolean) => Entity;
+
+    constructor(
+        id: string,
+        preloader: (scene: GameScene) => void,
+        loader: (scene: GameScene) => void,
+        animations: { [key: string]: string},
+        creator: (scene: GameScene, active: boolean) => Entity
+    ) {
         this.id = id;
-        this.texturePath = texturePath;
+        this.preloader = preloader;
+        this.loader = loader;
+        this.animations = animations;
         this.creator = creator;
     }
 
-    create(active: boolean = true): Entity {
-        return this.creator(active);
+    create(scene: GameScene, active: boolean = true): Entity {
+        return this.creator(scene, active);
     }
 }
 
-namespace EntityTypes {
-    let types = [
-        new EntityType("mikrotik", "mikrotik.jpg", null),
-    ]
-}
 
 

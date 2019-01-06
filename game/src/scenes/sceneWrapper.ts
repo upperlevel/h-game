@@ -35,11 +35,11 @@ export abstract class SceneWrapper extends Scene {
 
     abstract onCreate(): void;
 
-    update() {
-        this.onUpdate();
+    update(time: number, delta: number) {
+        this.onUpdate(time, delta);
     }
 
-    abstract onUpdate(): void;
+    abstract onUpdate(time: number, delta: number): void;
 
     shutdown() {
         console.log(`Shutting down scene: ${this.id}`);

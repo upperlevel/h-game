@@ -27,14 +27,16 @@ class LoginOverlay extends Overlay {
     }
 
     onMessage(packet: any) {
-        if (packet.error) {
-            this.feedback.style.color = "red";
-            this.feedback.innerText = packet.error;
-        } else {
-            this.feedback.style.color = "green";
-            this.feedback.innerText = "Username accepted";
+        if (packet.type == "result") {
+            if (packet.error) {
+                this.feedback.style.color = "red";
+                this.feedback.innerText = packet.error;
+            } else {
+                this.feedback.style.color = "green";
+                this.feedback.innerText = "Username accepted";
 
-            this.scene.changeScene("lobby");
+                this.scene.changeScene("lobby");
+            }
         }
     }
 

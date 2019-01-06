@@ -44,11 +44,21 @@ export class LobbyOverlay extends Overlay {
         this.requestsOverlay = new RequestsOverlay(scene);
     }
 
+    onMessage(packet: any) {
+        if (packet.type == "lobby_info") {
+            this.scene.setPlayers(packet);
+        }
+    }
+
     onShow() {
         this.requestsOverlay.show();
+
+        this.scene.game.events.on("message", this.onMessage, this);
     }
 
     onHide() {
+        this.scene.game.events.removeListener("message", this.onMessage, this, false);
+
         this.requestsOverlay.hide();
         this.inviteOverlay.hide();
     }

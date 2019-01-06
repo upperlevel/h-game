@@ -2,9 +2,13 @@ import {SceneWrapper} from "../sceneWrapper"
 
 import * as Phaser from "phaser";
 import Container = Phaser.GameObjects.Container;
+import Group = Phaser.GameObjects.Group;
+import Text = Phaser.GameObjects.Text;
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
+import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
+import {LobbyPlayerInfo} from "@common/matchmaking/protocol";
 
 export class LobbyScene extends SceneWrapper {
     overlay: LobbyOverlay;
@@ -16,29 +20,50 @@ export class LobbyScene extends SceneWrapper {
         this.overlay = new LobbyOverlay(this);
     }
 
-    addPlayer(playerName: string) {
-        const player = this.add.container(400, 300);
+    setPlayers(packet: CurrentLobbyInfoPacket) {
+        for (const player of this.players) {
+            player.destroy(true);
+        }
+        this.players = [];
+
+        for (const player of packet.players) {
+            this.addPlayer(player);
+        }
+
+        (this.players[packet.admin].getAt(0) as Text).setColor("yellow").updateText();
+    }
+
+    addPlayer(player: LobbyPlayerInfo) {
+        const container = this.add.container(0, 300);
 
         const sprite = this.add.sprite(0, 0, "santy").setDisplaySize(250, 250);
-
-        // TODO: play idle animation.
-        //sprite.anims.load("idle");
-        //sprite.anims.play("idle");
-
-        const name = this.add.text(0, 0, playerName, {
+        const name = this.add.text(0, 0, player.name, {
             fontFamily: "pixeled",
             fontSize: 32,
-            color: "yellow"
+            color: "white"
         });
         name.x -= name.displayWidth / 2.0;
-        name.y -= (sprite.height * sprite.scaleY) / 2.0 + name.displayHeight / 2.0 + 15;
+        name.y -= (sprite.height * sprite.scaleY) / 2.0 + name.displayHeight / 2.0 + 30.0;
 
-        player.add(sprite);
-        player.add(name);
+        // The name must be the first item of the container
+        container.add(name);
+        container.add(sprite);
 
-        player.active = true;
+        if (player.ready) {
+            const ready = this.add.text(0, 0, "Ready", {
+                fontFamily: "pixeled",
+                fontSize: 16,
+                color: "lime"
+            });
+            ready.x -= ready.displayWidth / 2.0;
+            ready.y -= (sprite.height * sprite.scaleY) / 2.0 + ready.displayHeight / 2.0 + 15.0;
 
-        this.players.push(player);
+            container.add(ready);
+        }
+
+        container.active = true;
+
+        this.players.push(container);
     }
 
     onPreload() {
@@ -46,8 +71,6 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onCreate() {
-        this.addPlayer("You");
-
         this.overlay.show();
     }
 

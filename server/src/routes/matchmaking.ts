@@ -40,21 +40,12 @@ class ConnectionHandler {
             if (packet.type != "login") {
                 // Wrong packet
                 this.sendResult("Login needed");
-            } else if (!this.player.onLogin(packet.name)) {
+            } else if (!this.player.onLogin(this.lobbyRegistry, packet.name)) {
                 // Login error: name taken
                 this.sendResult("Name already taken");
             } else {
                 // Login succeeded
                 this.sendResult();
-
-                let packet: proto.CurrentLobbyInfoPacket = {
-                    type: "lobby_info",
-                    players: [
-                        {name: this.player.name, ready: false}
-                    ],
-                    admin: 0
-                };
-                this.sendPacket(packet);
             }
             return
         }
@@ -62,6 +53,16 @@ class ConnectionHandler {
         switch (packet.type) {
             case "lobby_update": {
                 this.onPlayerInfoChangePacket(packet);
+                break;
+            }
+            case "lobby_info_request": {
+                if (this.player.lobby == null) {
+                    this.sendResult("No lobby joined");
+                    // Should never happen
+                    break;
+                }
+                this.sendResult();
+                this.sendPacket(this.player.lobby.createInfoPacket());
                 break;
             }
             case "invite": {

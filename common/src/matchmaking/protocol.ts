@@ -5,7 +5,7 @@
  * The first packet should be a LoginPacket (and it receives the OperationResultPacket too)
  */
 
-// -------- RESPONSES --------
+// -------- REQUESTS --------
 
 export interface LoginPacket {
     type: "login";
@@ -16,6 +16,10 @@ export interface PlayerLobbyInfoChangePacket {
     type: "lobby_update";
     character: string;
     ready: boolean;
+}
+
+export interface LobbyInfoRequestPacket {
+    type: "lobby_info_request";
 }
 
 // TODO: lobby discovery
@@ -81,6 +85,7 @@ export interface InvitePacket {
 export type MatchmakingPacket =
     LoginPacket
     | PlayerLobbyInfoChangePacket
+    | LobbyInfoRequestPacket
     | MatchBeginPacket
     | CurrentLobbyInfoPacket
     | OperationResultPacket

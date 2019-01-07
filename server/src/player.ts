@@ -33,12 +33,14 @@ export class Player {
         return this._name != null
     }
 
-    onLogin(name: string): boolean {
+    onLogin(lobbyRegistry: LobbyRegistry, name: string): boolean {
         if (!this.playerRegistry.onLogin(this, name)) return false;
 
         if (this.isLoginDone) throw new Error("Login already succeeded");
 
         this._name = name;
+        this.lobby = lobbyRegistry.create(this);
+
         return true;
     }
 

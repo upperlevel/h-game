@@ -77,6 +77,7 @@ export class HGame extends Game {
             console.log(`Web-socket received: ${raw}`);
 
             this.events.emit("message", JSON.parse(raw));
+            console.log("Done: ", raw);
         };
 
         this.socket.onclose = () => {

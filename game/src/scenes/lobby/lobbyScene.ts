@@ -21,6 +21,7 @@ export class LobbyScene extends SceneWrapper {
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
+        console.log("Set players: ", packet);
         for (const player of this.players) {
             player.destroy(true);
         }

@@ -48,7 +48,7 @@ export interface LobbyPlayerInfo {
 export interface CurrentLobbyInfoPacket {
     type: "lobby_info";
     players: Array<LobbyPlayerInfo>;
-    admin: number;
+    admin: string;
 }
 
 export interface OperationResultPacket {

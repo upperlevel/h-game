@@ -108,24 +108,20 @@ export class Lobby {
     // TODO: onJoin, refreshReady, startGame
 
     createInfoPacket(): CurrentLobbyInfoPacket {
-        let adminIndex = -1;
-        let i = 0;
         let players = new Array<LobbyPlayerInfo>();
 
         this.players.forEach((player) => {
-            if (player == this.admin) adminIndex = i;
             players.push({
                 "name": player.name,
                 "character": player.character,
                 "ready": player.ready,
             });
-            i++;
         });
 
         return {
             "type": "lobby_info",
             "players": players,
-            "admin": adminIndex,
+            "admin": this.admin.name,
         }
     }
 

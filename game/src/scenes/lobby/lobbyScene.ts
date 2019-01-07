@@ -1,14 +1,21 @@
 import {SceneWrapper} from "../sceneWrapper"
 
 import * as Phaser from "phaser";
-import Container = Phaser.GameObjects.Container;
-import Group = Phaser.GameObjects.Group;
 import Text = Phaser.GameObjects.Text;
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
 import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
-import {LobbyPlayerInfo} from "@common/matchmaking/protocol";
+import Container = Phaser.GameObjects.Container;
+import {TextContainer} from "../textContainer";
+
+interface LobbyPlayer {
+    name: string,
+    character?: string,
+    ready: boolean,
+    admin: boolean,
+    me: boolean,
+}
 
 export class LobbyScene extends SceneWrapper {
     overlay: LobbyOverlay;
@@ -28,43 +35,56 @@ export class LobbyScene extends SceneWrapper {
         this.players = [];
 
         for (const player of packet.players) {
-            this.addPlayer(player);
+            this.addPlayer({
+                name: player.name,
+                character: player.character,
+                ready: player.ready,
+                admin: player.name == packet.admin,
+                me: player.name == this.game.playerName
+            });
         }
-
-        (this.players[packet.admin].getAt(0) as Text).setColor("yellow").updateText();
     }
 
-    addPlayer(player: LobbyPlayerInfo) {
+    addPlayer(player: LobbyPlayer) {
         const container = this.add.container(0, 300);
 
         const sprite = this.add.sprite(0, 0, "santy").setDisplaySize(250, 250);
-        const name = this.add.text(0, 0, player.name, {
-            fontFamily: "pixeled",
-            fontSize: 32,
-            color: "white"
-        });
-        name.x -= name.displayWidth / 2.0;
-        name.y -= (sprite.height * sprite.scaleY) / 2.0 + name.displayHeight / 2.0 + 30.0;
-
-        // The name must be the first item of the container
-        container.add(name);
+        container.setName("sprite");
         container.add(sprite);
 
+        const aboveHead = new TextContainer(this, 0, 0, 5.0);
+        aboveHead.setName("aboveHead");
+
+        aboveHead.addLine(player.name, true, {
+            fontFamily: "pixeled",
+            fontSize: 32,
+            color: player.me ? "blue" : (player.admin ? "yellow" : "white")
+        });
+
+        if (player.admin) {
+            aboveHead.addLine("(Leader)", true, {
+                fontFamily: "pixeled",
+                fontSize: 24,
+                color: "yellow"
+            });
+        }
+
         if (player.ready) {
-            const ready = this.add.text(0, 0, "Ready", {
+            aboveHead.addLine("Ready", true, {
                 fontFamily: "pixeled",
                 fontSize: 16,
                 color: "lime"
             });
-            ready.x -= ready.displayWidth / 2.0;
-            ready.y -= (sprite.height * sprite.scaleY) / 2.0 + ready.displayHeight / 2.0 + 15.0;
-
-            container.add(ready);
         }
 
-        container.active = true;
+        const floating = 64.0;
+        aboveHead.y -= sprite.displayHeight / 2.0 + aboveHead.displayHeight / 2.0 + floating;
+
+        container.add(aboveHead);
 
         this.players.push(container);
+
+        return container;
     }
 
     onPreload() {

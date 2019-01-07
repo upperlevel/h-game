@@ -17,6 +17,8 @@ class LoginOverlay extends Overlay {
         this.submit.onclick = () => {
             const username = document.getElementById("login-username") as HTMLInputElement;
 
+            this.scene.game.playerName = username.value;
+
             this.scene.game.send({
                 type: "login",
                 name: username.value

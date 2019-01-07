@@ -53,6 +53,8 @@ export class LobbyOverlay extends Overlay {
     onShow() {
         this.requestsOverlay.show();
 
+        this.scene.game.send({type: "lobby_info_request"});
+
         this.scene.game.events.on("message", this.onMessage, this);
     }
 

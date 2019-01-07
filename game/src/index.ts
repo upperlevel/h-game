@@ -12,6 +12,8 @@ import {Keyboard} from "./actions";
 export class HGame extends Game {
     socket?: WebSocket;
 
+    playerName?: string;
+
     constructor() {
         super({
             title: "H-Game",

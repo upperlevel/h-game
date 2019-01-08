@@ -1,4 +1,5 @@
 import {Behaviour} from "./behaviour";
+import JustDown = Phaser.Input.Keyboard.JustDown;
 
 export class AttackBehaviour extends Behaviour {
     id = "attack";
@@ -28,8 +29,8 @@ export class NoAttackBehaviour extends Behaviour {
 
     initialize() {
         super.initialize();
-        this.hook(() => this.layer.scene.actions.ATTACK.isDown, this.layer.behaviours.get("attack")!);
-        this.hook(() => this.layer.scene.actions.SPECIAL_ATTACK.isDown, this.layer.behaviours.get("special_attack")!);
+        this.hook(() => JustDown(this.layer.scene.actions.ATTACK), this.layer.behaviours.get("attack")!);
+        this.hook(() => JustDown(this.layer.scene.actions.SPECIAL_ATTACK), this.layer.behaviours.get("special_attack")!);
     }
 }
 

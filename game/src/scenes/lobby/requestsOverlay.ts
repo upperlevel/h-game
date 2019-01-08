@@ -2,12 +2,12 @@ import {Overlay} from "../overlay";
 import {LobbyScene} from "./lobbyScene";
 
 export class RequestsOverlay extends Overlay {
-    private scene: LobbyScene;
+    private lobby: LobbyScene;
 
-    constructor(scene: LobbyScene) {
+    constructor(lobby: LobbyScene) {
         super("requests-overlay");
 
-        this.scene = scene;
+        this.lobby = lobby;
     }
 
     addRequest(player: string) {
@@ -25,12 +25,8 @@ export class RequestsOverlay extends Overlay {
         accept.innerText = "Accept";
         accept.className = "green-button";
         accept.onclick = () => {
-            this.scene.game.send({
-                type: "invite",
-                kind: "ACCEPT_INVITE",
-                player: player
-            });
-            console.log(`You accepted the invite of: ${player}`)
+            this.lobby.acceptInvite(player);
+            this.container.removeChild(request);
         };
         buttonsBar.appendChild(accept);
 
@@ -39,7 +35,6 @@ export class RequestsOverlay extends Overlay {
         decline.className = "red-button";
         decline.onclick = () => {
             this.container.removeChild(request);
-            console.log(`You declined the invite of: ${player}`);
         };
         buttonsBar.appendChild(decline);
 
@@ -55,10 +50,10 @@ export class RequestsOverlay extends Overlay {
     }
 
     onShow() {
-        this.scene.game.events.on("message",  this.onMessage, this);
+        this.lobby.game.matchmakingConnector.events.on("message",  this.onMessage, this);
     }
 
     onHide() {
-        this.scene.game.events.removeListener("message", this.onMessage.bind(this), this, false);
+        this.lobby.game.matchmakingConnector.events.removeListener("message", this.onMessage.bind(this), this, false);
     }
 }

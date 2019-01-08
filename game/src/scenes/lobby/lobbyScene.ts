@@ -1,13 +1,13 @@
 import {SceneWrapper} from "../sceneWrapper"
 
 import * as Phaser from "phaser";
-import Text = Phaser.GameObjects.Text;
+import Container = Phaser.GameObjects.Container;
+import {TextContainer} from "../textContainer";
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
 import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
-import Container = Phaser.GameObjects.Container;
-import {TextContainer} from "../textContainer";
+import {GameConnector} from "../../connector/gameConnector";
 
 interface LobbyPlayer {
     name: string,
@@ -22,13 +22,12 @@ export class LobbyScene extends SceneWrapper {
     players: Container[] = [];
 
     constructor() {
-        super("lobby");
+        super({key: "lobby"});
 
         this.overlay = new LobbyOverlay(this);
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
-        console.log("Set players: ", packet);
         for (const player of this.players) {
             player.destroy(true);
         }
@@ -87,11 +86,59 @@ export class LobbyScene extends SceneWrapper {
         return container;
     }
 
+    /**
+     * Sends a request to the server in order to have the full list of the current lobby's players.
+     */
+    requestInfo() {
+        this.game.matchmakingConnector.send({type: "lobby_info_request"});
+    }
+
+    invite(username: string) {
+        this.game.matchmakingConnector.send({
+            type: "invite",
+            kind: "INVITE_PLAYER",
+            player: username
+        });
+    }
+
+    acceptInvite(player: string) {
+        this.game.matchmakingConnector.send({
+            type: "invite",
+            kind: "ACCEPT_INVITE",
+            player: player
+        });
+    }
+
+    setPlayerInfo(character: string = "santy", ready: boolean = false) {
+        this.game.matchmakingConnector.send({
+            type: "lobby_update",
+            character: "santy",
+            ready: ready
+        });
+    }
+
+    onMessage(packet: any) {
+        switch (packet.type) {
+            case "lobby_info":
+                this.setPlayers(packet);
+                break;
+            case "match_begin":
+                this.game.gameConnector = new GameConnector(packet.token);
+                this.scene.start("connecting", {connector: this.game.gameConnector, nextScene: "game"});
+                break;
+        }
+    }
+
     onPreload() {
         this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
     }
 
     onCreate() {
+        this.game.matchmakingConnector.events.on("message", this.onMessage, this);
+
+        // The main player will be drawn only after an answer to this packet will be received.
+        this.requestInfo();
+
         this.overlay.show();
     }
 
@@ -109,5 +156,7 @@ export class LobbyScene extends SceneWrapper {
 
     onShutdown() {
         this.overlay.hide();
+
+        this.game.matchmakingConnector.events.removeListener("message", this.onMessage, this, false);
     }
 }

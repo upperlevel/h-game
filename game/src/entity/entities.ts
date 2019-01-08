@@ -1,6 +1,6 @@
 import {Santy} from "./player";
 import {EntityType} from "./entity";
-import {GameScene} from "../scenes/gameScene";
+import {GameScene} from "../scenes/game/gameScene";
 
 export namespace EntityTypes {
     import Scene = Phaser.Scene;

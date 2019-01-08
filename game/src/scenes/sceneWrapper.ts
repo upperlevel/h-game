@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import Scene = Phaser.Scene;
+import Config = Phaser.Scenes.Settings.Config
 
 import {HGame} from "../index";
 
@@ -12,13 +13,18 @@ export abstract class SceneWrapper extends Scene {
     // @ts-ignore
     game: HGame;
 
-    protected constructor(key: string) {
-        super({key: key});
-        this.id = key;
+    protected constructor(config: Config) {
+        super(config);
+        this.id = config.key!;
     }
 
-    init() {
+    init(config: any) {
+        console.log(`Init scene: ${this.id} ${config != null ? config.toString() : ""}`);
         this.events.once("shutdown", () => this.shutdown());
+        this.onInit(config);
+    }
+
+    onInit(config: any) {
     }
 
     preload() {
@@ -26,29 +32,33 @@ export abstract class SceneWrapper extends Scene {
         this.onPreload();
     }
 
-    abstract onPreload(): void;
+    onPreload() {
+    }
 
     create() {
         console.log(`Creating scene: ${this.id}`);
         this.onCreate();
     }
 
-    abstract onCreate(): void;
+    onCreate() {
+    }
 
     update(time: number, delta: number) {
         this.onUpdate(time, delta);
     }
 
-    abstract onUpdate(time: number, delta: number): void;
+    onUpdate(time: number, delta: number) {
+    }
 
     shutdown() {
         console.log(`Shutting down scene: ${this.id}`);
         this.onShutdown();
     }
 
-    abstract onShutdown(): void;
+    onShutdown() {
+    }
 
-    changeScene(next: string) {
-        this.scene.start(next);
+    changeScene(next: string, data: any = undefined) {
+        this.scene.start(next, data);
     }
 }

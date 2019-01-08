@@ -1,9 +1,9 @@
-import {SceneWrapper} from "./sceneWrapper"
+import {SceneWrapper} from "../sceneWrapper"
 
-import {Keyboard} from "../actions";
-import {EntityRegistry} from "../entity/entityRegistry";
-import {EntityTypes} from "../entity/entities";
-import {GamePacket} from "../protocol";
+import {Keyboard} from "../../actions";
+import {EntityRegistry} from "../../entity/entityRegistry";
+import {EntityTypes} from "../../entity/entities";
+import {GamePacket} from "../../protocol";
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -14,7 +14,10 @@ export class GameScene extends SceneWrapper {
     socket?: WebSocket;
 
     constructor() {
-        super("game");
+        super({key: "game"});
+    }
+
+    onInit(data: any) {
     }
 
     onPreload() {

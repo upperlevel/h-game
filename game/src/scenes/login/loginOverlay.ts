@@ -1,8 +1,7 @@
-import {SceneWrapper} from "./sceneWrapper";
+import {Overlay} from "../overlay";
+import {LoginScene} from "./loginScene";
 
-import {Overlay} from "./overlay";
-
-class LoginOverlay extends Overlay {
+export class LoginOverlay extends Overlay {
     scene: LoginScene;
 
     submit: HTMLButtonElement;
@@ -16,19 +15,13 @@ class LoginOverlay extends Overlay {
         this.submit = document.getElementById("login-button") as HTMLButtonElement;
         this.submit.onclick = () => {
             const username = document.getElementById("login-username") as HTMLInputElement;
-
-            this.scene.game.playerName = username.value;
-
-            this.scene.game.send({
-                type: "login",
-                name: username.value
-            });
+            this.scene.login(username.value);
         };
 
         this.feedback = document.getElementById("login-feedback") as HTMLDivElement;
     }
 
-    onMessage(packet: any) {
+    onResult(packet: any) {
         if (packet.type == "result") {
             if (packet.error) {
                 this.feedback.style.color = "red";
@@ -37,40 +30,14 @@ class LoginOverlay extends Overlay {
                 this.feedback.style.color = "green";
                 this.feedback.innerText = "Username accepted";
 
-                this.scene.changeScene("lobby");
+                this.scene.scene.start("lobby");
             }
         }
     }
 
     onShow() {
-        this.scene.game.events.on("message", this.onMessage, this);
     }
 
     onHide() {
-        this.scene.game.events.removeListener("message", this.onMessage, this, false);
-    }
-}
-
-export class LoginScene extends SceneWrapper {
-    overlay: LoginOverlay;
-
-    constructor() {
-        super("login");
-
-        this.overlay = new LoginOverlay(this);
-    }
-
-    onPreload() {
-    }
-
-    onCreate() {
-        this.overlay.show();
-    }
-
-    onUpdate() {
-    }
-
-    onShutdown() {
-        this.overlay.hide();
     }
 }

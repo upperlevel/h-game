@@ -1,16 +1,22 @@
 import * as Phaser from "phaser";
 import Game = Phaser.Game;
+import Scene = Phaser.Scene;
 
-import {ConnectingScene} from "./scenes/connectingScene";
-import {DisconnectedScene} from "./scenes/disconnectedScene";
-import {LoginScene} from "./scenes/loginScene";
+import {ConnectingScene} from "./scenes/connection/connectingScene";
+import {DisconnectedScene} from "./scenes/connection/disconnectedScene";
+import {LoginScene} from "./scenes/login/loginScene";
 import {LobbyScene} from "./scenes/lobby/lobbyScene";
-import {GameScene} from "./scenes/gameScene";
+import {GameScene} from "./scenes/game/gameScene";
 
 import {Keyboard} from "./actions";
+import {MatchmakingConnector} from "./connector/matchmakingConnector";
+import {GameConnector} from "./connector/gameConnector";
 
 export class HGame extends Game {
-    socket?: WebSocket;
+    matchmakingConnector: MatchmakingConnector;
+
+    // Will be initialized only after the matchmaking phase.
+    gameConnector?: GameConnector;
 
     playerName?: string;
 
@@ -22,16 +28,16 @@ export class HGame extends Game {
             height: 720,
             type: Phaser.AUTO,
             physics: {
-                default: 'arcade',
+                default: "arcade",
                 arcade: {
-                    gravity: { y: 600 },
+                    gravity: {y: 600},
                     debug: false
                 }
             },
             scene: [
-                // The first scene is always started -_-
+                // The first scene must always have {active: false}
+                // to avoid it from automatically be started.
                 ConnectingScene,
-
                 DisconnectedScene,
                 LoginScene,
                 LobbyScene,
@@ -51,6 +57,11 @@ export class HGame extends Game {
         window.addEventListener("resize", () => {
             this.updateSize();
         });
+
+        this.matchmakingConnector = new MatchmakingConnector();
+        //this.gameConnector = new GameConnector(this);
+
+        this.scene.start("connecting", {connector: this.matchmakingConnector, nextScene: "login"});
     }
 
     private customizeCanvas() {
@@ -64,41 +75,6 @@ export class HGame extends Game {
     private updateSize() {
         const canvas = this.canvas;
         this.resize(canvas.clientWidth, canvas.clientHeight);
-    }
-
-    reconnect() {
-        if (this.socket) {
-            this.socket.onclose = null;
-            this.socket!.close();
-        }
-
-        this.socket = new WebSocket("ws://localhost:8080/api/matchmaking");
-
-        this.socket.onmessage = event => {
-            const raw = event.data;
-            console.log(`Web-socket received: ${raw}`);
-
-            this.events.emit("message", JSON.parse(raw));
-            console.log("Done: ", raw);
-        };
-
-        this.socket.onclose = () => {
-            // TODO: find a way to stop all running scenes (may be one) and run DisconnectedScene.
-            console.log("Disconnected :(");
-        }
-    }
-
-    send(packet: any) {
-        const raw = JSON.stringify(packet);
-        console.log(`Web-socket sent: ${raw}`);
-
-        if (this.socket != null) {
-            this.socket.send(raw);
-        }
-    }
-
-    getChannel() {
-        return this.socket!;
     }
 }
 

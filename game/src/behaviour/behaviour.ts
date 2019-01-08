@@ -1,5 +1,5 @@
 import {Player} from "../entity/player";
-import {GameScene} from "../scenes/gameScene";
+import {GameScene} from "../scenes/game/gameScene";
 
 export type Trigger = () => boolean
 

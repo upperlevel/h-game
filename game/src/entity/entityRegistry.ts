@@ -1,4 +1,4 @@
-import {GameScene} from "../scenes/gameScene";
+import {GameScene} from "../scenes/game/gameScene";
 import {EntityResetPacket, EntitySpawnPacket, GamePacket} from "../protocol";
 import {Entity} from "./entity";
 import {EntityTypes} from "./entities";

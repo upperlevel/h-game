@@ -2,7 +2,7 @@ import {Entity, EntityType} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {EntityTypes} from "./entities";
 import {BehaviourManager} from "../behaviour/behaviour";
-import {GameScene} from "../scenes/gameScene";
+import {GameScene} from "../scenes/game/gameScene";
 import Scene = Phaser.Scene;
 import Sprite = Phaser.GameObjects.Sprite;
 import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";

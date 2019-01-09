@@ -6,7 +6,7 @@ import {GameScene} from "../scenes/game/gameScene";
 import Scene = Phaser.Scene;
 import Sprite = Phaser.GameObjects.Sprite;
 import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";
-import {HudRenderer} from "./HudRenderer";
+import {HudRenderer} from "./hudRenderer";
 
 export abstract class Player extends Entity {
     maxEnergy = 1.0;

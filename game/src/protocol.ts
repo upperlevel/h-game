@@ -76,7 +76,7 @@ export interface BehaviourChangePacket {
     type: "behaviour_change";
     actorId: number;
     layerIndex: number;
-    behaviour?: string;
+    behaviour: string;
 }
 
 export interface PlayerJumpPacket {

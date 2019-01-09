@@ -31,6 +31,9 @@ export class GameScene extends SceneWrapper {
             case "entity_spawn":
                 this.entityRegistry.onSpawn(packet);
                 break;
+            case "behaviour_change":
+                this.entityRegistry.onBehaviourChange(packet);
+                break;
             default:
                 console.error(`Unhandled packet type: ${packet.type}`);
                 break;

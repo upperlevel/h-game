@@ -1,7 +1,8 @@
 import {GameScene} from "../scenes/game/gameScene";
-import {EntityResetPacket, EntitySpawnPacket, GamePacket} from "../protocol";
+import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket, GamePacket} from "../protocol";
 import {Entity} from "./entity";
 import {EntityTypes} from "./entities";
+import {Behaviour, BehaviourManager} from "../behaviour/behaviour";
 
 export class EntityRegistry {
     entities = new Map<number, Entity>();
@@ -42,6 +43,27 @@ export class EntityRegistry {
         entity.sprite.setFlipX(packet.isFacingLeft);
         if (packet.meta != null) {
             entity.loadSpawnMeta(packet.meta);
+        }
+    }
+
+    onBehaviourChange(packet: BehaviourChangePacket) {
+        const entity: any = this.entities.get(packet.actorId);
+
+        // If the entity supports behaviours.
+        if (entity.behaviour != null) {
+            const layer = entity.behaviour.layers[packet.layerIndex];
+            if (layer == null) {
+                throw `Layer ${packet.layerIndex} is null for entity: ${packet.actorId}`;
+            }
+
+            const behaviour = layer.behaviours.get(packet.behaviour);
+            if (behaviour == null) {
+                throw `Behaviour ${packet.behaviour} is null for entity: ${packet.actorId}`;
+            }
+
+            layer.active = behaviour;
+        } else {
+            throw `Entity ${packet.actorId} does not support behaviours`
         }
     }
 

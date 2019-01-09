@@ -21,16 +21,13 @@ export class EntityRegistry {
 
     onEnable() {
         this.timerId = window.setTimeout(this.sendReset.bind(this), 1000);
-        this.scene.game.events.on("packet", this.onPacket, this);
     }
 
     onDisable() {
         window.clearTimeout(this.timerId);
-        this.scene.game.events.removeListener("packet", this.onPacket, this, false);
     }
 
-    onPacket(packet: GamePacket) {
-        if (packet.type != "entity_spawn") return;
+    onSpawn(packet: EntitySpawnPacket) {
         let type = EntityTypes.fromId(packet.entityType);
 
         if (type == null) {

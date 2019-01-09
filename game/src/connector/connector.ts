@@ -14,7 +14,7 @@ export class Connector {
     events: EventEmitter;
 
     connected = false;
-    private connection?: WebSocket;
+    protected connection?: WebSocket;
 
     constructor(url: string) {
         this.url = url;

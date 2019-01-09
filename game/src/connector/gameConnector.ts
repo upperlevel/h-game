@@ -1,8 +1,14 @@
 import {Connector} from "./connector";
-import {HGame} from "../index";
 
+/**
+ * The GameConnector is used during the game phase.
+ *
+ * It receives message from the game relay.
+ * During the handshake, messages are bare strings, after packets are JSON.
+ */
 export class GameConnector extends Connector {
     token: string;
+    handshakeDone: boolean = false;
 
     constructor(token: string) {
         super("ws://localhost:8080/api/game");
@@ -20,6 +26,8 @@ export class GameConnector extends Connector {
                 console.log("Token accepted.");
                 break;
             case "ready":
+                this.handshakeDone = true;
+
                 this.events.emit("connect");
                 this.events.removeListener("message", this.onHandshakeAccept, this, false);
                 break;
@@ -34,5 +42,21 @@ export class GameConnector extends Connector {
         this.events.on("message", this.onHandshakeAccept, this);
 
         this.send(this.token);
+    }
+
+    inboundMessage(message: string): any {
+        if (this.handshakeDone) {
+            return JSON.parse(message);
+        } else {
+            return message;
+        }
+    }
+
+    outboundMessage(message: any): string {
+        if (this.handshakeDone) {
+            return JSON.stringify(message);
+        } else {
+            return message;
+        }
     }
 }

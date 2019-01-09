@@ -4,6 +4,7 @@ import {Keyboard} from "../../actions";
 import {EntityRegistry} from "../../entity/entityRegistry";
 import {EntityTypes} from "../../entity/entities";
 import {GamePacket} from "../../protocol";
+import {GameConnector} from "../../connector/gameConnector";
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -11,7 +12,8 @@ export class GameScene extends SceneWrapper {
     // @ts-ignore
     actions: Keyboard;
 
-    socket?: WebSocket;
+    // @ts-ignore
+    relay: GameConnector;
 
     constructor() {
         super({key: "game"});
@@ -24,7 +26,21 @@ export class GameScene extends SceneWrapper {
         EntityTypes.preload(this);
     }
 
+    onPacket(packet: GamePacket) {
+        switch (packet.type) {
+            case "entity_spawn":
+                this.entityRegistry.onSpawn(packet);
+                break;
+            default:
+                console.error(`Unhandled packet type: ${packet.type}`);
+                break;
+        }
+    }
+
     onCreate() {
+        this.relay = this.game.gameConnector!;
+        this.relay.events.on("message", this.onPacket, this);
+
         this.actions = new Keyboard(this);
 
         EntityTypes.load(this);
@@ -34,8 +50,6 @@ export class GameScene extends SceneWrapper {
 
         let santy = EntityTypes.SANTY.create(this);
         this.entityRegistry.spawn(santy);
-
-        //this.cameras.main.startFollow(santy.sprite, true, 0.02, 0.02)
     }
 
     onUpdate(time: number, delta: number) {
@@ -43,11 +57,10 @@ export class GameScene extends SceneWrapper {
     }
 
     onShutdown() {
+        this.relay.events.removeListener("message", this.onPacket, this, false);
     }
 
     sendPacket(packet: GamePacket) {
-        if (this.socket != null) {
-            this.socket.send(JSON.stringify(packet))
-        }
+        this.relay.send(packet);
     }
 }

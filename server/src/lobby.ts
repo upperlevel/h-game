@@ -69,24 +69,35 @@ export class Lobby {
     }
 
     refreshReady() {
-        if (this.state != "PRE_GAME" && this.state != "CONNECTION_WAIT") return;
+        if (this.state != "PRE_GAME" && this.state != "CONNECTION_WAIT") {
+            return;
+        }
+        // If all the players are ready.
         for (let player of this.players.values()) {
-            if (!player.ready) return;
+            if (!player.ready) {
+                return;
+            }
         }
         for (let player of this.players.values()) {
             player.ready = false
         }
-        // Everyone's ready, start the game
+        // The ready variable is used in two different times:
+        // - during PRE_GAME phase to wait all the players to go ready.
+        // - during CONNECTION_WAIT phase to wait all the players to connect to the relay.
         switch (this.state) {
-            case "PRE_GAME": this.startGame(); break;
-            case "CONNECTION_WAIT":  this.notifyConnectionReady(); break;
+            case "PRE_GAME":
+                this.startGame();
+                break;
+            case "CONNECTION_WAIT":
+                this.notifyConnectionReady();
+                break;
         }
     }
 
     startGame() {
         let i = 0;
 
-        this._state = "PLAYING";
+        this._state = "CONNECTION_WAIT";
 
         this.players.forEach((player) => {
             player.sendPacket({
@@ -102,13 +113,13 @@ export class Lobby {
         this.players.forEach(player => {
             player.relaySocket!.send("ready")
         });
-        status = "PLAYING";
+        this._state = "PLAYING";
     }
 
     // TODO: onJoin, refreshReady, startGame
 
     createInfoPacket(): CurrentLobbyInfoPacket {
-        let players = new Array<LobbyPlayerInfo>();
+        let players: LobbyPlayerInfo[] = [];
 
         this.players.forEach((player) => {
             players.push({

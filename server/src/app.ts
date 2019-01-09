@@ -21,7 +21,7 @@ const gameRelay = new GameRelay(playerRegistry);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 
 const gameDir = path.join(rootDir, "../../game/dist");
 console.log("Game directory at: " + gameDir);
@@ -30,21 +30,23 @@ app.use("/", express.static(gameDir));
 app.ws("/api/matchmaking", matchMaker.connectionHandler.bind(matchMaker));
 app.ws("/api/game", gameRelay.connectionHandler.bind(gameRelay));
 app.ws("/api/echo", (ws) => {
-  ws.on("message", (mex) => { ws.send(mex); })
+    ws.on("message", (mex) => {
+        ws.send(mex);
+    })
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // Error handling
 app.use((err: Error, req: express.Request, res: express.Response) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
 const PORT = 8080;
 app.listen(PORT, () => {
-  console.log("Listening on port " + PORT)
+    console.log("Listening on port " + PORT)
 });

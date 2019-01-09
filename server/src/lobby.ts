@@ -99,11 +99,14 @@ export class Lobby {
 
         this._state = "CONNECTION_WAIT";
 
+        const playerCount = this.players.size;
+
         this.players.forEach((player) => {
             player.sendPacket({
                 type: "match_begin",
                 token: player.name,
-                playerIndex: i
+                playerCount: playerCount,
+                playerIndex: i,
             });
             i++
         })

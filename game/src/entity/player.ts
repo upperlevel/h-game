@@ -36,12 +36,16 @@ export abstract class Player extends Entity {
 
         this.behaviour.update();
 
-        if (this.scene.actions.JUMP.isDown && this.body.onFloor()) {
+        if (this.active && this.scene.actions.JUMP.isDown && this.body.onFloor()) {
             this.jump();
         }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
 
         this.hudRenderer.update(this.body, this.life, this.energy);
+    }
+
+    reloadName() {
+        this.hudRenderer.setName(this.name);
     }
 
     createSpawnMeta(): EntitySpawnMeta | undefined {
@@ -58,15 +62,18 @@ export abstract class Player extends Entity {
             return;
         }
         this.name = meta.name;
+        this.reloadName();
     }
 
     jump() {
         console.log("Jumping");
         this.body.setVelocityY(-this.jumpForce);
-        this.scene.sendPacket({
-            type: "player_jump",
-            entityId: this.id,
-        })
+        if (this.active) {
+            this.scene.sendPacket({
+                type: "player_jump",
+                entityId: this.id,
+            })
+        }
     }
 
     attack(callBack: any) {

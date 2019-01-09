@@ -9,6 +9,10 @@ import {LobbyOverlay} from "./lobbyOverlay";
 import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
 import {GameConnector} from "../../connector/gameConnector";
 
+import * as proto from "@common/matchmaking/protocol"
+import {GameScene} from "../game/gameScene";
+import {GameSceneConfig} from "../game/gameSceneConfig";
+
 interface LobbyPlayer {
     name: string,
     character?: string,
@@ -117,14 +121,25 @@ export class LobbyScene extends SceneWrapper {
         });
     }
 
-    onMessage(packet: any) {
+    onMessage(packet: proto.MatchmakingPacket) {
         switch (packet.type) {
             case "lobby_info":
                 this.setPlayers(packet);
                 break;
             case "match_begin":
                 this.game.gameConnector = new GameConnector(packet.token);
-                this.scene.start("connecting", {connector: this.game.gameConnector, nextScene: "game"});
+
+                let gameConfig: GameSceneConfig = {
+                    playerIndex: packet.playerIndex,
+                    playerCount: packet.playerCount,
+                    playerName: this.game.playerName!,
+                };
+
+                this.scene.start("connecting", {
+                    connector: this.game.gameConnector,
+                    nextScene: "game",
+                    nextSceneParams: gameConfig,
+                });
                 break;
         }
     }

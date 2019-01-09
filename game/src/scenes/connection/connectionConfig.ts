@@ -10,4 +10,6 @@ export interface ConnectionConfig {
      * The scene that will be set when the connection was successful.
      */
     nextScene: string,
+
+    nextSceneParams?: any;
 }

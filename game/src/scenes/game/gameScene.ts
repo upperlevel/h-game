@@ -5,6 +5,8 @@ import {EntityRegistry} from "../../entity/entityRegistry";
 import {EntityTypes} from "../../entity/entities";
 import {GamePacket} from "../../protocol";
 import {GameConnector} from "../../connector/gameConnector";
+import {GameSceneConfig} from "./gameSceneConfig";
+import {Player} from "../../entity/player";
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -15,11 +17,14 @@ export class GameScene extends SceneWrapper {
     // @ts-ignore
     relay: GameConnector;
 
+    config?: GameSceneConfig;
+
     constructor() {
         super({key: "game"});
     }
 
-    onInit(data: any) {
+    onInit(data: GameSceneConfig) {
+        this.config = data;
     }
 
     onPreload() {
@@ -34,6 +39,13 @@ export class GameScene extends SceneWrapper {
             case "behaviour_change":
                 this.entityRegistry.onBehaviourChange(packet);
                 break;
+            case "player_jump":
+                let p = this.entityRegistry.getEntity(packet.entityId);
+                if (p != null && 'jump' in p) {
+                    // @ts-ignore
+                    p.jump();
+                }
+                break;
             default:
                 console.error(`Unhandled packet type: ${packet.type}`);
                 break;
@@ -41,17 +53,21 @@ export class GameScene extends SceneWrapper {
     }
 
     onCreate() {
-        this.relay = this.game.gameConnector!;
-        this.relay.events.on("message", this.onPacket, this);
+        EntityTypes.load(this);
 
         this.actions = new Keyboard(this);
 
-        EntityTypes.load(this);
-
-
         this.entityRegistry = new EntityRegistry(this);
+        this.entityRegistry.setup(this.config!.playerCount, this.config!.playerIndex);
 
-        let santy = EntityTypes.SANTY.create(this);
+        this.relay = this.game.gameConnector!;
+        this.relay.events.on("message", this.onPacket, this);
+
+        // Spawn
+        let santy = EntityTypes.SANTY.create(this) as Player;
+        santy.name = this.config!.playerName;
+        santy.reloadName();
+
         this.entityRegistry.spawn(santy);
     }
 

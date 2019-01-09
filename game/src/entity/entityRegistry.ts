@@ -7,7 +7,7 @@ import {Behaviour, BehaviourManager} from "../behaviour/behaviour";
 export class EntityRegistry {
     entities = new Map<number, Entity>();
 
-    private playerCount = 2;
+    private playerCount = 0;
     private localOffset = 0;
 
     private localId = 0;
@@ -28,6 +28,11 @@ export class EntityRegistry {
         window.clearTimeout(this.timerId);
     }
 
+    setup(playerCount: number, playerIndex: number) {
+        this.playerCount = playerCount;
+        this.localOffset = playerIndex;
+    }
+
     onSpawn(packet: EntitySpawnPacket) {
         let type = EntityTypes.fromId(packet.entityType);
 
@@ -36,7 +41,7 @@ export class EntityRegistry {
             return
         }
 
-        let entity = type.create(this.scene);
+        let entity = type.create(this.scene, false);
         entity.id = packet.entityId;
         entity.sprite.setX(packet.x);
         entity.sprite.setY(packet.y);
@@ -44,6 +49,8 @@ export class EntityRegistry {
         if (packet.meta != null) {
             entity.loadSpawnMeta(packet.meta);
         }
+
+        this.forceSpawn(entity);
     }
 
     onBehaviourChange(packet: BehaviourChangePacket) {

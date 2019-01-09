@@ -65,6 +65,10 @@ export class HudRenderer {
         console.log(this);
     }
 
+    setName(name: string) {
+        this.textHud.setText(name);
+    }
+
     private translateToTarget(target: Body) {
         let x = target.x + target.halfWidth;
         let y = target.y - this.height - HudRenderer.hudPlayerDistance;

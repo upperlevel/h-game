@@ -17,7 +17,7 @@ export abstract class Entity {
 
     destroyed = false;
 
-    active = false;
+    readonly active: boolean;
 
     constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
         this.scene = scene;

@@ -215,12 +215,14 @@ export class BehaviourManager {
         let current = this.currentAnimated;
 
         console.log("Behaviour change: layer ", layer.index, " prev: ", previous, "next: ", next);
-        this.player.scene.sendPacket({
-            type: "behaviour_change",
-            actorId: this.player.id,
-            layerIndex: layer.index,
-            behaviour: layer.active.id
-        });
+        if (this.active) {
+            this.player.scene.sendPacket({
+                type: "behaviour_change",
+                actorId: this.player.id,
+                layerIndex: layer.index,
+                behaviour: layer.active.id
+            });
+        }
 
         if (current == null) {
             // The current one is null

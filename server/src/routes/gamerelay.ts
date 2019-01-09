@@ -47,6 +47,7 @@ class ConnectionHandler {
         let other: Player;
         for (other of this.player.lobby.players) {
             if (other != this.player && other.relaySocket != null) {
+                console.log("relay ", other.name, msg);
                 other.relaySocket.send(msg)
             }
         }

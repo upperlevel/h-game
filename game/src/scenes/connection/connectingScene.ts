@@ -22,7 +22,7 @@ export class ConnectingScene extends SceneWrapper {
     }
 
     onConnect() {
-        this.scene.start(this.config!.nextScene);
+        this.scene.start(this.config!.nextScene, this.config!.nextSceneParams);
     }
 
     onDisconnect() {

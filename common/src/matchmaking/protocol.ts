@@ -32,6 +32,7 @@ export interface LobbyInfoRequestPacket {
 export interface MatchBeginPacket {
     type: "match_begin";
     token: string;
+    playerCount: number;
     playerIndex: number;
 }
 

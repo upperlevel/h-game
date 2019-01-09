@@ -6,11 +6,12 @@ import {GameScene} from "../scenes/game/gameScene";
 import Scene = Phaser.Scene;
 import Sprite = Phaser.GameObjects.Sprite;
 import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";
+import {HudRenderer} from "./HudRenderer";
 
 export abstract class Player extends Entity {
     maxEnergy = 1.0;
-    energy = 1.0;
-    energyGainPerSecond = 0.05;
+    energy = 0.0;
+    energyGainPerMs = 0.05 / 1000;
 
     attackPower = 0.1;
     jumpForce = 300;
@@ -21,11 +22,14 @@ export abstract class Player extends Entity {
     damageable = true;
     private behaviour: BehaviourManager;
 
+    private hudRenderer: HudRenderer;
+
+
     protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
         super(scene, sprite, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
+        this.hudRenderer = new HudRenderer(scene, this.name);
     }
-
 
     update(deltatime: number) {
         super.update(deltatime);
@@ -35,7 +39,9 @@ export abstract class Player extends Entity {
         if (this.scene.actions.JUMP.isDown && this.body.onFloor()) {
             this.jump();
         }
-        this.energy = Math.min(this.energy + this.energyGainPerSecond * deltatime, this.maxEnergy);
+        this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
+
+        this.hudRenderer.update(this.body, this.life, this.energy);
     }
 
     createSpawnMeta(): EntitySpawnMeta | undefined {
@@ -85,7 +91,7 @@ export abstract class Player extends Entity {
     }
 
     renderHud() {
-        // TODO?
+
     }
 }
 

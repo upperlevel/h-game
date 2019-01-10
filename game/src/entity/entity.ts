@@ -1,7 +1,9 @@
 import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
 import {GameScene} from "../scenes/game/gameScene";
 import Sprite = Phaser.GameObjects.Sprite;
+import Color = Phaser.Display.Color;
 
+import {Position} from "./util";
 
 export abstract class Entity {
     id = -1;
@@ -26,6 +28,35 @@ export abstract class Entity {
         this.type = type;
     }
 
+    get x() {
+        return this.sprite.x;
+    }
+
+    set x(x) {
+        this.sprite.x = x;
+    }
+
+    get y() {
+        return this.sprite.y;
+    }
+
+    set y(y) {
+        this.sprite.y = y;
+    }
+
+    get position(): Position {
+        return {x: this.x, y: this.y} as Position;
+    }
+
+    set position(position: Position) {
+        this.x = position.x;
+        this.y = position.y;
+    }
+
+    get isFacingLeft() {
+        return this.sprite.flipX;
+    }
+
     update(deltatime: number) {
     }
 
@@ -35,10 +66,26 @@ export abstract class Entity {
         return this.sprite.body as Phaser.Physics.Arcade.Body;
     }
 
+    respawn() {
+        this.life = this.maxLife;
+
+        this.position = this.scene.spawn;
+    }
+
     damage(amount: number) {
-        if (!this.damageable) return;
+        if (!this.damageable) {
+            return;
+        }
         this.life -= amount;
-        // TODO: Popup
+
+        if (this.life <= 0) {
+            this.respawn();
+            return;
+        }
+
+        // Only done if the player isn't death.
+        this.sprite.tint = 0xff0000;
+        setTimeout(() => this.sprite.tint = 0xffffff, 250);
     }
 
     // TODO: throw
@@ -47,7 +94,8 @@ export abstract class Entity {
         return undefined;
     }
 
-    loadSpawnMeta(meta: EntitySpawnMeta) {}
+    loadSpawnMeta(meta: EntitySpawnMeta) {
+    }
 
     fillResetPacket(packet: EntityResetPacket) {
         packet.x = this.body.x;
@@ -75,7 +123,7 @@ export class EntityType {
         id: string,
         preloader: (scene: GameScene) => void,
         loader: (scene: GameScene) => void,
-        animations: { [key: string]: string},
+        animations: { [key: string]: string },
         creator: (scene: GameScene, active: boolean) => Entity
     ) {
         this.id = id;

@@ -76,9 +76,25 @@ export abstract class Player extends Entity {
         }
     }
 
+    respawn() {
+        super.respawn();
+        this.energy = 0;
+    }
+
     attack(callBack: any) {
         this.sprite.anims.play(this.type.animations["attack"]);
         this.sprite.once("animationcomplete", callBack);
+
+        for (const entity of this.scene.entityRegistry.entities.values()) {
+            // @ts-ignore
+            if (this.scene.physics.world.collide(this.sprite, entity.sprite)) {
+                const distance = this.x - entity.x;
+                if (distance == 0 || distance < 0 != this.isFacingLeft) {
+
+                    entity.damage(this.attackPower);
+                }
+            }
+        }
     }
 
     specialAttack(callBack: any) {

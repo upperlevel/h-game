@@ -8,6 +8,8 @@ import {GameConnector} from "../../connector/gameConnector";
 import {GameSceneConfig} from "./gameSceneConfig";
 import {Player} from "../../entity/player";
 
+import {Position} from "../../entity/util"
+
 export class GameScene extends SceneWrapper {
     // @ts-ignore
     entityRegistry: EntityRegistry;
@@ -18,6 +20,8 @@ export class GameScene extends SceneWrapper {
     relay: GameConnector;
 
     config?: GameSceneConfig;
+
+    spawn = {x: 100, y: 100} as Position;
 
     constructor() {
         super({key: "game"});

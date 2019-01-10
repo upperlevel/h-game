@@ -62,6 +62,13 @@ export class HGame extends Game {
         //this.gameConnector = new GameConnector(this);
 
         this.scene.start("connecting", {connector: this.matchmakingConnector, nextScene: "login"});
+
+        window.addEventListener('resize', () => {
+            this.resize(window.innerWidth, window.innerHeight);
+            this.scene.scenes.forEach((s) => {
+                s.cameras.resize(window.innerWidth, window.innerHeight);
+            })
+        });
     }
 
     private customizeCanvas() {

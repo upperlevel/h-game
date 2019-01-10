@@ -1,9 +1,9 @@
 import {GameScene} from "../scenes/game/gameScene";
 import * as Phaser from "phaser";
+import Scene = Phaser.Scene;
 
-type GameObject = Phaser.GameObjects.GameObject;
 type Text = Phaser.GameObjects.Text;
-type Graphics = Phaser.GameObjects.Graphics;
+type Image = Phaser.GameObjects.Image;
 type Body = Phaser.Physics.Arcade.Body;
 
 export class HudRenderer {
@@ -22,14 +22,14 @@ export class HudRenderer {
 
     private textHud: Text;
 
-    private lifeContainer: Graphics;
-    private lifeBar: Graphics;
-    private lifeMaskShape: Graphics;
+    private lifeContainer: Image;
+    private lifeBar: Image;
+    private lifeMaskShape: Image;
     private lifeYOffset: number;
 
-    private energyContainer: Graphics;
-    private energyBar: Graphics;
-    private energyMaskShape: Graphics;
+    private energyContainer: Image;
+    private energyBar: Image;
+    private energyMaskShape: Image;
     private energyYOffset: number;
 
     private lifeMaskOffset = 0;
@@ -39,6 +39,7 @@ export class HudRenderer {
 
 
     public constructor(scene: GameScene, name: string) {
+        HudRenderer.load(scene);
         const padding = HudRenderer.componentPadding;
         let nextY = 0;
 
@@ -46,17 +47,17 @@ export class HudRenderer {
         this.textHud.setOrigin(0.5, 0);
         nextY += this.textHud.height + padding;
 
-        let lifeShapes = HudRenderer.createBar(scene, 0x00ff00);
-        this.lifeContainer = lifeShapes[0];
-        this.lifeBar = lifeShapes[1];
-        this.lifeMaskShape = lifeShapes[2];
+        this.lifeContainer = scene.add.image(0, 0, "bar_container").setOrigin(0.5, 0);
+        this.lifeBar = scene.add.image(0, 0, "life_bar_fill").setOrigin(0.5, 0);
+        this.lifeMaskShape = scene.add.image(0, 0, "bar_mask").setOrigin(0.5, 0).setVisible(false);
+        this.lifeBar.setMask(this.lifeMaskShape.createBitmapMask());
         this.lifeYOffset = nextY;
         nextY += HudRenderer.barContainerHeight + padding;
 
-        let energyShapes = HudRenderer.createBar(scene, 0x00BCD4);
-        this.energyContainer = energyShapes[0];
-        this.energyBar = energyShapes[1];
-        this.energyMaskShape = energyShapes[2];
+        this.energyContainer = scene.add.image(0, 0, "bar_container").setOrigin(0.5, 0);
+        this.energyBar = scene.add.image(0, 0, "energy_bar_fill").setOrigin(0.5, 0);
+        this.energyMaskShape = scene.add.image(0, 0, "bar_mask").setOrigin(0.5, 0).setVisible(false);
+        this.energyBar.setMask(this.energyMaskShape.createBitmapMask());
         this.energyYOffset = nextY;
         nextY +=  HudRenderer.barContainerHeight;
 
@@ -72,18 +73,17 @@ export class HudRenderer {
     private translateToTarget(target: Body) {
         let x = target.x + target.halfWidth;
         let y = target.y - this.height - HudRenderer.hudPlayerDistance;
-
-        const barOffset = - HudRenderer.barContainerWidth / 2;
+        let barOffY = HudRenderer.barContainerMargin * HudRenderer.scale;
 
         this.textHud.setPosition(x, y);
 
-        this.lifeContainer.setPosition(x + barOffset, y + this.lifeYOffset);
-        this.lifeBar.setPosition(x + barOffset, y + this.lifeYOffset);
-        this.lifeMaskShape.setPosition(x + barOffset + this.lifeMaskOffset, y + this.lifeYOffset);
+        this.lifeContainer.setPosition(x, y + this.lifeYOffset);
+        this.lifeBar.setPosition(x, y + this.lifeYOffset + barOffY);
+        this.lifeMaskShape.setPosition(x + this.lifeMaskOffset, y + this.lifeYOffset + barOffY);
 
-        this.energyContainer.setPosition(x + barOffset, y + this.energyYOffset);
-        this.energyBar.setPosition(x + barOffset, y + this.energyYOffset);
-        this.energyMaskShape.setPosition(x + barOffset + this.energyMaskOffset, y + this.energyYOffset);
+        this.energyContainer.setPosition(x, y + this.energyYOffset);
+        this.energyBar.setPosition(x, y + this.energyYOffset + barOffY);
+        this.energyMaskShape.setPosition(x + this.energyMaskOffset, y + this.energyYOffset + barOffY);
     }
 
     private updateMaskOffsets(life: number, energy: number) {
@@ -96,14 +96,19 @@ export class HudRenderer {
         this.translateToTarget(body);
     }
 
+    private static loaded = false;
 
-    private static createBar(scene: GameScene, colour: number): Graphics[] {
+    private static load(scene: Scene) {
+        if (this.loaded) return;
+        this.loaded = true;
+
         const scale = HudRenderer.scale;
         const margin = HudRenderer.barContainerMargin;
         const radius = (this.barHeightPixels / 2) * scale;
 
-        let barContainer = scene.add.graphics();
-        //barContainer.setOrigin(0.5, 0);
+        const make: any = scene.make;
+
+        let barContainer = make.graphics();
         barContainer.fillStyle(0x444444, 1);
         barContainer.fillRoundedRect(
             0, 0,
@@ -111,25 +116,35 @@ export class HudRenderer {
             this.barContainerHeight,
             radius
         );
+        barContainer.generateTexture("bar_container", this.barContainerWidth, this.barContainerHeight);
 
-        var bar = scene.add.graphics();
-        //bar.setOrigin(0.5, 0);
-        bar.fillStyle(colour, 1);
+
+
+        let bar = make.graphics();
+        bar.fillStyle(0x00ff00, 1);
         bar.fillRoundedRect(
-            margin * scale,
-            margin * scale,
+            0,
+            0,
             this.barWidthPixels * scale,
             this.barHeightPixels * scale,
             radius
         );
+        bar.generateTexture("life_bar_fill", this.barWidthPixels * scale, this.barHeightPixels * scale);
 
-        // @ts-ignore
-        var barMaskShape = scene.make.graphics();
-        //barMaskShape.setOrigin(0.5, 0);
+        // Draw over previous bar
+        bar.fillStyle(0x00BCD4, 1);
+        bar.fillRoundedRect(
+            0,
+            0,
+            this.barWidthPixels * scale,
+            this.barHeightPixels * scale,
+            radius
+        );
+        bar.generateTexture("energy_bar_fill", this.barWidthPixels * scale, this.barHeightPixels * scale);
+
+        let barMaskShape = make.graphics();
         barMaskShape.fillStyle(0xffffff, 1);
-        barMaskShape.fillRect(margin * scale, 0, 100 * scale, (10 + margin * 2) * scale);
-        bar.setMask(barMaskShape.createGeometryMask());
-
-        return [barContainer, bar, barMaskShape];
+        barMaskShape.fillRect(0, 0, 100 * scale, (10 + margin * 2) * scale);
+        barMaskShape.generateTexture("bar_mask", 100*scale, (10 + margin * 2) * scale);
     }
 }

@@ -1,6 +1,6 @@
 import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
 import {GameScene} from "../scenes/game/gameScene";
-import Sprite = Phaser.GameObjects.Sprite;
+import Sprite = Phaser.Physics.Arcade.Sprite;
 import Color = Phaser.Display.Color;
 
 import {Position} from "./util";
@@ -45,7 +45,7 @@ export abstract class Entity {
     }
 
     get position(): Position {
-        return {x: this.x, y: this.y} as Position;
+        return {x: this.x, y: this.y};
     }
 
     set position(position: Position) {
@@ -106,13 +106,13 @@ export abstract class Entity {
     }
 
     fillResetPacket(packet: EntityResetPacket) {
-        packet.x = this.body.x;
-        packet.y = this.body.y;
+        packet.x = this.x;
+        packet.y = this.y;
     }
 
     onReset(packet: EntityResetPacket) {
-        // TODO: de-comment this only after the physics system doesn't depend from the camera size
-        //this.sprite.setPosition(packet.x, packet.y);
+        this.x = packet.x;
+        this.y = packet.y;
     }
 
     destroy() {

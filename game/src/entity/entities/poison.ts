@@ -5,7 +5,7 @@ import {Entity} from "../entity";
 
 import * as Phaser from "phaser";
 import Scene = Phaser.Scene;
-import Sprite = Phaser.GameObjects.Sprite;
+import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export class Poison extends Entity {
     thrower?: Player;
@@ -14,9 +14,9 @@ export class Poison extends Entity {
         super(scene, Poison.createSprite(scene), active, EntityTypes.POISON);
     }
 
-    static createSprite(scene: Scene): Sprite {
-        const sprite = scene.physics.add.sprite(0, 0, "poison").setScale(4);
-        sprite.setCollideWorldBounds(true);
+    static createSprite(scene: GameScene): Sprite {
+        let sprite = scene.physics.add.sprite(0, 0, "poison").setScale(4);
+        scene.physics.add.collider(sprite, scene.platformPhysicsGroup);
         return sprite;
     }
 

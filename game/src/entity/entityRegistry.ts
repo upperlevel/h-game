@@ -86,6 +86,7 @@ export class EntityRegistry {
             entityId: entity.id
         };
         entity.fillResetPacket(resetPacket);
+        entity.onReset(resetPacket);
         return resetPacket;
     }
 
@@ -117,8 +118,8 @@ export class EntityRegistry {
             type: "entity_spawn",
             entityType: entity.type.id,
             entityId: entity.id,
-            x: entity.body.x,
-            y: entity.body.y,
+            x: entity.x,
+            y: entity.y,
             isFacingLeft: entity.sprite.flipX,
             meta: entity.createSpawnMeta(),
         };

@@ -3,7 +3,7 @@ import {EntityTypes} from "../entities";
 import {Player} from "../player";
 import {Poison} from "./poison";
 
-import Sprite = Phaser.GameObjects.Sprite;
+import Sprite = Phaser.Physics.Arcade.Sprite;
 import Scene = Phaser.Scene;
 
 export class Santy extends Player {
@@ -14,9 +14,7 @@ export class Santy extends Player {
     }
 
     static createSprite(scene: Scene): Sprite {
-        let sprite = scene.physics.add.sprite(200, 200, "santy").setScale(4);
-        sprite.setCollideWorldBounds(true);
-        return sprite;
+        return scene.physics.add.sprite(200, 800, "santy").setScale(4);
     }
 
     specialAttack(onComplete: () => void) {

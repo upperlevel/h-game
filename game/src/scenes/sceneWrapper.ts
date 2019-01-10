@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import Scene = Phaser.Scene;
-import Config = Phaser.Scenes.Settings.Config
+import Config = Phaser.Scenes.Settings.Config;
 
 import {HGame} from "../index";
 

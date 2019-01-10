@@ -1,12 +1,10 @@
 import {Entity, EntityType} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
-import {EntityTypes} from "./entities";
 import {BehaviourManager} from "../behaviour/behaviour";
 import {GameScene} from "../scenes/game/gameScene";
-import Scene = Phaser.Scene;
-import Sprite = Phaser.GameObjects.Sprite;
 import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";
 import {HudRenderer} from "./hudRenderer";
+import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export abstract class Player extends Entity {
     maxEnergy = 1.0;
@@ -29,6 +27,9 @@ export abstract class Player extends Entity {
         super(scene, sprite, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
         this.hudRenderer = new HudRenderer(scene, this.name);
+
+        scene.entityPhysicsGroup.add(this.sprite);
+        this.sprite.setCollideWorldBounds(true);
     }
 
     update(deltatime: number) {

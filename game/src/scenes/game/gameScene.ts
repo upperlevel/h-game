@@ -9,6 +9,9 @@ import {GameSceneConfig} from "./gameSceneConfig";
 import {Player} from "../../entity/player";
 
 import {Position} from "../../entity/util"
+import TileSprite = Phaser.GameObjects.TileSprite;
+import Group = Phaser.GameObjects.Group;
+import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -19,9 +22,14 @@ export class GameScene extends SceneWrapper {
     // @ts-ignore
     relay: GameConnector;
 
+    // @ts-ignore
+    entityPhysicsGroup: Group;
+    // @ts-ignore
+    platformPhysicsGroup: StaticGroup;
+
     config?: GameSceneConfig;
 
-    spawnLocation: Position = {x: 100, y: 100};
+    spawnLocation: Position = {x: 100, y: 800};
 
     constructor() {
         super({key: "game"});
@@ -33,6 +41,7 @@ export class GameScene extends SceneWrapper {
 
     onPreload() {
         EntityTypes.preload(this);
+        this.load.image("urban_terrain", "assets/game/urban_terrain.png");
     }
 
     onPacket(packet: GamePacket) {
@@ -60,6 +69,9 @@ export class GameScene extends SceneWrapper {
     }
 
     onCreate() {
+        this.cameras.main.setBounds(0, 0, 1920,1080);
+        this.physics.world.setBounds(0, 0, 1920, 1080);
+
         EntityTypes.load(this);
 
         this.actions = new Keyboard(this);
@@ -67,6 +79,16 @@ export class GameScene extends SceneWrapper {
         this.entityRegistry = new EntityRegistry(this);
         this.entityRegistry.setup(this.config!.playerCount, this.config!.playerIndex);
         this.entityRegistry.onEnable();
+
+        this.entityPhysicsGroup = this.physics.add.group();
+
+        // Setup terrain
+        this.platformPhysicsGroup = this.physics.add.staticGroup();
+        let ts = this.add.tileSprite(1920/2, 1080 - 25, 1920, 25, "urban_terrain");
+        this.platformPhysicsGroup.add(ts);
+
+
+        //this.add.tileSprite(0, 1080 / 2, 1920, 25, "urban_terrain");
 
         this.relay = this.game.gameConnector!;
         this.relay.events.on("message", this.onPacket, this);
@@ -76,7 +98,11 @@ export class GameScene extends SceneWrapper {
         santy.name = this.config!.playerName;
         santy.reloadName();
 
+        this.physics.add.collider(this.platformPhysicsGroup, this.entityPhysicsGroup);
+
         this.entityRegistry.spawn(santy);
+
+        this.cameras.main.startFollow(santy.sprite);
     }
 
     onUpdate(time: number, delta: number) {

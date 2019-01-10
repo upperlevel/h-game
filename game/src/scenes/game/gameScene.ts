@@ -46,6 +46,9 @@ export class GameScene extends SceneWrapper {
                     p.jump();
                 }
                 break;
+            case "entity_reset":
+                this.entityRegistry.onResetPacket(packet);
+                break;
             default:
                 console.error(`Unhandled packet type: ${packet.type}`);
                 break;
@@ -59,6 +62,7 @@ export class GameScene extends SceneWrapper {
 
         this.entityRegistry = new EntityRegistry(this);
         this.entityRegistry.setup(this.config!.playerCount, this.config!.playerIndex);
+        this.entityRegistry.onEnable();
 
         this.relay = this.game.gameConnector!;
         this.relay.events.on("message", this.onPacket, this);
@@ -76,6 +80,7 @@ export class GameScene extends SceneWrapper {
     }
 
     onShutdown() {
+        this.entityRegistry.onDisable();
         this.relay.events.removeListener("message", this.onPacket, this, false);
     }
 

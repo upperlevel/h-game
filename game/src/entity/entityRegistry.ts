@@ -2,7 +2,6 @@ import {GameScene} from "../scenes/game/gameScene";
 import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket, GamePacket} from "../protocol";
 import {Entity} from "./entity";
 import {EntityTypes} from "./entities";
-import {Behaviour, BehaviourManager} from "../behaviour/behaviour";
 
 export class EntityRegistry {
     entities = new Map<number, Entity>();
@@ -21,7 +20,7 @@ export class EntityRegistry {
     }
 
     onEnable() {
-        this.timerId = window.setTimeout(this.sendReset.bind(this), 1000);
+        this.timerId = window.setInterval(this.sendReset.bind(this), 1000);
     }
 
     onDisable() {
@@ -88,6 +87,14 @@ export class EntityRegistry {
         };
         entity.fillResetPacket(resetPacket);
         return resetPacket;
+    }
+
+    onResetPacket(packet: EntityResetPacket) {
+        let entity = this.entities.get(packet.entityId);
+        if (entity == null) {
+            throw `Entity ${packet.entityId} not found`;
+        }
+        entity.onReset(packet);
     }
 
     getEntity(id: number): Entity | undefined {

@@ -55,8 +55,8 @@ export abstract class Entity {
     }
 
     onReset(packet: EntityResetPacket) {
-        this.body.x = packet.x;
-        this.body.y = packet.y;
+        // TODO: de-comment this only after the physics system doesn't depend from the camera size
+        //this.sprite.setPosition(packet.x, packet.y);
     }
 }
 

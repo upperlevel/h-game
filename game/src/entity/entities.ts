@@ -1,6 +1,8 @@
-import {Santy} from "./player";
 import {EntityType} from "./entity";
 import {GameScene} from "../scenes/game/gameScene";
+
+import {Santy} from "./entities/santy";
+import {Poison} from "./entities/poison";
 
 export namespace EntityTypes {
     import Scene = Phaser.Scene;
@@ -46,9 +48,21 @@ export namespace EntityTypes {
         (scene: GameScene, active: boolean) => new Santy(scene, active)
     );
 
+    export const POISON: EntityType = new EntityType(
+        "poison",
+        (scene) => {
+            scene.load.image("poison", "assets/game/poison.png")
+        },
+        () => {
+        },
+        {},
+        (scene: GameScene, active: boolean) => new Poison(scene, active)
+    );
+
 
     export let types = [
-        SANTY
+        SANTY,
+        POISON
     ];
 
 

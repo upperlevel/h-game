@@ -53,11 +53,19 @@ export abstract class Entity {
         this.y = position.y;
     }
 
+    get width() {
+        return this.sprite.width * this.sprite.scaleX;
+    }
+
+    get height() {
+        return this.sprite.height * this.sprite.scaleY;
+    }
+
     get isFacingLeft() {
         return this.sprite.flipX;
     }
 
-    update(deltatime: number) {
+    update(delta: number) {
     }
 
     get body(): Phaser.Physics.Arcade.Body {
@@ -105,6 +113,10 @@ export abstract class Entity {
     onReset(packet: EntityResetPacket) {
         // TODO: de-comment this only after the physics system doesn't depend from the camera size
         //this.sprite.setPosition(packet.x, packet.y);
+    }
+
+    destroy() {
+        this.sprite.destroy(true);
     }
 }
 

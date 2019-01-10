@@ -125,6 +125,13 @@ export class EntityRegistry {
         entity.scene.sendPacket(packet);
     }
 
+    despawn(entity: Entity) {
+        if (entity.id != -1) {
+            return;
+        }
+        this.entities.delete(entity.id);
+        entity.destroy();
+    }
 
     onUpdate(timedelta: number): any {
         for (let [id, entity] of this.entities) {

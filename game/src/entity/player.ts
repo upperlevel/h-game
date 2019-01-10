@@ -117,16 +117,3 @@ export abstract class Player extends Entity {
 
     }
 }
-
-export class Santy extends Player {
-    constructor(scene: GameScene, active: boolean) {
-        super(scene, Santy.createSprite(scene), active, EntityTypes.SANTY);
-    }
-
-    static createSprite(scene: Scene): Sprite {
-        let sprite = scene.physics.add.sprite(200, 200, "santy").setScale(4);
-        sprite.setCollideWorldBounds(true);
-        return sprite;
-    }
-
-}

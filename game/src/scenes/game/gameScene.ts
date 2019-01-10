@@ -21,7 +21,7 @@ export class GameScene extends SceneWrapper {
 
     config?: GameSceneConfig;
 
-    spawn = {x: 100, y: 100} as Position;
+    spawnLocation: Position = {x: 100, y: 100};
 
     constructor() {
         super({key: "game"});

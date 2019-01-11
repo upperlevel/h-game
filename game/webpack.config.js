@@ -44,7 +44,7 @@ module.exports = {
             new TerserPlugin({
                 terserOptions: {
                     compress: {
-                        drop_console: true,
+                        pure_funcs: [ "console.trace", "console.log", "console.debug" ]
                     },
                     output: {
                         comments: false

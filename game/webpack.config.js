@@ -1,10 +1,13 @@
 const path = require("path");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     mode: "development",
     devtool: "inline-source-map",
+
     entry: "./src/index.ts",
     module: {
         rules: [
@@ -19,7 +22,7 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"]
     },
     output: {
-        filename: "bundle.[contenthash].js",
+        filename: "[name].[contenthash].js",
         path: path.resolve(__dirname, "dist")
     },
     plugins: [
@@ -29,7 +32,25 @@ module.exports = {
             template: "src/index.html"
         }),
         new CopyWebpackPlugin([{
-            from: "assets", to: "assets"
-        }])
-    ]
+            from: "assets",
+            to: "assets"
+        }]),
+    ],
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+        },
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    compress: {
+                        drop_console: true,
+                    },
+                    output: {
+                        comments: false
+                    },
+                }
+            })
+        ]
+    }
 };

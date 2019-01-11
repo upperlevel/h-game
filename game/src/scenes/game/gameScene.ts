@@ -12,6 +12,7 @@ import {Position} from "../../entity/util"
 import TileSprite = Phaser.GameObjects.TileSprite;
 import Group = Phaser.GameObjects.Group;
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
+import StaticBody = Phaser.Physics.Arcade.StaticBody;
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -86,9 +87,8 @@ export class GameScene extends SceneWrapper {
         this.platformPhysicsGroup = this.physics.add.staticGroup();
         let ts = this.add.tileSprite(1920/2, 1080 - 25, 1920, 25, "urban_terrain");
         this.platformPhysicsGroup.add(ts);
-
-
-        //this.add.tileSprite(0, 1080 / 2, 1920, 25, "urban_terrain");
+        let body = ts.body as StaticBody;
+        body.setOffset(0, 10);
 
         this.relay = this.game.gameConnector!;
         this.relay.events.on("message", this.onPacket, this);
@@ -106,7 +106,7 @@ export class GameScene extends SceneWrapper {
     }
 
     onUpdate(time: number, delta: number) {
-        this.entityRegistry!.onUpdate(delta);
+        this.entityRegistry.onUpdate(delta);
     }
 
     onShutdown() {

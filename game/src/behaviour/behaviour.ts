@@ -68,7 +68,7 @@ export class BehaviourLayer {
         let previous = this._active;
 
         if (this._active != null) {
-            console.log("Disabling ", this._active.id);
+            //console.log("Disabling ", this._active.id);
             this._active.onDisable()
         }
 
@@ -78,7 +78,7 @@ export class BehaviourLayer {
         do {
             this._active = val;
             if (val != null) {
-                console.log("Resolving: ", val.id);
+                //console.log("Resolving: ", val.id);
                 // If the behaviour system is active try to resolve the hooks
                 // Otherwise just assign null to newVal then go on
                 if (active && val.instantHookCheck) {
@@ -91,7 +91,7 @@ export class BehaviourLayer {
 
         // Now we have the new State, so we can enable and send the change.
         if (this._active != null) {
-            console.log("Enabling ", this._active.id);
+            //console.log("Enabling ", this._active.id);
             this._active.onEnable();
         }
         this.parent!.onBehaviourChange(this, previous, this._active);
@@ -180,12 +180,12 @@ export class BehaviourManager {
 
     set currentAnimated(value: Behaviour | undefined) {
         if (this._currentAnimated != null) {
-            console.log("Disabling animation: ", this._currentAnimated.id);
+            //console.log("Disabling animation: ", this._currentAnimated.id);
             this._currentAnimated.onAnimationDisable();
         }
         this._currentAnimated = value;
         if (value != null) {
-            console.log("Enabling animation: ", value.id);
+            //console.log("Enabling animation: ", value.id);
             value.onAnimationEnable();
         }
     }
@@ -214,7 +214,7 @@ export class BehaviourManager {
     onBehaviourChange(layer: BehaviourLayer, previous: Behaviour | undefined, next: Behaviour | undefined) {
         let current = this.currentAnimated;
 
-        console.log("Behaviour change: layer ", layer.index, " prev: ", previous, "next: ", next);
+        //console.log("Behaviour change: layer ", layer.index, " prev: ", previous, "next: ", next);
         if (this.active) {
             this.player.scene.sendPacket({
                 type: "behaviour_change",

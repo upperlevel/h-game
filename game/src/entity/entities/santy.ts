@@ -19,14 +19,15 @@ export class Santy extends Player {
 
     specialAttack(onComplete: () => void) {
         super.specialAttack(() => {
-            const poison: Poison = EntityTypes.POISON.create(this.scene);
-            poison.x = this.x + Santy.THROW_POWER * (this.isFacingLeft ? -1 : 1);
-            poison.y = this.y;
-            poison.thrower = this;
+            if (this.active) {
+                const poison = EntityTypes.POISON.create(this.scene) as Poison;
+                poison.x = this.x + Santy.THROW_POWER * (this.isFacingLeft ? -1 : 1);
+                poison.y = this.y;
+                poison.thrower = this;
+                this.scene.entityRegistry.spawn(poison);
+            }
 
             onComplete();
-
-            setTimeout(() => this.scene.entityRegistry.despawn(poison), 5000);
         });
     }
 }

@@ -2,7 +2,7 @@ import {Entity, EntityType} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
 import {GameScene} from "../scenes/game/gameScene";
-import {EntitySpawnMeta, PlayerEntitySpawnMeta} from "../protocol";
+import {PlayerEntitySpawnMeta} from "../protocol";
 import {HudRenderer} from "./hudRenderer";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
@@ -49,7 +49,7 @@ export abstract class Player extends Entity {
         this.hudRenderer.setName(this.name);
     }
 
-    createSpawnMeta(): EntitySpawnMeta | undefined {
+    createSpawnMeta(): PlayerEntitySpawnMeta {
         const meta: PlayerEntitySpawnMeta = {
             type: "player",
             name: this.name,

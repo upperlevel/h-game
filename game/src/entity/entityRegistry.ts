@@ -127,7 +127,8 @@ export class EntityRegistry {
     }
 
     despawn(entity: Entity) {
-        if (entity.id != -1) {
+        if (entity.id == -1) {
+            console.warn("Trying to despawn a non-spawned entity!");
             return;
         }
         this.entities.delete(entity.id);

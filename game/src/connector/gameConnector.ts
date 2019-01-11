@@ -44,7 +44,7 @@ export class GameConnector extends Connector {
         this.send(this.token);
     }
 
-    inboundMessage(message: string): any {
+    deserialize(message: string): any {
         if (this.handshakeDone) {
             return JSON.parse(message);
         } else {
@@ -52,7 +52,7 @@ export class GameConnector extends Connector {
         }
     }
 
-    outboundMessage(message: any): string {
+    serialize(message: any): string {
         if (this.handshakeDone) {
             return JSON.stringify(message);
         } else {

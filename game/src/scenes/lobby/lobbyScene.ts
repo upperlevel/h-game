@@ -149,7 +149,7 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onCreate() {
-        this.game.matchmakingConnector.events.on("message", this.onMessage, this);
+        this.game.matchmakingConnector.subscribe("message", this.onMessage, this);
 
         // The main player will be drawn only after an answer to this packet will be received.
         this.requestInfo();
@@ -172,6 +172,6 @@ export class LobbyScene extends SceneWrapper {
     onShutdown() {
         this.overlay.hide();
 
-        this.game.matchmakingConnector.events.removeListener("message", this.onMessage, this, false);
+        this.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }
 }

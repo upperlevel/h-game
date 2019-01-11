@@ -20,12 +20,12 @@ export class LoginScene extends SceneWrapper {
     }
 
     onCreate() {
-        this.game.matchmakingConnector.events.once("message", this.overlay.onResult, this.overlay);
+        this.game.matchmakingConnector.subscribe("message", this.overlay.onResult, this.overlay);
         this.overlay.show();
     }
 
     onShutdown() {
-        this.game.matchmakingConnector.events.removeListener("message", this.overlay.onResult, this.overlay, true);
+        this.game.matchmakingConnector.unsubscribe("message", this.overlay.onResult, this.overlay);
         this.overlay.hide();
     }
 }

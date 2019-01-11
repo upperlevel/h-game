@@ -52,10 +52,10 @@ export class InviteOverlay extends Overlay {
     onShow() {
         this.reset();
 
-        this.lobby.game.matchmakingConnector.events.on("message", this.onMessage, this);
+        this.lobby.game.matchmakingConnector.subscribe("message", this.onMessage, this);
     }
 
     onHide() {
-        this.lobby.game.matchmakingConnector.events.removeListener("message", this.onMessage, this, true);
+        this.lobby.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }
 }

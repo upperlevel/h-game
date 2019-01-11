@@ -91,7 +91,7 @@ export class GameScene extends SceneWrapper {
         body.setOffset(0, 10);
 
         this.relay = this.game.gameConnector!;
-        this.relay.events.on("message", this.onPacket, this);
+        this.relay.subscribe("message", this.onPacket, this);
 
         // Spawn
         let santy = EntityTypes.SANTY.create(this) as Player;
@@ -111,7 +111,7 @@ export class GameScene extends SceneWrapper {
 
     onShutdown() {
         this.entityRegistry.onDisable();
-        this.relay.events.removeListener("message", this.onPacket, this, false);
+        this.relay.unsubscribe("message", this.onPacket, this, false);
     }
 
     sendPacket(packet: GamePacket) {

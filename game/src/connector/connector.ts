@@ -11,13 +11,16 @@ import EventEmitter = Phaser.Events.EventEmitter;
  */
 export class Connector {
     url: string;
-    events: EventEmitter;
+    protected events: EventEmitter;
 
     connected = false;
     protected connection?: WebSocket;
 
+    private pending: any[] = [];
+
     constructor(url: string) {
         this.url = url;
+
         this.events = new EventEmitter();
 
         this.events.on("connect", () => {
@@ -48,14 +51,45 @@ export class Connector {
     }
 
     send(message: any) {
-        console.log(`[Web-socket] [${this.url}] OUT ${JSON.stringify(message)}`);
-        this.connection!.send(this.outboundMessage(message));
+        console.log(`[Web-socket] [${this.url}] SENT`);
+        console.log(message);
+
+        this.connection!.send(this.serialize(message));
     }
 
     private onMessage(raw: any) {
-        const message = this.inboundMessage(raw.data);
-        console.log(`[Web-socket] [${this.url}] IN  ${JSON.stringify(message)}`);
+        const message = this.deserialize(raw.data);
+
+        // If there is no event listener for messages we queue them.
+        if (this.events.listeners("message").length == 0) {
+            console.log(`[Web-socket] [${this.url}] ${raw} QUEUED`);
+            console.log(message);
+
+            this.pending.push(message);
+            return;
+        }
+
         this.events.emit("message", message);
+    }
+
+    subscribe(event: string, callback: (message: any) => void, context: any, once: boolean = false) {
+        if (once) {
+            this.events.once(event, callback, context);
+        } else {
+            this.events.on(event, callback, context);
+        }
+
+        // If the event subscribed is a message event then we can emit all pending messages.
+        if (event == "message") {
+            for (const message of this.pending) {
+                this.events.emit("message", message);
+            }
+            this.pending = [];
+        }
+    }
+
+    unsubscribe(event: string, callback: (message: any) => void, context: any, once: boolean = false) {
+        this.events.removeListener(event, callback, context, once);
     }
 
     protected onConnect() {
@@ -66,11 +100,11 @@ export class Connector {
         this.events.emit("disconnect");
     }
 
-    protected inboundMessage(message: string): any {
-        return message;
+    serialize(message: any): string {
+        return message.toString();
     }
 
-    protected outboundMessage(message: any): string {
-        return message.toString();
+    deserialize(message: string): any {
+        return message;
     }
 }

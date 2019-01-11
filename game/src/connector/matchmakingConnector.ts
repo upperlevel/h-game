@@ -7,11 +7,11 @@ export class MatchmakingConnector extends Connector {
 
     // All messages sent within this protocol are JSON formatted.
 
-    inboundMessage(message: string): any {
+    deserialize(message: string): any {
         return JSON.parse(message);
     }
 
-    outboundMessage(message: any): string {
+    serialize(message: any): string {
         return JSON.stringify(message);
     }
 }

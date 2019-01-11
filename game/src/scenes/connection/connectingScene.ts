@@ -34,8 +34,8 @@ export class ConnectingScene extends SceneWrapper {
 
         const connector = this.config!.connector;
 
-        connector.events.once("connect", this.onConnect, this);
-        connector.events.once("disconnect", this.onDisconnect, this);
+        connector.subscribe("connect", this.onConnect, this, true);
+        connector.subscribe("disconnect", this.onDisconnect, this, true);
 
         connector.connect();
     }
@@ -46,8 +46,8 @@ export class ConnectingScene extends SceneWrapper {
     onShutdown() {
         const connector = this.config!.connector;
 
-        connector.events.removeListener("connect", this.onConnect, this, true);
-        connector.events.removeListener("disconnect", this.onDisconnect, this, true);
+        connector.unsubscribe("connect", this.onConnect, this, true);
+        connector.unsubscribe("disconnect", this.onDisconnect, this, true);
 
         this.overlay.hide();
     }

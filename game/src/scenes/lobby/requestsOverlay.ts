@@ -50,10 +50,10 @@ export class RequestsOverlay extends Overlay {
     }
 
     onShow() {
-        this.lobby.game.matchmakingConnector.events.on("message",  this.onMessage, this);
+        this.lobby.game.matchmakingConnector.subscribe("message",  this.onMessage, this);
     }
 
     onHide() {
-        this.lobby.game.matchmakingConnector.events.removeListener("message", this.onMessage.bind(this), this, false);
+        this.lobby.game.matchmakingConnector.unsubscribe("message", this.onMessage.bind(this), this);
     }
 }

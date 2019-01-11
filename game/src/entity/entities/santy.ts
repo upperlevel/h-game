@@ -13,8 +13,12 @@ export class Santy extends Player {
         super(scene, Santy.createSprite(scene), active, EntityTypes.SANTY);
     }
 
-    static createSprite(scene: Scene): Sprite {
-        return scene.physics.add.sprite(200, 800, "santy").setScale(4);
+    static createSprite(scene: GameScene): Sprite {
+        let sceneWidth = 1920;
+        let x = (sceneWidth / (scene.config!.playerCount + 1)) * (scene.config!.playerIndex + 1);
+        let sprite = scene.physics.add.sprite(x, 800, "santy").setScale(4);
+        sprite.setFlipX(scene.config!.playerIndex % 2 != 0);
+        return sprite;
     }
 
     specialAttack(onComplete: () => void) {

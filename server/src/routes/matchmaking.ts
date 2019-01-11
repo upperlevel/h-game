@@ -128,7 +128,7 @@ class ConnectionHandler {
 
 
     onDisconnect() {
-        console.log("Player disconnected: ", this.player.name);
+        console.log("Player disconnected: ", this.player.isLoginDone ? this.player.name : "no-login");
         this.player.onDisconnect()
     }
 }

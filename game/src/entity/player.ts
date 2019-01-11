@@ -86,7 +86,7 @@ export abstract class Player extends Entity {
 
         for (const entity of this.scene.entityRegistry.entities.values()) {
             // @ts-ignore
-            if (this.scene.physics.world.collide(this.sprite, entity.sprite)) {
+            if (entity.damageable && this.scene.physics.world.collide(this.sprite, entity.sprite)) {
                 const distance = this.x - entity.x;
                 if (distance == 0 || distance < 0 != this.isFacingLeft) {
 

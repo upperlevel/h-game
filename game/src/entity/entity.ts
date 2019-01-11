@@ -4,6 +4,8 @@ import Sprite = Phaser.Physics.Arcade.Sprite;
 import Color = Phaser.Display.Color;
 
 import {Position} from "./util";
+import Animation = Phaser.Animations.Animation;
+import AnimationFrame = Phaser.Animations.AnimationFrame;
 
 export abstract class Entity {
     id = -1;
@@ -115,6 +117,19 @@ export abstract class Entity {
         this.x = packet.x;
         this.y = packet.y;
         this.life = packet.life;
+    }
+
+    onFrameOnce(targetFrame: number, callback: () => void) {
+        let key = this.sprite.anims.getCurrentKey();
+        this.sprite.once("animationupdate", (animation: Animation, frame: AnimationFrame) => {
+            if (animation.key != key) return;
+
+            if (frame.index == targetFrame) {
+                callback();
+            } else {
+                this.onFrameOnce(targetFrame, callback);
+            }
+        })
     }
 
     destroy() {

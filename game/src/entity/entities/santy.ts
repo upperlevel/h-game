@@ -18,17 +18,16 @@ export class Santy extends Player {
     }
 
     specialAttack(onComplete: () => void) {
-        super.specialAttack(() => {
-            if (this.active) {
+        super.specialAttack(onComplete);
+        if (this.active) {
+            this.onFrameOnce(7, () => {
                 const poison = EntityTypes.POISON.create(this.scene) as Poison;
                 poison.x = this.x + Santy.THROW_POWER * (this.isFacingLeft ? -1 : 1);
-                poison.y = this.y;
+                poison.y = this.y + this.sprite.height * 0.75;
                 poison.thrower = this;
                 this.scene.entityRegistry.spawn(poison);
-            }
-
-            onComplete();
-        });
+            })
+        }
     }
 }
 

@@ -108,11 +108,13 @@ export abstract class Entity {
     fillResetPacket(packet: EntityResetPacket) {
         packet.x = this.x;
         packet.y = this.y;
+        packet.life = this.life;
     }
 
     onReset(packet: EntityResetPacket) {
         this.x = packet.x;
         this.y = packet.y;
+        this.life = packet.life;
     }
 
     destroy() {

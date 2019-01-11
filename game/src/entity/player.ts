@@ -2,7 +2,7 @@ import {Entity, EntityType} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
 import {GameScene} from "../scenes/game/gameScene";
-import {PlayerEntitySpawnMeta} from "../protocol";
+import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
 import {HudRenderer} from "./hudRenderer";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
@@ -50,11 +50,10 @@ export abstract class Player extends Entity {
     }
 
     createSpawnMeta(): PlayerEntitySpawnMeta {
-        const meta: PlayerEntitySpawnMeta = {
+        return {
             type: "player",
             name: this.name,
         };
-        return meta;
     }
 
     loadSpawnMeta(meta: PlayerEntitySpawnMeta) {
@@ -67,7 +66,6 @@ export abstract class Player extends Entity {
     }
 
     jump() {
-        console.log("Jumping");
         this.body.setVelocityY(-this.jumpForce);
         if (this.active) {
             this.scene.sendPacket({
@@ -107,14 +105,13 @@ export abstract class Player extends Entity {
         this.sprite.anims.play(this.type.animations["idle"])
     }
 
-    onAttacked(player: Player) {
-        this.life -= player.attackPower;
-        if (this.life < 0) {
-            // TODO: die
-        }
+    fillResetPacket(packet: EntityResetPacket) {
+        super.fillResetPacket(packet);
+        packet.energy = this.energy;
     }
 
-    renderHud() {
-
+    onReset(packet: EntityResetPacket) {
+        super.onReset(packet);
+        this.energy = packet.energy;
     }
 }

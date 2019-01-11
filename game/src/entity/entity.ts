@@ -15,7 +15,7 @@ export abstract class Entity {
 
     sprite: Sprite;
 
-    maxLife = 1.0;
+    maxLife = 100;
     life = this.maxLife;
     damageable = false;
 

@@ -11,7 +11,7 @@ export abstract class Player extends Entity {
     energy = 0.0;
     energyGainPerMs = 0.05 / 1000;
 
-    attackPower = 0.1;
+    attackPower = 10;
     jumpForce = 300;
 
     name = "Ulisse";
@@ -42,7 +42,7 @@ export abstract class Player extends Entity {
         }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
 
-        this.hudRenderer.update(this.body, this.life, this.energy);
+        this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
     }
 
     reloadName() {

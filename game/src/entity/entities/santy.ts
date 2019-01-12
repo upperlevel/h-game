@@ -4,7 +4,6 @@ import {Player} from "../player";
 import {Poison} from "./poison";
 
 import Sprite = Phaser.Physics.Arcade.Sprite;
-import Scene = Phaser.Scene;
 
 export class Santy extends Player {
     static THROW_POWER = 100.0;
@@ -15,14 +14,23 @@ export class Santy extends Player {
 
     static createSprite(scene: GameScene): Sprite {
         let sceneWidth = 1920;
-        let x = (sceneWidth / (scene.config!.playerCount + 1)) * (scene.config!.playerIndex + 1);
+        let conf = scene.config!;
+        let x = (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
         let sprite = scene.physics.add.sprite(x, 800, "santy").setScale(4);
-        sprite.setFlipX(scene.config!.playerIndex % 2 != 0);
+        sprite.setFlipX(conf.playerIndex % 2 != 0);
         return sprite;
+    }
+
+    attack(callBack: any) {
+        super.attack(callBack);
+        this.onFrameOnce(2, () => {
+            this.giveCloseAttackDamage();
+        })
     }
 
     specialAttack(onComplete: () => void) {
         super.specialAttack(onComplete);
+        this.energy -= this.specialAttackEnergy;
         if (this.active) {
             this.onFrameOnce(7, () => {
                 const poison = EntityTypes.POISON.create(this.scene) as Poison;

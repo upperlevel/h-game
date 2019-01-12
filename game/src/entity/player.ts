@@ -9,6 +9,7 @@ import Sprite = Phaser.Physics.Arcade.Sprite;
 export abstract class Player extends Entity {
     maxEnergy = 1.0;
     energy = 0.0;
+    specialAttackEnergy = 0.8;
     energyGainPerMs = 0.05 / 1000;
 
     attackPower = 10;
@@ -26,7 +27,7 @@ export abstract class Player extends Entity {
     protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
         super(scene, sprite, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
-        this.hudRenderer = new HudRenderer(scene, this.name);
+        this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
 
         scene.entityPhysicsGroup.add(this.sprite);
         this.sprite.setCollideWorldBounds(true);
@@ -80,20 +81,25 @@ export abstract class Player extends Entity {
         this.energy = 0;
     }
 
-    attack(callBack: any) {
-        this.sprite.anims.play(this.type.animations["attack"]);
-        this.sprite.once("animationcomplete", callBack);
-
+    giveCloseAttackDamage() {
         for (const entity of this.scene.entityRegistry.entities.values()) {
             // @ts-ignore
             if (entity.damageable && this.scene.physics.world.collide(this.sprite, entity.sprite)) {
                 const distance = this.x - entity.x;
                 if (distance == 0 || distance < 0 != this.isFacingLeft) {
-
                     entity.damage(this.attackPower);
                 }
             }
         }
+    }
+
+    attack(callBack: any) {
+        this.sprite.anims.play(this.type.animations["attack"]);
+        this.sprite.once("animationcomplete", callBack);
+    }
+
+    canSpecialAttack(): boolean {
+        return this.energy >= this.specialAttackEnergy;
     }
 
     specialAttack(callBack: any) {

@@ -8,11 +8,20 @@ import Sprite = Phaser.Physics.Arcade.Sprite;
 import {ThrowableEntitySpawnMeta} from "../../protocol";
 
 export class Poison extends Entity {
-    thrower?: Player;
+    _thrower?: Player;
 
     constructor(scene: GameScene, active: boolean) {
         super(scene, Poison.createSprite(scene), active, EntityTypes.POISON);
         setTimeout(() => this.scene.entityRegistry.despawn(this), 5000);
+    }
+
+    get thrower(): Player {
+        return this._thrower!;
+    }
+
+    set thrower(thrower: Player) {
+        this._thrower = thrower;
+        this.sprite.tint = thrower.active ? 0x00ff00 : 0xff0000;
     }
 
     createSpawnMeta(): ThrowableEntitySpawnMeta {
@@ -35,6 +44,7 @@ export class Poison extends Entity {
         let body = sprite.body as Phaser.Physics.Arcade.Body;
         body.setSize(body.width, 1);
         body.setOffset(0, 1);
+        sprite.anims.play("poison_boil");
         return sprite;
     }
 

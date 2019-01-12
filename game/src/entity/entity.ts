@@ -79,7 +79,7 @@ export abstract class Entity {
     respawn() {
         this.life = this.maxLife;
 
-        this.position = this.scene.spawnLocation;
+        this.position = this.scene.getSpawnLocation();
     }
 
     damage(amount: number) {

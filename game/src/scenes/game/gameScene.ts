@@ -30,8 +30,6 @@ export class GameScene extends SceneWrapper {
 
     config?: GameSceneConfig;
 
-    spawnLocation: Position = {x: 100, y: 800};
-
     constructor() {
         super({key: "game"});
     }
@@ -116,5 +114,12 @@ export class GameScene extends SceneWrapper {
 
     sendPacket(packet: GamePacket) {
         this.relay.send(packet);
+    }
+
+    getSpawnLocation(): Position {
+        return {
+            x: Math.random() * 1920,
+            y: 800,
+        };
     }
 }

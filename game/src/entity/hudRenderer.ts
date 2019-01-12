@@ -38,13 +38,15 @@ export class HudRenderer {
     private height: number;
 
 
-    public constructor(scene: GameScene, name: string) {
+    public constructor(scene: GameScene, name: string, color: string) {
         HudRenderer.load(scene);
         const padding = HudRenderer.componentPadding;
         let nextY = 0;
 
         this.textHud = scene.add.text(0, 0, name, {fontFamily: "pixeled"});
         this.textHud.setOrigin(0.5, 0);
+        this.textHud.setColor(color);
+        this.textHud.updateText();
         nextY += this.textHud.height + padding;
 
         this.lifeContainer = scene.add.image(0, 0, "bar_container").setOrigin(0.5, 0);

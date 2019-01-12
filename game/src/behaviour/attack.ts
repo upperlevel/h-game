@@ -30,7 +30,7 @@ export class NoAttackBehaviour extends Behaviour {
     initialize() {
         super.initialize();
         this.hook(() => JustDown(this.layer.scene.actions.ATTACK), this.layer.behaviours.get("attack")!);
-        this.hook(() => JustDown(this.layer.scene.actions.SPECIAL_ATTACK), this.layer.behaviours.get("special_attack")!);
+        this.hook(() => JustDown(this.layer.scene.actions.SPECIAL_ATTACK) && this.player.canSpecialAttack(), this.layer.behaviours.get("special_attack")!);
     }
 }
 

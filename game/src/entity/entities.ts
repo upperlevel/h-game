@@ -51,9 +51,15 @@ export namespace EntityTypes {
     export const POISON: EntityType = new EntityType(
         "poison",
         (scene) => {
-            scene.load.image("poison", "assets/game/poison.png")
+            scene.load.spritesheet("poison", "assets/game/poison.png", {frameWidth: 37, frameHeight: 5})
         },
-        () => {
+        (scene) => {
+            scene.anims.create({
+                key: "poison_boil",
+                frames: scene.anims.generateFrameNumbers("poison", {start: 0, end: 3}),
+                frameRate: 8,
+                repeat: -1,
+            });
         },
         {},
         (scene: GameScene, active: boolean) => new Poison(scene, active)

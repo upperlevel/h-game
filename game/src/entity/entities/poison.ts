@@ -53,7 +53,7 @@ export class Poison extends Entity {
         for (const entity of this.scene.entityRegistry.entities.values()) {
             // @ts-ignore
             if (entity != this.thrower && this.scene.physics.collide(this.sprite, entity.sprite)) {
-                entity.damage(500.0);
+                entity.damage(delta * 25 / 1000);
             }
         }
     }

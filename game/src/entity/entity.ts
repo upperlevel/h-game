@@ -6,6 +6,8 @@ import Color = Phaser.Display.Color;
 import {Position} from "./util";
 import Animation = Phaser.Animations.Animation;
 import AnimationFrame = Phaser.Animations.AnimationFrame;
+import {Popup} from "./popup";
+import Scene = Phaser.Scene;
 
 export abstract class Entity {
     id = -1;
@@ -86,7 +88,9 @@ export abstract class Entity {
         if (!this.damageable) {
             return;
         }
+
         this.life -= amount;
+        this.scene.popup(new Popup(this.scene, this.x, this.y, amount.toFixed(2), "red"));
 
         if (this.life <= 0) {
             this.respawn();
@@ -140,8 +144,8 @@ export abstract class Entity {
 export class EntityType {
     id: string;
 
-    preloader: (scene: GameScene) => void;
-    loader: (scene: GameScene) => void;
+    preloader: (scene: Scene) => void;
+    loader: (scene: Scene) => void;
 
     animations: { [key: string]: string };
 
@@ -150,8 +154,8 @@ export class EntityType {
 
     constructor(
         id: string,
-        preloader: (scene: GameScene) => void,
-        loader: (scene: GameScene) => void,
+        preloader: (scene: Scene) => void,
+        loader: (scene: Scene) => void,
         animations: { [key: string]: string },
         creator: (scene: GameScene, active: boolean) => Entity
     ) {

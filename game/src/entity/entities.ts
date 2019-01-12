@@ -3,6 +3,7 @@ import {GameScene} from "../scenes/game/gameScene";
 
 import {Santy} from "./entities/santy";
 import {Poison} from "./entities/poison";
+import {Mixter} from "./entities/mixter";
 
 export namespace EntityTypes {
     import Scene = Phaser.Scene;
@@ -48,6 +49,47 @@ export namespace EntityTypes {
         (scene: GameScene, active: boolean) => new Santy(scene, active)
     );
 
+    export const MIXTER: EntityType = new EntityType(
+        "mixter",
+        (scene) => {
+            scene.load.spritesheet("mixter", "assets/game/mixter.png", {frameWidth: 48, frameHeight: 48});
+        },
+        (scene: Scene) => {
+            scene.anims.create({
+                key: "mixter_idle",
+                frames: scene.anims.generateFrameNumbers("mixter", {start: 0, end: 1}),
+                frameRate: 6,
+                repeat: -1,
+            });
+            scene.anims.create({
+                key: "mixter_walk",
+                frames: scene.anims.generateFrameNumbers("mixter", {start: 3, end: 5}),
+                frameRate: 6,
+                yoyo: true,
+                repeat: -1,
+            });
+            scene.anims.create({
+                key: "mixter_attack",
+                frames: scene.anims.generateFrameNumbers("mixter", {start: 6, end: 8}),
+                frameRate: 6,
+                repeat: 0,
+            });
+            scene.anims.create({
+                key: "mixter_special_attack",
+                frames: scene.anims.generateFrameNumbers("mixter", {start: 9, end: 11}),
+                frameRate: 6,
+                repeat: 0,
+            });
+        },
+        {
+            "idle": "mixter_idle",
+            "walk": "mixter_walk",
+            "attack": "mixter_attack",
+            "special_attack": "mixter_special_attack",
+        },
+        (scene: GameScene, active: boolean) => new Mixter(scene, active)
+    );
+
     export const POISON: EntityType = new EntityType(
         "poison",
         (scene) => {
@@ -68,17 +110,23 @@ export namespace EntityTypes {
 
     export let types = [
         SANTY,
-        POISON
+        MIXTER,
+        POISON,
+    ];
+
+    export let playableTypes = [
+        SANTY,
+        MIXTER,
     ];
 
 
-    export function preload(scene: GameScene) {
+    export function preload(scene: Scene) {
         for (let type of types) {
             type.preloader(scene);
         }
     }
 
-    export function load(scene: GameScene) {
+    export function load(scene: Scene) {
         for (let type of types) {
             type.loader(scene);
         }

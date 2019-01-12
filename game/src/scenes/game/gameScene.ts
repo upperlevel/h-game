@@ -13,6 +13,7 @@ import TileSprite = Phaser.GameObjects.TileSprite;
 import Group = Phaser.GameObjects.Group;
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticBody = Phaser.Physics.Arcade.StaticBody;
+import {Popup} from "../../entity/popup";
 
 export class GameScene extends SceneWrapper {
     // @ts-ignore
@@ -30,8 +31,14 @@ export class GameScene extends SceneWrapper {
 
     config?: GameSceneConfig;
 
+    popups = new Set<Popup>();
+
     constructor() {
         super({key: "game"});
+    }
+
+    popup(popup: Popup) {
+        this.popups.add(popup);
     }
 
     onInit(data: GameSceneConfig) {
@@ -70,6 +77,7 @@ export class GameScene extends SceneWrapper {
     onCreate() {
         this.cameras.main.setBounds(0, 0, 1920,1080);
         this.physics.world.setBounds(0, 0, 1920, 1080);
+        this.cameras.main.setBackgroundColor("#90CAF9");
 
         EntityTypes.load(this);
 
@@ -92,7 +100,7 @@ export class GameScene extends SceneWrapper {
         this.relay.subscribe("message", this.onPacket, this);
 
         // Spawn
-        let santy = EntityTypes.SANTY.create(this) as Player;
+        let santy = this.config!.player.character!.create(this) as Player;
         santy.name = this.config!.playerName;
         santy.reloadName();
 
@@ -105,6 +113,12 @@ export class GameScene extends SceneWrapper {
 
     onUpdate(time: number, delta: number) {
         this.entityRegistry.onUpdate(delta);
+
+        for (const popup of this.popups) {
+            if (popup.update(delta)) {
+                this.popups.delete(popup);
+            }
+        }
     }
 
     onShutdown() {

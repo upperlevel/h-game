@@ -12,18 +12,25 @@ import {GameConnector} from "../../connector/gameConnector";
 import * as proto from "@common/matchmaking/protocol"
 import {GameScene} from "../game/gameScene";
 import {GameSceneConfig} from "../game/gameSceneConfig";
+import Key = Phaser.Input.Keyboard.Key;
+import JustDown = Phaser.Input.Keyboard.JustDown;
 
-interface LobbyPlayer {
+import {EntityTypes} from "../../entity/entities";
+import {EntityType} from "../../entity/entity";
+
+export interface LobbyPlayer {
     name: string,
-    character?: string,
+    character: EntityType,
     ready: boolean,
     admin: boolean,
     me: boolean,
+    spawned?: Container,
 }
 
 export class LobbyScene extends SceneWrapper {
     overlay: LobbyOverlay;
-    players: Container[] = [];
+    players = new Map<string, LobbyPlayer>();
+    changeCharacterKey?: Key;
 
     constructor() {
         super({key: "lobby"});
@@ -32,15 +39,15 @@ export class LobbyScene extends SceneWrapper {
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
-        for (const player of this.players) {
-            player.destroy(true);
+        for (const player of this.players.values()) {
+            player.spawned!.destroy(true);
         }
-        this.players = [];
+        this.players.clear();
 
         for (const player of packet.players) {
             this.addPlayer({
                 name: player.name,
-                character: player.character,
+                character: player.character ? EntityTypes.fromId(player.character!)! : EntityTypes.playableTypes[0],
                 ready: player.ready,
                 admin: player.name == packet.admin,
                 me: player.name == this.game.playerName
@@ -51,7 +58,7 @@ export class LobbyScene extends SceneWrapper {
     addPlayer(player: LobbyPlayer) {
         const container = this.add.container(0, 300);
 
-        const sprite = this.add.sprite(0, 0, "santy").setDisplaySize(250, 250);
+        const sprite = this.add.sprite(0, 0, player.character.id).setDisplaySize(250, 250);
         container.setName("sprite");
         container.add(sprite);
 
@@ -85,7 +92,8 @@ export class LobbyScene extends SceneWrapper {
 
         container.add(aboveHead);
 
-        this.players.push(container);
+        player.spawned = container;
+        this.players.set(player.name, player);
 
         return container;
     }
@@ -116,7 +124,7 @@ export class LobbyScene extends SceneWrapper {
     setPlayerInfo(character: string = "santy", ready: boolean = false) {
         this.game.matchmakingConnector.send({
             type: "lobby_update",
-            character: "santy",
+            character: character,
             ready: ready
         });
     }
@@ -133,6 +141,7 @@ export class LobbyScene extends SceneWrapper {
                     playerIndex: packet.playerIndex,
                     playerCount: packet.playerCount,
                     playerName: this.game.playerName!,
+                    player: this.players.get(this.game.playerName!)!
                 };
 
                 this.scene.start("connecting", {
@@ -145,14 +154,17 @@ export class LobbyScene extends SceneWrapper {
     }
 
     onPreload() {
-        this.load.spritesheet("santy", "assets/game/santy.png", {frameWidth: 48, frameHeight: 48});
+        EntityTypes.preload(this);
     }
 
     onCreate() {
+        EntityTypes.load(this);
         this.game.matchmakingConnector.subscribe("message", this.onMessage, this);
 
         // The main player will be drawn only after an answer to this packet will be received.
         this.requestInfo();
+
+        this.changeCharacterKey = this.input.keyboard.addKey("SPACE");
 
         this.overlay.show();
     }
@@ -160,12 +172,20 @@ export class LobbyScene extends SceneWrapper {
     onUpdate(): void {
         const padding = 100;
         const width = this.game.canvas.clientWidth - padding * 2;
-        const step = Math.floor(width / (this.players.length + 1));
+        const step = Math.floor(width / (this.players.size + 1));
 
         let distance = padding + step;
-        for (const player of this.players) {
-            player.x = distance;
+        for (const player of this.players.values()) {
+            player.spawned!.x = distance;
             distance += step;
+        }
+
+        if (JustDown(this.changeCharacterKey!)) {
+            const me = this.players.get(this.game.playerName!);
+            if (me) {
+                const index = (EntityTypes.playableTypes.indexOf(me.character) + 1) % EntityTypes.playableTypes.length;
+                this.setPlayerInfo(EntityTypes.playableTypes[index].id, me.ready);
+            }
         }
     }
 

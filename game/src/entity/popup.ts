@@ -4,9 +4,9 @@ import Text = Phaser.GameObjects.Text;
 import {GameScene} from "../scenes/game/gameScene";
 
 export class Popup {
-    static VELOCITY = 70;
-    static VIBRATION = 10;
-    static MAX_DISTANCE = 120;
+    static VELOCITY = 1.0;
+    static VIBRATION = 1.0;
+    static MAX_DISTANCE = 1.0;
 
     spawnY: number;
     spawnX: number;

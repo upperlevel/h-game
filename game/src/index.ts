@@ -30,7 +30,7 @@ export class HGame extends Game {
             physics: {
                 default: "arcade",
                 arcade: {
-                    gravity: {y: 600},
+                    gravity: {y: 50.0},
                     debug: false
                 }
             },

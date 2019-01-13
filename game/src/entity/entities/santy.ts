@@ -6,7 +6,7 @@ import {Poison} from "./poison";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export class Santy extends Player {
-    static THROW_POWER = 100.0;
+    static THROW_POWER = 2.0;
 
     constructor(scene: GameScene, active: boolean) {
         super(scene, Santy.createSprite(scene), active, EntityTypes.SANTY);

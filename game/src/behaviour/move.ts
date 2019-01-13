@@ -30,7 +30,7 @@ export class WalkLeftBehaviour extends Behaviour {
     id = "walk_left";
     animated = true;
 
-    maxVelocity = 200.0;
+    maxVelocity = 5.0;
 
     initialize() {
         super.initialize();
@@ -58,7 +58,7 @@ export class WalkRightBehaviour extends Behaviour {
     id = "walk_right";
     animated = true;
 
-    maxVelocity = 250.0;
+    maxVelocity = 5.0;
 
     initialize() {
         super.initialize();

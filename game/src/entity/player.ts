@@ -19,7 +19,7 @@ export abstract class Player extends Entity {
     energyGainPerMs = 0.05 / 1000;
 
     attackPower = 10;
-    jumpForce = 300;
+    jumpForce = 20.0;
 
     name = "Ulisse";
 

@@ -76,18 +76,8 @@ export class EntityRegistry {
     sendReset() {
         for (let [id, entity] of this.entities) {
             if (!entity.active) continue;
-            entity.scene.sendPacket(this.createResetPacket(entity));
+            entity.sendReset();
         }
-    }
-
-    private createResetPacket(entity: Entity) {
-        let resetPacket: EntityResetPacket = {
-            type: "entity_reset",
-            entityId: entity.id
-        };
-        entity.fillResetPacket(resetPacket);
-        entity.onReset(resetPacket);
-        return resetPacket;
     }
 
     onResetPacket(packet: EntityResetPacket) {

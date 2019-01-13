@@ -81,7 +81,10 @@ export abstract class Entity {
     respawn() {
         this.life = this.maxLife;
 
-        this.position = this.scene.getSpawnLocation();
+        if (this.active) {
+            this.position = this.scene.getSpawnLocation();
+            this.sendReset();// Broadcast the position
+        }
     }
 
     damage(amount: number) {
@@ -121,6 +124,20 @@ export abstract class Entity {
         this.x = packet.x;
         this.y = packet.y;
         this.life = packet.life;
+    }
+
+    sendReset() {
+        this.scene.sendPacket(this.createResetPacket())
+    }
+
+    private createResetPacket() {
+        let resetPacket: EntityResetPacket = {
+            type: "entity_reset",
+            entityId: this.id
+        };
+        this.fillResetPacket(resetPacket);
+        this.onReset(resetPacket);
+        return resetPacket;
     }
 
     onFrameOnce(targetFrame: number, callback: () => void) {

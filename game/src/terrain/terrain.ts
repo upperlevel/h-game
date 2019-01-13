@@ -5,6 +5,7 @@ import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticBody = Phaser.Physics.Arcade.StaticBody;
 import Group = Phaser.GameObjects.Group;
 import Vector2 = Phaser.Math.Vector2;
+import {Player} from "../entity/player";
 
 export class Terrain {
     private scene: GameScene;
@@ -39,9 +40,10 @@ export class Terrain {
         platform.setScale(1, height / image.height);
         this.platformsGroup!.add(platform);
 
+        // Body's position is top left (top y)
         const body = (platform.body as StaticBody);
-        body.position = new Vector2(x, this.height - y - height); // Body's position is top left (top y)
-        body.setSize(width, height);
+        body.position = new Vector2(x, this.height - y - height + Player.STEP_HEIGHT);
+        body.setSize(width, height - Player.STEP_HEIGHT);
 
         return platform;
     }

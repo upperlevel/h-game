@@ -7,8 +7,11 @@ import {HudRenderer} from "./hudRenderer";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export abstract class Player extends Entity {
+    static SPRITE_SIZE = 48;
+
     static WIDTH  = 2;
     static HEIGHT = 2;
+    static STEP_HEIGHT = (2.0 / Player.SPRITE_SIZE) * Player.HEIGHT;
 
     maxEnergy = 1.0;
     energy = 0.0;

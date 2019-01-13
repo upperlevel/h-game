@@ -7,6 +7,9 @@ import {HudRenderer} from "./hudRenderer";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export abstract class Player extends Entity {
+    static WIDTH  = 2;
+    static HEIGHT = 2;
+
     maxEnergy = 1.0;
     energy = 0.0;
     specialAttackEnergy = 0.8;
@@ -21,15 +24,15 @@ export abstract class Player extends Entity {
     damageable = true;
     private behaviour: BehaviourManager;
 
-    private hudRenderer: HudRenderer;
+    //private hudRenderer: HudRenderer;
 
 
     protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
         super(scene, sprite, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
-        this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
+        //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
 
-        scene.entityPhysicsGroup.add(this.sprite);
+        scene.terrain!.entitiesGroup!.add(this.sprite);
         this.sprite.setCollideWorldBounds(true);
     }
 
@@ -43,11 +46,11 @@ export abstract class Player extends Entity {
         }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
 
-        this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
+        //this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
     }
 
     reloadName() {
-        this.hudRenderer.setName(this.name);
+        //this.hudRenderer.setName(this.name);
     }
 
     createSpawnMeta(): PlayerEntitySpawnMeta {

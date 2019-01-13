@@ -43,7 +43,8 @@ export class Poison extends Entity {
 
     static createSprite(scene: GameScene): Sprite {
         let sprite = scene.physics.add.sprite(0, 0, "poison").setScale(4);
-        scene.physics.add.collider(sprite, scene.platformPhysicsGroup);
+        scene.physics.add.collider(sprite, scene.terrain!.platformsGroup!);
+
         let body = sprite.body as Phaser.Physics.Arcade.Body;
         body.setSize(body.width, 1);
         body.setOffset(0, 1);

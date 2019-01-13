@@ -16,7 +16,7 @@ export class Mixter extends Player {
         let sceneWidth = 1920;
         let conf = scene.config!;
         let x = (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
-        let sprite = scene.physics.add.sprite(x, 800, "santy").setScale(4);
+        let sprite = scene.physics.add.sprite(x, 800, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);;
         sprite.setFlipX(conf.playerIndex % 2 != 0);
         return sprite;
     }

@@ -4,11 +4,14 @@ import {EntityTypes} from "../entities";
 import {Entity} from "../entity";
 
 import * as Phaser from "phaser";
-import Sprite = Phaser.Physics.Arcade.Sprite;
 import {ThrowableEntitySpawnMeta} from "../../protocol";
+import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export class Poison extends Entity {
     _thrower?: Player;
+    attacked = new Map<Entity, number>();
+    attackForce = 25;
+    attackTimeout = 500;
 
     constructor(scene: GameScene, active: boolean) {
         super(scene, Poison.createSprite(scene), active, EntityTypes.POISON);
@@ -48,13 +51,27 @@ export class Poison extends Entity {
         return sprite;
     }
 
+    private canAttack(player: Entity) {
+        let lastTime = this.attacked.get(player);
+        if (lastTime == null) return true;
+        return Date.now() - lastTime >= this.attackTimeout;
+    }
+
+    private attack(player: Entity) {
+        this.attacked.set(player, Date.now());
+        player.damage(this.attackForce);
+    }
+
     update(delta: number) {
-        // TODO: currently poison instantly kills.
         for (const entity of this.scene.entityRegistry.entities.values()) {
+            if (entity == this.thrower) continue;
+
             // @ts-ignore
-            if (entity != this.thrower && this.scene.physics.collide(this.sprite, entity.sprite)) {
-                entity.damage(delta * 25 / 1000);
-            }
+            if (!this.scene.physics.collide(this.sprite, entity.sprite)) continue;
+
+            if (!this.canAttack(entity)) continue;
+
+            this.attack(entity);
         }
     }
 }

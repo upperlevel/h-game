@@ -13,7 +13,7 @@ export class Santy extends Player {
     }
 
     static createSprite(scene: GameScene): Sprite {
-        let sprite = scene.physics.add.sprite(0, 25, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);
+        let sprite = scene.physics.add.sprite(0, 4, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);
         let conf = scene.config!;
         sprite.setFlipX(conf.playerIndex % 2 != 0);
         return sprite;

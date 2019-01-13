@@ -4,6 +4,7 @@ import {Position} from "../entity/util";
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
 import StaticBody = Phaser.Physics.Arcade.StaticBody;
 import Group = Phaser.GameObjects.Group;
+import Vector2 = Phaser.Math.Vector2;
 
 export class Terrain {
     private scene: GameScene;
@@ -33,12 +34,14 @@ export class Terrain {
     createPlatform(x: number, y: number, width: number, height: number, texture: string) {
         const image = this.scene.textures.get(texture).getSourceImage();
 
+        // Game objects' position is the middle of it (top y)
         const platform = this.scene.add.tileSprite(x + width / 2, this.height - y - height / 2, width, image.height, texture);
         platform.setScale(1, height / image.height);
         this.platformsGroup!.add(platform);
 
-        // Needed because the player has one foot upper than the other
-        // (platform.body as StaticBody)
+        const body = (platform.body as StaticBody);
+        body.position = new Vector2(x, this.height - y - height); // Body's position is top left (top y)
+        body.setSize(width, height);
 
         return platform;
     }

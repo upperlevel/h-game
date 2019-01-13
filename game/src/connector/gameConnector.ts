@@ -46,7 +46,11 @@ export class GameConnector extends Connector {
 
     deserialize(message: string): any {
         if (this.handshakeDone) {
-            return JSON.parse(message);
+            try {
+                return JSON.parse(message);
+            } catch (e) {
+                throw `Error parsing json: '${message}'`;
+            }
         } else {
             return message;
         }

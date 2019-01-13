@@ -11,7 +11,7 @@ export class GameConnector extends Connector {
     handshakeDone: boolean = false;
 
     constructor(token: string) {
-        super("wss://hgame.gq/api/game");
+        super("/api/game");
         this.token = token;
     }
 

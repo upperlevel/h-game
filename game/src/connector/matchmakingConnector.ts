@@ -2,7 +2,7 @@ import {Connector} from "./connector";
 
 export class MatchmakingConnector extends Connector {
     constructor() {
-        super("wss://hgame.gq/api/matchmaking");
+        super("/api/matchmaking");
     }
 
     // All messages sent within this protocol are JSON formatted.

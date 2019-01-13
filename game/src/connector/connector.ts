@@ -18,8 +18,8 @@ export class Connector {
 
     private pending: any[] = [];
 
-    constructor(url: string) {
-        this.url = url;
+    constructor(path: string) {
+        this.url = this.getRelativeUrl(path);
 
         this.events = new EventEmitter();
 
@@ -32,6 +32,11 @@ export class Connector {
             console.log(`[Web-socket] [${this.url}] DISCONNECTED`);
             this.connected = false
         });
+    }
+
+    private getRelativeUrl(path: string): string {
+        const location = window.location;
+        return ((location.protocol === "https:") ? "wss://" : "ws://") + location.hostname +  ":" + location.port + path;
     }
 
     connect() {

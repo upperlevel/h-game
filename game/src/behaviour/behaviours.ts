@@ -2,7 +2,7 @@ import {Player} from "../entity/player";
 import * as move from "./move";
 import * as attack from "./attack";
 import {BehaviourLayer, BehaviourManager} from "./behaviour";
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 
 export function createPlayerBehaviour(scene: GameScene, entity: Player): BehaviourManager {
 

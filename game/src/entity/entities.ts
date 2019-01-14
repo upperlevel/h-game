@@ -1,5 +1,5 @@
 import {EntityType} from "./entity";
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 
 import {Santy} from "./entities/santy";
 import {Poison} from "./entities/poison";

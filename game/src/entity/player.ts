@@ -1,10 +1,9 @@
 import {Entity, EntityType} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
 import {HudRenderer} from "./hudRenderer";
-import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export abstract class Player extends Entity {
     static SPRITE_SIZE = 48;

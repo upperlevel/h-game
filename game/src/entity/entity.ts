@@ -1,5 +1,5 @@
 import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 import Sprite = Phaser.Physics.Arcade.Sprite;
 import Color = Phaser.Display.Color;
 

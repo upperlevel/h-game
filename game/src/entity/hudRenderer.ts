@@ -1,4 +1,4 @@
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 import * as Phaser from "phaser";
 import Scene = Phaser.Scene;
 

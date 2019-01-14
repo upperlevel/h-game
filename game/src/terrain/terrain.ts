@@ -1,4 +1,4 @@
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 import {Position} from "../entity/util";
 
 import StaticGroup = Phaser.Physics.Arcade.StaticGroup;

@@ -1,7 +1,7 @@
 import * as Phaser from "phaser"
 import Text = Phaser.GameObjects.Text;
 
-import {GameScene} from "../scenes/game/gameScene";
+import {GameScene} from "../scene/game/gameScene";
 
 export class Popup {
     static VELOCITY = 1.0;

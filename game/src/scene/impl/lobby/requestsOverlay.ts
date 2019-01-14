@@ -1,7 +1,7 @@
-import {Overlay} from "../overlay";
+import {OverlayScene} from "../../overlayScene";
 import {LobbyScene} from "./lobbyScene";
 
-export class RequestsOverlay extends Overlay {
+export class RequestsOverlay extends OverlayScene {
     private lobby: LobbyScene;
 
     constructor(lobby: LobbyScene) {

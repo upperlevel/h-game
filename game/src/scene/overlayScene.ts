@@ -1,4 +1,6 @@
-export class Overlay {
+import {Scene} from "./scene";
+
+export class OverlayScene implements Scene {
     container: HTMLElement;
 
     constructor(id: string) {
@@ -8,19 +10,26 @@ export class Overlay {
         }
     }
 
-    show() {
+    enable() {
         this.container.style.display = "block";
-        this.onShow();
+        this.onEnable();
     }
 
-    onShow() {
+    protected onEnable() {
     }
 
-    hide() {
-        this.onHide();
+    update(delta: number) {
+        this.onUpdate(delta);
+    }
+
+    protected onUpdate(delta: number) {
+    }
+
+    disable() {
+        this.onDisable();
         this.container.style.display = "none";
     }
 
-    onHide() {
+    protected onDisable() {
     }
 }

@@ -1,22 +1,15 @@
-import {SceneWrapper} from "../sceneWrapper"
-
-import * as Phaser from "phaser";
-import Container = Phaser.GameObjects.Container;
-import {TextContainer} from "../textContainer";
+import {Scene} from "../../scene";
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
-import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
-import {GameConnector} from "../../connector/gameConnector";
+import {CurrentLobbyInfoPacket} from "../../../../../common/src/matchmaking/protocol";
+import {GameConnector} from "../../../connector/gameConnector";
 
-import * as proto from "@common/matchmaking/protocol"
-import {GameScene} from "../game/gameScene";
-import {GameSceneConfig} from "../game/gameSceneConfig";
-import Key = Phaser.Input.Keyboard.Key;
-import JustDown = Phaser.Input.Keyboard.JustDown;
+import * as proto from "../../../../../common/src/matchmaking/protocol"
+import {GameSceneConfig} from "../../game/gameSceneConfig";
 
-import {EntityTypes} from "../../entity/entities";
-import {EntityType} from "../../entity/entity";
+import {EntityTypes} from "../../../entity/entities";
+import {EntityType} from "../../../entity/entity";
 
 export interface LobbyPlayer {
     name: string,
@@ -27,7 +20,7 @@ export interface LobbyPlayer {
     spawned?: Container,
 }
 
-export class LobbyScene extends SceneWrapper {
+export class LobbyScene implements Scene {
     overlay: LobbyOverlay;
     players = new Map<string, LobbyPlayer>();
     changeCharacterKey?: Key;
@@ -153,11 +146,8 @@ export class LobbyScene extends SceneWrapper {
         }
     }
 
-    onPreload() {
-        EntityTypes.preload(this);
-    }
 
-    onCreate() {
+    enable() {
         EntityTypes.load(this);
         this.game.matchmakingConnector.subscribe("message", this.onMessage, this);
 
@@ -169,7 +159,7 @@ export class LobbyScene extends SceneWrapper {
         this.overlay.show();
     }
 
-    onUpdate(): void {
+    update(): void {
         const padding = 100;
         const width = this.game.canvas.clientWidth - padding * 2;
         const step = Math.floor(width / (this.players.size + 1));
@@ -189,7 +179,7 @@ export class LobbyScene extends SceneWrapper {
         }
     }
 
-    onShutdown() {
+    disable() {
         this.overlay.hide();
 
         this.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);

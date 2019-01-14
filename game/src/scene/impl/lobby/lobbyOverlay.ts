@@ -1,10 +1,10 @@
-import {Overlay} from "../overlay";
+import {OverlayScene} from "../../overlayScene";
 import {InviteOverlay} from "./inviteOverlay";
 
 import {RequestsOverlay} from "./requestsOverlay";
 import {LobbyScene} from "./lobbyScene";
 
-export class LobbyOverlay extends Overlay {
+export class LobbyOverlay extends OverlayScene {
     lobby: LobbyScene;
 
     readyButton: HTMLButtonElement;

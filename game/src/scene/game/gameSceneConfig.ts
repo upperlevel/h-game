@@ -1,4 +1,4 @@
-import {LobbyPlayer} from "../lobby/lobbyScene";
+import {LobbyPlayer} from "../impl/lobby/lobbyScene";
 
 export interface GameSceneConfig {
     playerIndex: number,

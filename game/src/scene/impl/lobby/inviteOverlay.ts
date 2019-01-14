@@ -1,7 +1,7 @@
-import {Overlay} from "../overlay";
+import {OverlayScene} from "../../overlayScene";
 import {LobbyScene} from "./lobbyScene";
 
-export class InviteOverlay extends Overlay {
+export class InviteOverlay extends OverlayScene {
     lobby: LobbyScene;
 
     username: HTMLInputElement;

@@ -8,7 +8,6 @@ import {GameConnector} from "../../../connector/gameConnector";
 import * as proto from "../../../../../common/src/matchmaking/protocol"
 import {GameSceneConfig} from "../../game/gameSceneConfig";
 
-import {EntityTypes} from "../../../entity/entities";
 import {EntityType} from "../../../entity/entity";
 
 export interface LobbyPlayer {
@@ -26,8 +25,6 @@ export class LobbyScene implements Scene {
     changeCharacterKey?: Key;
 
     constructor() {
-        super({key: "lobby"});
-
         this.overlay = new LobbyOverlay(this);
     }
 
@@ -49,51 +46,8 @@ export class LobbyScene implements Scene {
     }
 
     addPlayer(player: LobbyPlayer) {
-        const container = this.add.container(0, 300);
-
-        const sprite = this.add.sprite(0, 0, player.character.id).setDisplaySize(250, 250);
-        container.setName("sprite");
-        container.add(sprite);
-
-        const aboveHead = new TextContainer(this, 0, 0, 5.0);
-        aboveHead.setName("aboveHead");
-
-        aboveHead.addLine(player.name, true, {
-            fontFamily: "pixeled",
-            fontSize: 32,
-            color: player.me ? "blue" : (player.admin ? "yellow" : "white")
-        });
-
-        if (player.admin) {
-            aboveHead.addLine("(Leader)", true, {
-                fontFamily: "pixeled",
-                fontSize: 24,
-                color: "yellow"
-            });
-        }
-
-        if (player.ready) {
-            aboveHead.addLine("Ready", true, {
-                fontFamily: "pixeled",
-                fontSize: 16,
-                color: "lime"
-            });
-        }
-
-        const floating = 64.0;
-        aboveHead.y -= sprite.displayHeight / 2.0 + aboveHead.displayHeight / 2.0 + floating;
-
-        container.add(aboveHead);
-
-        player.spawned = container;
-        this.players.set(player.name, player);
-
-        return container;
     }
 
-    /**
-     * Sends a request to the server in order to have the full list of the current lobby's players.
-     */
     requestInfo() {
         this.game.matchmakingConnector.send({type: "lobby_info_request"});
     }

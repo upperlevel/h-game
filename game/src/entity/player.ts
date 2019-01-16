@@ -1,9 +1,10 @@
-import {Entity, EntityType} from "./entity";
+import {Entity} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
 import {GameScene} from "../scene/game/gameScene";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
 import {HudRenderer} from "./hudRenderer";
+import {EntityType} from "./entityType";
 
 export abstract class Player extends Entity {
     static SPRITE_SIZE = 48;
@@ -29,13 +30,10 @@ export abstract class Player extends Entity {
     //private hudRenderer: HudRenderer;
 
 
-    protected constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
-        super(scene, sprite, active, type);
+    protected constructor(scene: GameScene, active: boolean, type: EntityType) {
+        super(scene, active, type);
         this.behaviour = createPlayerBehaviour(scene, this);
         //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
-
-        scene.terrain!.entitiesGroup!.add(this.sprite);
-        this.sprite.setCollideWorldBounds(true);
     }
 
     update(deltatime: number) {
@@ -98,22 +96,25 @@ export abstract class Player extends Entity {
         }
     }
 
-    attack(callBack: any) {
-        this.sprite.anims.play(this.type.animations["attack"]);
-        this.sprite.once("animationcomplete", callBack);
+    idle() {
+        this.type.animations["idle"](this.sprite, this.type.spritesheet!);
+        this.sprite.play();
+    }
+
+    attack(onComplete: () => void) {
+        this.type.animations["attack"](this.sprite, this.type.spritesheet!);
+        this.sprite.play();
+        this.sprite.onComplete = onComplete;
     }
 
     canSpecialAttack(): boolean {
         return this.energy >= this.specialAttackEnergy;
     }
 
-    specialAttack(callBack: any) {
-        this.sprite.anims.play(this.type.animations["special_attack"]);
-        this.sprite.once("animationcomplete", callBack);
-    }
-
-    idle() {
-        this.sprite.anims.play(this.type.animations["idle"])
+    specialAttack(onComplete: () => void) {
+        this.type.animations["specialAttack"](this.sprite, this.type.spritesheet!);
+        this.sprite.play();
+        this.sprite.onComplete = onComplete;
     }
 
     fillResetPacket(packet: EntityResetPacket) {

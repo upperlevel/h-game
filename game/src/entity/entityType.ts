@@ -1,31 +1,16 @@
-import {GameScene} from "../scene/game/gameScene";
 import {Entity} from "./entity";
+import {GameScene} from "../scene/game/gameScene";
 
-export class EntityType {
-    id: string;
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
+import Spritesheet = PIXI.Spritesheet;
 
-    preloader: (scene: Scene) => void;
-    loader: (scene: Scene) => void;
+export interface EntityType {
+    readonly id: string;
 
-    animations: { [key: string]: string };
+    readonly spritesheetPath: string;
+    spritesheet?: Spritesheet;
 
-    creator: (scene: GameScene, active: boolean) => Entity;
+    readonly animations: { [key: string]: ((sprite: AnimatedSprite, spritesheet: Spritesheet) => void) };
 
-    constructor(
-        id: string,
-        preloader: (scene: Scene) => void,
-        loader: (scene: Scene) => void,
-        animations: { [key: string]: string },
-        creator: (scene: GameScene, active: boolean) => Entity
-    ) {
-        this.id = id;
-        this.preloader = preloader;
-        this.loader = loader;
-        this.animations = animations;
-        this.creator = creator;
-    }
-
-    create(scene: GameScene, active: boolean = true): Entity {
-        return this.creator(scene, active);
-    }
+    create(game: GameScene, active: boolean): Entity;
 }

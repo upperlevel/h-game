@@ -1,5 +1,4 @@
-import * as Phaser from "phaser";
-import EventEmitter = Phaser.Events.EventEmitter;
+import EventEmitter = PIXI.utils.EventEmitter;
 
 /**
  * The Connector is a class that manages the connection.

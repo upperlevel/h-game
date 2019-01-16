@@ -1,4 +1,3 @@
-
 export interface Scene {
     enable(previous?: Scene): void;
 

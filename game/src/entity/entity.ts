@@ -1,13 +1,11 @@
 import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
 import {GameScene} from "../scene/game/gameScene";
-import Sprite = Phaser.Physics.Arcade.Sprite;
-import Color = Phaser.Display.Color;
 
 import {Position} from "./util";
-import Animation = Phaser.Animations.Animation;
-import AnimationFrame = Phaser.Animations.AnimationFrame;
 import {Popup} from "./popup";
-import Scene = Phaser.Scene;
+import {EntityType} from "./entityType";
+
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export abstract class Entity {
     id = -1;
@@ -15,7 +13,7 @@ export abstract class Entity {
 
     scene: GameScene;
 
-    sprite: Sprite;
+    sprite: AnimatedSprite;
 
     maxLife = 100;
     life = this.maxLife;
@@ -25,11 +23,13 @@ export abstract class Entity {
 
     readonly active: boolean;
 
-    constructor(scene: GameScene, sprite: Sprite, active: boolean, type: EntityType) {
+    constructor(scene: GameScene, active: boolean, type: EntityType) {
         this.scene = scene;
-        this.sprite = sprite;
         this.active = active;
         this.type = type;
+
+        const spritesheet = PIXI.loader.resources[type.spritesheetPath].spritesheet!;
+        this.sprite = new AnimatedSprite(spritesheet.animations["idle"]);
     }
 
     get x() {
@@ -58,11 +58,11 @@ export abstract class Entity {
     }
 
     get width() {
-        return this.sprite.width * this.sprite.scaleX;
+        return this.sprite.width * this.sprite.scale.x;
     }
 
     get height() {
-        return this.sprite.height * this.sprite.scaleY;
+        return this.sprite.height * this.sprite.scale.y;
     }
 
     get isFacingLeft() {
@@ -138,19 +138,6 @@ export abstract class Entity {
         this.fillResetPacket(resetPacket);
         this.onReset(resetPacket);
         return resetPacket;
-    }
-
-    onFrameOnce(targetFrame: number, callback: () => void) {
-        let key = this.sprite.anims.getCurrentKey();
-        this.sprite.once("animationupdate", (animation: Animation, frame: AnimationFrame) => {
-            if (animation.key != key) return;
-
-            if (frame.index == targetFrame) {
-                callback();
-            } else {
-                this.onFrameOnce(targetFrame, callback);
-            }
-        })
     }
 
     destroy() {

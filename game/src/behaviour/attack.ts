@@ -1,5 +1,4 @@
 import {Behaviour} from "./behaviour";
-import JustDown = Phaser.Input.Keyboard.JustDown;
 
 export class AttackBehaviour extends Behaviour {
     id = "attack";

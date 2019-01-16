@@ -1,29 +1,29 @@
 import {EntityType} from "./entityType";
-
 import {SantyType} from "./entities/santy";
 
 export namespace EntityTypes {
     const entities = new Map<string, EntityType>();
 
     function register(type: EntityType) {
-        this.entities.set(type.id, type);
+        entities.set(type.id, type);
     }
 
-    export function load(onDone: () => void) {
-        const loader = PIXI.loader;
+    export function onLoad() {
         for (const entity of entities.values()) {
-            loader.add(entity.spritesheetPath);
+            entity.onLoad();
         }
-        loader.load(() => {
-            for (const entity of entities.values()) {
-                entity.spritesheet = PIXI.loader.resources[entity.spritesheetPath].spritesheet;
-            }
-            onDone();
-        });
     }
 
-    export function get(id: string) {
+    export function get(id: string): EntityType | undefined {
         return entities.get(id);
+    }
+
+    export function getAssets(): string[] {
+        const assets = [];
+        for (const entity of entities.values()) {
+            assets.push(entity.asset);
+        }
+        return assets;
     }
 
     export const SANTY = new SantyType();

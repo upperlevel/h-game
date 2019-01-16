@@ -41,7 +41,7 @@ export class LoginScene extends OverlayScene {
                 this.feedbackLabel.style.color = "green";
                 this.feedbackLabel.innerText = "Username accepted";
 
-                this.game.sceneManager.setScene(new LobbyScene());
+                this.game.sceneManager.setScene(new LobbyScene(this.game));
             }
         }
     }

@@ -1,3 +1,6 @@
+// @ts-ignore
+import * as planck from "planck-js"
+
 import {Entity} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
@@ -44,8 +47,7 @@ export abstract class Player extends Entity {
         this.behaviour = createPlayerBehaviour(this);
         //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
 
-        let conf = scene.config!;
-        let x = (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
+        let x = 0; // (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
         let y = 800;
         this.body.setPosition(planck.Vec2(x, y));
 
@@ -64,9 +66,9 @@ export abstract class Player extends Entity {
 
         this.behaviour.update();
 
-        if (this.active && this.scene.actions.JUMP.isDown && this.isTouchingGround) {
-            this.jump();
-        }
+        // TODO if (this.active && this.scene.actions.JUMP.isDown && this.isTouchingGround) {
+           // this.jump();
+        // }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
 
         //this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
@@ -120,12 +122,12 @@ export abstract class Player extends Entity {
     }
 
     idle() {
-        this.type.animations["idle"](this.sprite, this.type.spritesheet!);
+        this.type.getAnimator("idle").bind(this.sprite);
         this.sprite.play();
     }
 
     attack(onComplete: () => void) {
-        this.type.animations["attack"](this.sprite, this.type.spritesheet!);
+        this.type.getAnimator("attack").bind(this.sprite);
         this.sprite.play();
         this.sprite.onComplete = onComplete;
     }
@@ -135,7 +137,7 @@ export abstract class Player extends Entity {
     }
 
     specialAttack(onComplete: () => void) {
-        this.type.animations["specialAttack"](this.sprite, this.type.spritesheet!);
+        this.type.getAnimator("specialAttack").bind(this.sprite);
         this.sprite.play();
         this.sprite.onComplete = onComplete;
     }

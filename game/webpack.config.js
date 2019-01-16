@@ -37,9 +37,6 @@ module.exports = {
         }]),
     ],
     optimization: {
-        splitChunks: {
-            chunks: "all",
-        },
         minimizer: [
             new TerserPlugin({
                 terserOptions: {

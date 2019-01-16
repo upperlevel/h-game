@@ -1,3 +1,6 @@
+// @ts-ignore
+import * as planck from "planck-js"
+
 import {EntityRegistry} from "./entity/entityRegistry";
 import {Entity} from "./entity/entity";
 import {GamePacket} from "./protocol";

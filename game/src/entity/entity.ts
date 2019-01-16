@@ -34,8 +34,9 @@ export abstract class Entity {
         this.active = active;
         this.type = type;
 
-        const spritesheet = PIXI.loader.resources[type.spritesheetPath].spritesheet!;
-        this.sprite = new AnimatedSprite(spritesheet.animations["idle"]);
+        this.sprite = new AnimatedSprite(type.getAnimator("idle")!.frames!);
+
+
     }
 
     getPosition(): planck.Vec2 {
@@ -80,7 +81,7 @@ export abstract class Entity {
     }
 
     get isFacingLeft() {
-        return this.sprite.flipX;
+        return this.sprite.scale.x < -1;
     }
 
     onPrePhysics(timeDelta: number) {
@@ -93,7 +94,7 @@ export abstract class Entity {
         this.life = this.maxLife;
 
         if (this.active) {
-            this.position = this.scene.getSpawnLocation();
+            this.position = this.world.getSpawnLocation();
             this.sendReset();// Broadcast the position
         }
     }

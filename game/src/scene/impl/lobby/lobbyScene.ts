@@ -1,4 +1,5 @@
 import {Scene} from "../../scene";
+import {SceneManager} from "../../sceneManager";
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
@@ -8,44 +9,52 @@ import {GameConnector} from "../../../connector/gameConnector";
 import * as proto from "../../../../../common/src/matchmaking/protocol"
 import {GameSceneConfig} from "../../game/gameSceneConfig";
 
-import {EntityType} from "../../../entity/entity";
+import {EntityTypes} from "../../../entity/entityTypes";
+import {EntityType} from "../../../entity/entityType";
+import {HGame} from "../../../index";
+import {Key} from "../../../util/key";
+import {World} from "../../../world";
 
 export interface LobbyPlayer {
     name: string,
     character: EntityType,
     ready: boolean,
     admin: boolean,
-    me: boolean,
-    spawned?: Container,
+    me: boolean
 }
 
 export class LobbyScene implements Scene {
-    overlay: LobbyOverlay;
-    players = new Map<string, LobbyPlayer>();
-    changeCharacterKey?: Key;
+    game: HGame;
 
-    constructor() {
+    overlay: LobbyOverlay;
+
+    world: World;
+
+    players = new Map<string, LobbyPlayer>();
+    changeCharacterKey: Key;
+
+    constructor(game: HGame) {
+        this.game = game;
+
+
         this.overlay = new LobbyOverlay(this);
+
+        this.world = new World();
+        this.changeCharacterKey = new Key("Space");
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
-        for (const player of this.players.values()) {
-            player.spawned!.destroy(true);
-        }
-        this.players.clear();
-
         for (const player of packet.players) {
-            this.addPlayer({
-                name: player.name,
-                character: player.character ? EntityTypes.fromId(player.character!)! : EntityTypes.playableTypes[0],
-                ready: player.ready,
-                admin: player.name == packet.admin,
-                me: player.name == this.game.playerName
-            });
-        }
-    }
+            console.log(`Player: name=${player.name} character=${player.character}`);
+            if (!player.character) {
+                player.character = "santy";
+            }
 
-    addPlayer(player: LobbyPlayer) {
+            const entity = EntityTypes.get(player.character!)!.create(this.world, false);
+            this.game.app.stage.addChild(entity.sprite);
+
+            this.world.spawn(entity);
+        }
     }
 
     requestInfo() {
@@ -102,15 +111,14 @@ export class LobbyScene implements Scene {
 
 
     enable() {
-        EntityTypes.load(this);
         this.game.matchmakingConnector.subscribe("message", this.onMessage, this);
 
         // The main player will be drawn only after an answer to this packet will be received.
         this.requestInfo();
 
-        this.changeCharacterKey = this.input.keyboard.addKey("SPACE");
+        this.changeCharacterKey.subscribe();
 
-        this.overlay.show();
+        // this.overlay.show();
     }
 
     update(): void {
@@ -134,7 +142,8 @@ export class LobbyScene implements Scene {
     }
 
     disable() {
-        this.overlay.hide();
+        // this.overlay.hide();
+        this.changeCharacterKey.unsubscribe();
 
         this.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }

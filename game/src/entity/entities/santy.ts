@@ -1,42 +1,54 @@
-import {EntityTypes} from "../entities";
 import {Player} from "../player";
 import {Poison} from "./poison";
 import {EntityType} from "../entityType";
+import {EntityTypes} from "../entityTypes";
+
+import {World} from "../../world";
+import {SpritesheetUtil} from "../../util/spritesheet";
+import {Animator} from "../../util/animator";
 
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
-import Spritesheet = PIXI.Spritesheet;
-import {World} from "../../world";
 
-export class SantyType implements EntityType {
-    id = "santy";
+export class SantyType extends EntityType {
+    constructor() {
+        super("santy", "assets/game/santy.png");
 
-    spritesheetPath = "assets/images/santy.json";
+        this.addAnimator(new Animator(
+            "idle",
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 0, 2),
+            (sprite: AnimatedSprite) => {
+                sprite.animationSpeed = 0.1;
+                sprite.loop = true;
+            }
+        ));
 
-    animations = {
-        "idle": (sprite: AnimatedSprite, spritesheet: Spritesheet) => {
-            sprite.textures = spritesheet.animations["santy_idle"];
-            sprite.animationSpeed = 6;
-            sprite.loop = true;
-        },
+        this.addAnimator(new Animator(
+            "walk",
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 1, 3),
+            (sprite: AnimatedSprite) => {
+                sprite.animationSpeed = 0.1;
+                sprite.loop = true;
+            }
+        ));
 
-        "walk": (sprite: AnimatedSprite, spritesheet: Spritesheet) => {
-            sprite.textures = spritesheet.animations["santy_walk"];
-            sprite.animationSpeed = 6;
-            sprite.loop = true;
-        },
+        this.addAnimator(new Animator(
+            "attack",
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 2, 3),
+            (sprite: AnimatedSprite) => {
+                sprite.animationSpeed = 0.1;
+                sprite.loop = false;
+            }
+        ));
 
-        "attack": (sprite: AnimatedSprite, spritesheet: Spritesheet) => {
-            sprite.textures = spritesheet.animations["santy_attack"];
-            sprite.animationSpeed = 6;
-            sprite.loop = false;
-        },
-
-        "specialAttack": (sprite: AnimatedSprite, spritesheet: Spritesheet) => {
-            sprite.textures = spritesheet.animations["santy_special_attack"];
-            sprite.animationSpeed = 6;
-            sprite.loop = false;
-        }
-    };
+        this.addAnimator(new Animator(
+            "specialAttack",
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 3, 9),
+            (sprite: AnimatedSprite) => {
+                sprite.animationSpeed = 0.1;
+                sprite.loop = false;
+            }
+        ));
+    }
 
     create(world: World, active: boolean) {
         return new Santy(world, active);

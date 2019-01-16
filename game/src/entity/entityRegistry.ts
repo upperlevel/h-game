@@ -1,7 +1,7 @@
 import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket} from "../protocol";
 import {Entity} from "./entity";
-import {EntityTypes} from "./entities";
 import {World} from "../world";
+import {EntityTypes} from "./entityTypes";
 
 export class EntityRegistry {
     entities = new Map<number, Entity>();
@@ -33,7 +33,7 @@ export class EntityRegistry {
     }
 
     onSpawn(packet: EntitySpawnPacket) {
-        let type = EntityTypes.fromId(packet.entityType);
+        let type = EntityTypes.get(packet.entityType);
 
         if (type == null) {
             console.log("Invalid spawn: entity type " + packet.entityType + " not defined");
@@ -42,9 +42,9 @@ export class EntityRegistry {
 
         let entity = type.create(this.world, false);
         entity.id = packet.entityId;
-        entity.sprite.setX(packet.x);
-        entity.sprite.setY(packet.y);
-        entity.sprite.setFlipX(packet.isFacingLeft);
+        entity.sprite.x = packet.x;
+        entity.sprite.y = packet.y;
+        entity.sprite.scale.x = packet.isFacingLeft ? -1 : 1;
         if (packet.meta != null) {
             entity.loadSpawnMeta(packet.meta);
         }

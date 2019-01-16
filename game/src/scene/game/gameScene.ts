@@ -8,11 +8,6 @@ import {GameConnector} from "../../connector/gameConnector";
 import {GameSceneConfig} from "./gameSceneConfig";
 import {Player} from "../../entity/player";
 
-
-import Group = Phaser.GameObjects.Group;
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
-
-import {Position} from "../../entity/util"
 import {Popup} from "../../entity/popup";
 import {Terrain} from "../../terrain/terrain"
 
@@ -113,12 +108,5 @@ export class GameScene extends SceneWrapper {
 
     sendPacket(packet: GamePacket) {
         this.relay.send(packet);
-    }
-
-    getSpawnLocation(): Position {
-        return {
-            x: Math.random() * 1920,
-            y: 800,
-        };
     }
 }

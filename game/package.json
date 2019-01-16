@@ -16,6 +16,7 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "pixi.js": "^4.8.5"
+    "pixi.js": "^4.8.5",
+    "planck-js": "^0.3.0-rc.2"
   }
 }

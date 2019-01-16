@@ -1,7 +1,7 @@
-import {GameScene} from "../scene/game/gameScene";
-import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket, GamePacket} from "../protocol";
+import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket} from "../protocol";
 import {Entity} from "./entity";
 import {EntityTypes} from "./entities";
+import {World} from "../world";
 
 export class EntityRegistry {
     entities = new Map<number, Entity>();
@@ -13,10 +13,10 @@ export class EntityRegistry {
 
     private timerId: any;
 
-    readonly scene: GameScene;
+    readonly world: World;
 
-    constructor(scene: GameScene) {
-        this.scene = scene;
+    constructor(world: World) {
+        this.world = world;
     }
 
     onEnable() {
@@ -40,7 +40,7 @@ export class EntityRegistry {
             return
         }
 
-        let entity = type.create(this.scene, false);
+        let entity = type.create(this.world, false);
         entity.id = packet.entityId;
         entity.sprite.setX(packet.x);
         entity.sprite.setY(packet.y);
@@ -110,10 +110,10 @@ export class EntityRegistry {
             entityId: entity.id,
             x: entity.x,
             y: entity.y,
-            isFacingLeft: entity.sprite.flipX,
+            isFacingLeft: entity.isFacingLeft,
             meta: entity.createSpawnMeta(),
         };
-        entity.scene.sendPacket(packet);
+        entity.world.sendPacket(packet);
     }
 
     despawn(entity: Entity) {
@@ -125,9 +125,15 @@ export class EntityRegistry {
         entity.destroy();
     }
 
+    onPrePhysicsStep(timedelta: number) {
+        for (let [id, entity] of this.entities) {
+            entity.onPrePhysics(timedelta);
+        }
+    }
+
     onUpdate(timedelta: number): any {
         for (let [id, entity] of this.entities) {
-            entity.update(timedelta);
+            entity.onUpdate(timedelta);
         }
     }
 }

@@ -1,4 +1,3 @@
-import {GameScene} from "../../scene/game/gameScene";
 import {EntityTypes} from "../entities";
 import {Player} from "../player";
 import {Poison} from "./poison";
@@ -6,6 +5,7 @@ import {EntityType} from "../entityType";
 
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import Spritesheet = PIXI.Spritesheet;
+import {World} from "../../world";
 
 export class SantyType implements EntityType {
     id = "santy";
@@ -38,16 +38,16 @@ export class SantyType implements EntityType {
         }
     };
 
-    create(game: GameScene, active: boolean) {
-        return new Santy(game, active);
+    create(world: World, active: boolean) {
+        return new Santy(world, active);
     }
 }
 
 export class Santy extends Player {
     static THROW_POWER = 2.0;
 
-    constructor(scene: GameScene, active: boolean) {
-        super(scene, active, EntityTypes.SANTY);
+    constructor(world: World, active: boolean) {
+        super(world, Player.createBody(world), active, EntityTypes.SANTY);
     }
 
     attack(onComplete: () => void) {
@@ -65,11 +65,11 @@ export class Santy extends Player {
         if (this.active) {
             this.sprite.onFrameChange = (frame: number) => {
                 if (frame == 7) {
-                    const poison = EntityTypes.POISON.create(this.scene) as Poison;
+                    const poison = EntityTypes.POISON.create(this.world) as Poison;
                     poison.x = this.x + Santy.THROW_POWER * (this.isFacingLeft ? -1 : 1);
                     poison.y = this.y + this.sprite.height * 0.75;
                     poison.thrower = this;
-                    this.scene.entityRegistry.spawn(poison);
+                    this.world.spawn(poison);
                 }
             };
         }

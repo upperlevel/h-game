@@ -3,8 +3,9 @@ import * as move from "./move";
 import * as attack from "./attack";
 import {BehaviourLayer, BehaviourManager} from "./behaviour";
 import {GameScene} from "../scene/game/gameScene";
+import {World} from "../world";
 
-export function createPlayerBehaviour(scene: GameScene, entity: Player): BehaviourManager {
+export function createPlayerBehaviour(entity: Player): BehaviourManager {
 
     let moveLayer = new BehaviourLayer();
     moveLayer.register(new move.IdleBehaviour(moveLayer));
@@ -18,5 +19,5 @@ export function createPlayerBehaviour(scene: GameScene, entity: Player): Behavio
     attackLayer.register(new attack.SpecialAttackBehaviour(attackLayer));
     attackLayer.initialize("none");
 
-    return new BehaviourManager(scene, [moveLayer, attackLayer], entity);
+    return new BehaviourManager([moveLayer, attackLayer], entity);
 }

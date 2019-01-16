@@ -1,28 +1,23 @@
-import {GameScene} from "../scene/game/gameScene";
 import {Position} from "../entity/util";
 
-import StaticGroup = Phaser.Physics.Arcade.StaticGroup;
-import StaticBody = Phaser.Physics.Arcade.StaticBody;
-import Group = Phaser.GameObjects.Group;
-import Vector2 = Phaser.Math.Vector2;
+
+import "planck-js";
 import {Player} from "../entity/player";
+import {World} from "../world";
 
 export class Terrain {
-    private scene: GameScene;
+    private world: World;
 
     width: number;
     height: number;
-
-    platformsGroup?: StaticGroup;
-    entitiesGroup?: Group;
 
     spawnPoints: Position[] = [
         {x: 0, y: 0},
         {x: 0, y: 0}
     ];
 
-    constructor(scene: GameScene) {
-        this.scene = scene;
+    constructor(world: World) {
+        this.world = world;
 
         this.width  = 32;
         this.height = 18;
@@ -38,12 +33,15 @@ export class Terrain {
         // Game objects' position is the middle of it (top y)
         const platform = this.scene.add.tileSprite(x + width / 2, this.height - y - height / 2, width, image.height, texture);
         platform.setScale(1, height / image.height);
-        this.platformsGroup!.add(platform);
 
         // Body's position is top left (top y)
-        const body = (platform.body as StaticBody);
-        body.position = new Vector2(x, this.height - y - height + Player.STEP_HEIGHT);
-        body.setSize(width, height - Player.STEP_HEIGHT);
+        let body = this.world.physics.createBody({
+           type: "static",
+           position: planck.Vec2(x, this.height - y - height + Player.STEP_HEIGHT)
+        });
+        body.createFixture({
+            shape: planck.Edge(planck.Vec2(-width / 2, 0), planck.Vec2(width / 2, height - Player.STEP_HEIGHT))
+        });
 
         return platform;
     }
@@ -63,11 +61,6 @@ export class Terrain {
 
     build() {
         this.updateCamera();
-        this.scene.physics.world.setBounds(0, 0, this.width, this.height);
-
-        this.platformsGroup = this.scene.physics.add.staticGroup();
-        this.entitiesGroup = this.scene.physics.add.group();
-        this.scene.physics.add.collider(this.platformsGroup, this.entitiesGroup);
 
         this.createPlatform(0, 0, this.width, 1, "urban_terrain");
         this.createPlatform(0, 8, 24, 1, "urban_terrain");

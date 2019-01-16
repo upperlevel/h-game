@@ -1,8 +1,8 @@
 import {Entity} from "./entity";
-import {GameScene} from "../scene/game/gameScene";
 
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import Spritesheet = PIXI.Spritesheet;
+import {World} from "../world";
 
 export interface EntityType {
     readonly id: string;
@@ -12,5 +12,5 @@ export interface EntityType {
 
     readonly animations: { [key: string]: ((sprite: AnimatedSprite, spritesheet: Spritesheet) => void) };
 
-    create(game: GameScene, active: boolean): Entity;
+    create(game: World, active: boolean): Entity;
 }

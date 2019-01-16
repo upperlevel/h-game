@@ -1,17 +1,16 @@
-import {EntityResetPacket, EntitySpawnMeta, EntitySpawnPacket, GamePacket} from "../protocol"
-import {GameScene} from "../scene/game/gameScene";
+import {EntityResetPacket, EntitySpawnMeta} from "../protocol"
 
 import {Position} from "./util";
-import {Popup} from "./popup";
 import {EntityType} from "./entityType";
-
+import {World} from "../world";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export abstract class Entity {
     id = -1;
     type: EntityType;
 
-    scene: GameScene;
+    world: World;
+    body: planck.Body;
 
     sprite: AnimatedSprite;
 
@@ -23,8 +22,15 @@ export abstract class Entity {
 
     readonly active: boolean;
 
-    constructor(scene: GameScene, active: boolean, type: EntityType) {
-        this.scene = scene;
+    private groundContactCount = 0;
+
+    get isTouchingGround(): boolean {
+        return this.groundContactCount > 0
+    }
+
+    constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
+        this.world = world;
+        this.body = body;
         this.active = active;
         this.type = type;
 
@@ -32,20 +38,28 @@ export abstract class Entity {
         this.sprite = new AnimatedSprite(spritesheet.animations["idle"]);
     }
 
+    getPosition(): planck.Vec2 {
+        return this.body.getPosition();
+    }
+
     get x() {
-        return this.sprite.x;
+        return this.getPosition().x;
     }
 
     set x(x) {
-        this.sprite.x = x;
+        let pos = this.getPosition();
+        pos.x = x;
+        this.body.setPosition(pos);
     }
 
     get y() {
-        return this.sprite.y;
+        return this.getPosition().y;
     }
 
     set y(y) {
-        this.sprite.y = y;
+        let pos = this.getPosition();
+        pos.y = y;
+        this.body.setPosition(pos);
     }
 
     get position(): Position {
@@ -69,13 +83,10 @@ export abstract class Entity {
         return this.sprite.flipX;
     }
 
-    update(delta: number) {
+    onPrePhysics(timeDelta: number) {
     }
 
-    get body(): Phaser.Physics.Arcade.Body {
-        if (this.sprite == null) throw new Error("sprite is null");
-        if (this.sprite.body == null) throw new Error("body is null");
-        return this.sprite.body as Phaser.Physics.Arcade.Body;
+    onUpdate(delta: number) {
     }
 
     respawn() {
@@ -93,7 +104,7 @@ export abstract class Entity {
         }
 
         this.life -= amount;
-        this.scene.popup(new Popup(this.scene, this.x, this.y, amount.toFixed(2), "red"));
+        //TODO: this.scene.popup(new Popup(this.scene, this.x, this.y, amount.toFixed(2), "red"));
 
         if (this.life <= 0) {
             this.respawn();
@@ -127,7 +138,7 @@ export abstract class Entity {
     }
 
     sendReset() {
-        this.scene.sendPacket(this.createResetPacket())
+        this.world.sendPacket(this.createResetPacket())
     }
 
     private createResetPacket() {
@@ -138,6 +149,17 @@ export abstract class Entity {
         this.fillResetPacket(resetPacket);
         this.onReset(resetPacket);
         return resetPacket;
+    }
+
+    addSensor(fixture: planck.Fixture) {
+        fixture.setUserData({
+            onTouchBegin: (other: planck.Fixture) => {
+                if (other.getUserData() == "ground") this.groundContactCount++;
+            },
+            onTouchEnd: (other: planck.Fixture) => {
+                if (other.getUserData() == "ground") this.groundContactCount--;
+            },
+        });
     }
 
     destroy() {

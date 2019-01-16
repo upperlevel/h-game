@@ -1,9 +1,8 @@
 import {Entity} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
-import {GameScene} from "../scene/game/gameScene";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
-import {HudRenderer} from "./hudRenderer";
+import {World} from "../world";
 import {EntityType} from "./entityType";
 
 export abstract class Player extends Entity {
@@ -12,6 +11,8 @@ export abstract class Player extends Entity {
     static WIDTH  = 2;
     static HEIGHT = 2;
     static STEP_HEIGHT = (2.0 / Player.SPRITE_SIZE) * Player.HEIGHT;
+
+    static COLLISION_CATEGORY = 0x2;
 
     maxEnergy = 1.0;
     energy = 0.0;
@@ -29,19 +30,41 @@ export abstract class Player extends Entity {
 
     //private hudRenderer: HudRenderer;
 
-
-    protected constructor(scene: GameScene, active: boolean, type: EntityType) {
-        super(scene, active, type);
-        this.behaviour = createPlayerBehaviour(scene, this);
-        //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
+    get friction(): number {
+        return this.body.getFixtureList()!.getFriction()
     }
 
-    update(deltatime: number) {
-        super.update(deltatime);
+    set friction(v: number) {
+        this.body.getFixtureList()!.setFriction(v);
+    }
+
+
+    protected constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
+        super(world, body, active, type);
+        this.behaviour = createPlayerBehaviour(this);
+        //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
+
+        let conf = scene.config!;
+        let x = (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
+        let y = 800;
+        this.body.setPosition(planck.Vec2(x, y));
+
+        let sensorW = Player.WIDTH / 2;
+        let sensorH = 0.1;
+        this.addSensor(body.createFixture({
+            shape: planck.Edge(
+                planck.Vec2(-sensorW / 2, -sensorH / 2),
+                planck.Vec2(sensorW / 2, sensorH / 2)
+            ),
+        }));
+    }
+
+    onUpdate(deltatime: number) {
+        super.onUpdate(deltatime);
 
         this.behaviour.update();
 
-        if (this.active && this.scene.actions.JUMP.isDown && this.body.onFloor()) {
+        if (this.active && this.scene.actions.JUMP.isDown && this.isTouchingGround) {
             this.jump();
         }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
@@ -70,9 +93,9 @@ export abstract class Player extends Entity {
     }
 
     jump() {
-        this.body.setVelocityY(-this.jumpForce);
+        this.body.applyLinearImpulse(planck.Vec2(0, -this.jumpForce), this.body.getWorldCenter(), true);
         if (this.active) {
-            this.scene.sendPacket({
+            this.world.sendPacket({
                 type: "player_jump",
                 entityId: this.id,
             })
@@ -85,7 +108,7 @@ export abstract class Player extends Entity {
     }
 
     giveCloseAttackDamage() {
-        for (const entity of this.scene.entityRegistry.entities.values()) {
+        for (const entity of this.world.entityRegistry.entities.values()) {
             // @ts-ignore
             if (entity.damageable && this.scene.physics.world.collide(this.sprite, entity.sprite)) {
                 const distance = this.x - entity.x;
@@ -125,5 +148,29 @@ export abstract class Player extends Entity {
     onReset(packet: EntityResetPacket) {
         super.onReset(packet);
         this.energy = packet.energy;
+    }
+
+    static createBody(world: World) {
+        //let sprite = scene.physics.add.sprite(x, 800, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);;
+        let body = world.physics.createBody({
+            type: "dynamic",
+            fixedRotation: true,
+        });
+
+        const width = 2;
+        const height = 2;
+
+        body.createFixture({
+            shape: planck.Edge(
+                planck.Vec2(-width / 2, 0),
+                planck.Vec2(width / 2, height),
+            ),
+            density: 1,
+            // Collide with everything BUT players (or anything that is the same category as the player)
+            filterCategoryBits: Player.COLLISION_CATEGORY,
+            filterMaskBits: ~Player.COLLISION_CATEGORY,
+        });
+        //sprite.setFlipX(conf.playerIndex % 2 != 0);
+        return body;
     }
 }

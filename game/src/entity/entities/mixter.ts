@@ -1,24 +1,14 @@
-import {GameScene} from "../../scene/game/gameScene";
 import {EntityTypes} from "../entities";
 import {Player} from "../player";
 import {Poison} from "./poison";
 
-import Sprite = Phaser.Physics.Arcade.Sprite;
+import {World} from "../../world";
 
 export class Mixter extends Player {
     static THROW_POWER = 100.0;
 
-    constructor(scene: GameScene, active: boolean) {
-        super(scene, Mixter.createSprite(scene), active, EntityTypes.MIXTER);
-    }
-
-    static createSprite(scene: GameScene): Sprite {
-        let sceneWidth = 1920;
-        let conf = scene.config!;
-        let x = (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
-        let sprite = scene.physics.add.sprite(x, 800, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);;
-        sprite.setFlipX(conf.playerIndex % 2 != 0);
-        return sprite;
+    constructor(world: World, active: boolean) {
+        super(world, Player.createBody(world), active, EntityTypes.MIXTER);
     }
 
     attack(callBack: any) {
@@ -33,11 +23,11 @@ export class Mixter extends Player {
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
             this.onFrameOnce(7, () => {
-                const poison = EntityTypes.POISON.create(this.scene) as Poison;
+                const poison = EntityTypes.POISON.create() as Poison;
                 poison.x = this.x + Mixter.THROW_POWER * (this.isFacingLeft ? -1 : 1);
                 poison.y = this.y + this.sprite.height * 0.75;
                 poison.thrower = this;
-                this.scene.entityRegistry.spawn(poison);
+                this.world.spawn(poison);
             })
         }
     }

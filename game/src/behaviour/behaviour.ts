@@ -1,5 +1,4 @@
 import {Player} from "../entity/player";
-import {GameScene} from "../scene/game/gameScene";
 
 export type Trigger = () => boolean
 
@@ -113,10 +112,6 @@ export class BehaviourLayer {
         return this.parent!.player;
     }
 
-    get scene(): GameScene {
-        return this.parent!.scene;
-    }
-
     register(behaviour: Behaviour): this {
         if (this.initialized) {
             throw new Error("Cannot register behaviour once initialized")
@@ -149,7 +144,6 @@ export class BehaviourLayer {
 export class BehaviourManager {
     layers: BehaviourLayer[];
     player: Player;
-    scene: GameScene;
 
     private _currentAnimated?: Behaviour;
 
@@ -162,10 +156,9 @@ export class BehaviourManager {
     }
 
 
-    constructor(scene: GameScene, layers: BehaviourLayer[], player: Player) {
+    constructor(layers: BehaviourLayer[], player: Player) {
         this.layers = layers;
         this.player = player;
-        this.scene = scene;
 
         this.layers.forEach((layer, index) => {
             layer.parent = this;
@@ -216,7 +209,7 @@ export class BehaviourManager {
 
         //console.log("Behaviour change: layer ", layer.index, " prev: ", previous, "next: ", next);
         if (this.active) {
-            this.player.scene.sendPacket({
+            this.player.world.sendPacket({
                 type: "behaviour_change",
                 actorId: this.player.id,
                 layerIndex: layer.index,

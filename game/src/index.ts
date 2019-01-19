@@ -18,12 +18,13 @@ export class HGame {
     playerName?: string;
 
     constructor() {
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
         this.app = new PIXI.Application();
         document.body.appendChild(this.app.view);
 
-        window.addEventListener("resize", () => {
-            this.app.renderer.resize(window.innerWidth, window.innerHeight);
-        });
+        this.fitCanvas();
+        window.addEventListener("resize", this.fitCanvas.bind(this));
 
         this.matchmakingConnector = new MatchmakingConnector();
 
@@ -45,12 +46,18 @@ export class HGame {
 
         loader
             .add(EntityTypes.getAssets())
+            .add("assets/game/urban_terrain.png")
             .load(() => {
                 EntityTypes.onLoad();
 
                 this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
                 console.log(`Loading process was completed.`);
             });
+    }
+
+    private fitCanvas() {
+        // Makes the viewport fit the whole canvas
+        this.app.renderer.resize(window.innerWidth, window.innerHeight);
     }
 }
 

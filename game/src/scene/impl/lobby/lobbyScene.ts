@@ -36,10 +36,9 @@ export class LobbyScene implements Scene {
     constructor(game: HGame) {
         this.game = game;
 
-
         this.overlay = new LobbyOverlay(this);
 
-        this.world = new World();
+        this.world = new World(game.app);
         this.changeCharacterKey = new Key("Space");
     }
 
@@ -118,30 +117,22 @@ export class LobbyScene implements Scene {
 
         this.changeCharacterKey.subscribe();
 
+        this.world.setup();
+        console.log("World setup");
+
         // this.overlay.show();
     }
 
-    update(): void {
-        const padding = 100;
-        const width = this.game.canvas.clientWidth - padding * 2;
-        const step = Math.floor(width / (this.players.size + 1));
+    update(delta: number): void {
+        this.world.update(delta);
 
-        let distance = padding + step;
-        for (const player of this.players.values()) {
-            player.spawned!.x = distance;
-            distance += step;
-        }
-
-        if (JustDown(this.changeCharacterKey!)) {
-            const me = this.players.get(this.game.playerName!);
-            if (me) {
-                const index = (EntityTypes.playableTypes.indexOf(me.character) + 1) % EntityTypes.playableTypes.length;
-                this.setPlayerInfo(EntityTypes.playableTypes[index].id, me.ready);
-            }
-        }
+        // TODO change player's skin on keyboard click
     }
 
     disable() {
+        this.world.destroy();
+        console.log("World destroyed");
+
         // this.overlay.hide();
         this.changeCharacterKey.unsubscribe();
 

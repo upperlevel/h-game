@@ -6,6 +6,11 @@ import {Entity} from "./entity/entity";
 import {GamePacket} from "./protocol";
 
 export class World {
+    app: PIXI.Application;
+
+    width = 32;
+    height = 18;
+
     entityRegistry = new EntityRegistry(this);
 
     physics = new planck.World({
@@ -15,18 +20,46 @@ export class World {
 
     socket?: WebSocket;
 
-    onEnable() {
-        this.physics.on("begin-contact", this.onContactBegin.apply(this))
-        this.physics.on("end-contact", this.onContactEnd.apply(this))
+    constructor(app: PIXI.Application) {
+        this.app = app;
     }
 
-    onDisable() {
+    private updateCamera() {
+        const stage = this.app.stage;
+        stage.scale.x = stage.scale.y = window.innerWidth / this.width;
+        stage.y = window.innerHeight - this.height * stage.scale.y;
+
+        console.log("window size: " + window.innerWidth + " " + window.innerHeight);
+        console.log("stage pos: " + stage.x + " " + stage.y);
+        console.log("stage scales: " + stage.scale.x + " " + stage.scale.y);
     }
 
-    onUpdate(deltaTime: number) {
-        this.doPhysicsStep(deltaTime);
+    createPlatform(x: number, y: number, width: number, height: number, texture: PIXI.Texture) {
+        const platform = new PIXI.extras.TilingSprite(texture, width, height);
+        platform.x = x;
+        platform.y = this.height - y - height;
 
-        this.entityRegistry.onUpdate(deltaTime);
+        this.app.stage.addChild(platform);
+
+        // TODO spawn physic body
+
+        return platform;
+    }
+
+    setup() {
+        this.physics.on("begin-contact", this.onContactBegin.bind(this));
+        this.physics.on("end-contact", this.onContactEnd.bind(this));
+
+        this.updateCamera();
+
+        const terrain = PIXI.loader.resources["assets/game/urban_terrain.png"].texture;
+        this.createPlatform(0, 0, this.width, 1, terrain);
+    }
+
+    update(delta: number) {
+        this.doPhysicsStep(delta);
+
+        this.entityRegistry.onUpdate(delta);
     }
 
     doPhysicsStep(deltaTime: number) {
@@ -90,4 +123,6 @@ export class World {
         }
     }
 
+    destroy() {
+    }
 }

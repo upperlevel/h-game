@@ -50,9 +50,11 @@ export class LobbyScene implements Scene {
             }
 
             const entity = EntityTypes.get(player.character!)!.create(this.world, false);
-            //this.game.app.stage.addChild(entity.sprite);
-
+            entity.x = 2;
+            entity.y = 5;
+            this.game.app.stage.addChild(entity.sprite);
             this.world.spawn(entity);
+
         }
     }
 
@@ -118,7 +120,6 @@ export class LobbyScene implements Scene {
         this.changeCharacterKey.subscribe();
 
         this.world.setup();
-        console.log("World setup");
 
         // this.overlay.show();
     }
@@ -135,7 +136,6 @@ export class LobbyScene implements Scene {
 
     disable() {
         this.world.destroy();
-        console.log("World destroyed");
 
         // this.overlay.hide();
         this.changeCharacterKey.unsubscribe();

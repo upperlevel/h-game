@@ -4,7 +4,7 @@ import AnimatedSprite = PIXI.extras.AnimatedSprite;
 export class Animator {
     readonly id: string;
 
-    private framesRetriever: () => Texture[];
+    private readonly framesRetriever: () => Texture[];
     frames?: Texture[];
 
     settings: (sprite: AnimatedSprite) => void;

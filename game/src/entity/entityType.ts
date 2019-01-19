@@ -3,14 +3,17 @@ import {World} from "../world";
 import {Animator} from "../util/animator";
 
 export abstract class EntityType {
-    readonly id: string;
-    readonly asset: string;
+    readonly abstract id: string;
 
-    animators = new Map<string, Animator>();
+    readonly width: number = 2;
+    readonly height: number = 2;
 
-    constructor(id: string, asset: string) {
-        this.id = id;
-        this.asset = asset;
+    readonly assets: string[] = [];
+
+    readonly animators = new Map<string, Animator>();
+
+    addAsset(asset: string) {
+        this.assets.push(asset);
     }
 
     addAnimator(animator: Animator) {

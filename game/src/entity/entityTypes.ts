@@ -19,9 +19,9 @@ export namespace EntityTypes {
     }
 
     export function getAssets(): string[] {
-        const assets = [];
+        let assets: string[] = [];
         for (const entity of entities.values()) {
-            assets.push(entity.asset);
+            assets = assets.concat(entity.assets);
         }
         return assets;
     }

@@ -36,7 +36,19 @@ export abstract class Entity {
 
         this.sprite = new AnimatedSprite(type.getAnimator("idle")!.frames!);
 
+        // A sprite size is supposed to be always 48x48, make that more flexible
+        this.sprite.scale.x = type.width / 48;
+        this.sprite.scale.y = type.height / 48;
 
+        this.syncPosition();
+    }
+
+    /** Synchronizes the sprite position with the body's one. */
+    private syncPosition() {
+        const position = this.body.getPosition();
+
+        this.sprite.x = position.x;
+        this.sprite.y = this.world.height - position.y;
     }
 
     getPosition(): planck.Vec2 {
@@ -51,6 +63,8 @@ export abstract class Entity {
         let pos = this.getPosition();
         pos.x = x;
         this.body.setPosition(pos);
+
+        this.syncPosition();
     }
 
     get y() {
@@ -61,6 +75,8 @@ export abstract class Entity {
         let pos = this.getPosition();
         pos.y = y;
         this.body.setPosition(pos);
+
+        this.syncPosition();
     }
 
     get position(): Position {
@@ -88,6 +104,7 @@ export abstract class Entity {
     }
 
     onUpdate(delta: number) {
+        this.syncPosition();
     }
 
     respawn() {

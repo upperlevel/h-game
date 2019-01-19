@@ -58,6 +58,12 @@ export class HGame {
                 this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
                 console.log(`Loading process was completed.`);
             });
+
+        const ticker = new PIXI.ticker.Ticker();
+        ticker.add((msDelta: number) => {
+            this.sceneManager.update(msDelta / 1000);
+        });
+        ticker.start();
     }
 
     private onResize() {

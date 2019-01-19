@@ -10,12 +10,18 @@ import {Animator} from "../../util/animator";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export class SantyType extends EntityType {
+    id = "santy";
+
     constructor() {
-        super("santy", "assets/game/santy.png");
+        super();
+
+        const texture = "assets/game/santy.png";
+
+        this.addAsset(texture);
 
         this.addAnimator(new Animator(
             "idle",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 0, 2),
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 0, 2),
             (sprite: AnimatedSprite) => {
                 sprite.animationSpeed = 0.1;
                 sprite.loop = true;
@@ -24,7 +30,7 @@ export class SantyType extends EntityType {
 
         this.addAnimator(new Animator(
             "walk",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 1, 3),
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 1, 3),
             (sprite: AnimatedSprite) => {
                 sprite.animationSpeed = 0.1;
                 sprite.loop = true;
@@ -33,7 +39,7 @@ export class SantyType extends EntityType {
 
         this.addAnimator(new Animator(
             "attack",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 2, 3),
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 2, 3),
             (sprite: AnimatedSprite) => {
                 sprite.animationSpeed = 0.1;
                 sprite.loop = false;
@@ -42,7 +48,7 @@ export class SantyType extends EntityType {
 
         this.addAnimator(new Animator(
             "specialAttack",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[this.asset], 48, 48, 3, 9),
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 3, 9),
             (sprite: AnimatedSprite) => {
                 sprite.animationSpeed = 0.1;
                 sprite.loop = false;

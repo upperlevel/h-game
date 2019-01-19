@@ -23,8 +23,13 @@ export class HGame {
         this.app = new PIXI.Application();
         document.body.appendChild(this.app.view);
 
-        this.fitCanvas();
-        window.addEventListener("resize", this.fitCanvas.bind(this));
+        const canvas = this.app.view;
+        canvas.style.position = "fixed";
+        canvas.style.top = "0";
+        canvas.style.left = "0";
+
+        this.onResize();
+        window.addEventListener("resize", this.onResize.bind(this));
 
         this.matchmakingConnector = new MatchmakingConnector();
 
@@ -55,9 +60,12 @@ export class HGame {
             });
     }
 
-    private fitCanvas() {
-        // Makes the viewport fit the whole canvas
+    private onResize() {
         this.app.renderer.resize(window.innerWidth, window.innerHeight);
+
+        if (this.sceneManager) {
+            this.sceneManager.resize();
+        }
     }
 }
 

@@ -24,18 +24,11 @@ export class World {
         this.app = app;
     }
 
-    private updateCamera() {
-        const stage = this.app.stage;
-        stage.scale.x = stage.scale.y = window.innerWidth / this.width;
-        stage.y = window.innerHeight - this.height * stage.scale.y;
-
-        console.log("window size: " + window.innerWidth + " " + window.innerHeight);
-        console.log("stage pos: " + stage.x + " " + stage.y);
-        console.log("stage scales: " + stage.scale.x + " " + stage.scale.y);
-    }
-
     createPlatform(x: number, y: number, width: number, height: number, texture: PIXI.Texture) {
-        const platform = new PIXI.extras.TilingSprite(texture, width, height);
+        const platform = new PIXI.extras.TilingSprite(texture, width * texture.width, height * texture.height);
+        platform.scale.x = 1 / texture.width;
+        platform.scale.y = 1 / texture.height;
+
         platform.x = x;
         platform.y = this.height - y - height;
 
@@ -50,10 +43,18 @@ export class World {
         this.physics.on("begin-contact", this.onContactBegin.bind(this));
         this.physics.on("end-contact", this.onContactEnd.bind(this));
 
-        this.updateCamera();
+        this.resize();
 
         const terrain = PIXI.loader.resources["assets/game/urban_terrain.png"].texture;
         this.createPlatform(0, 0, this.width, 1, terrain);
+        this.createPlatform(0, 3, 9, 1, terrain);
+        this.createPlatform(this.width - 5, 12, 5, 1, terrain);
+    }
+
+    resize() {
+        const stage = this.app.stage;
+        stage.scale.x = stage.scale.y = window.innerWidth / this.width;
+        stage.y = window.innerHeight - this.height * stage.scale.y;
     }
 
     update(delta: number) {

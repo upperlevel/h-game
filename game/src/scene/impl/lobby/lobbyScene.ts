@@ -50,7 +50,7 @@ export class LobbyScene implements Scene {
             }
 
             const entity = EntityTypes.get(player.character!)!.create(this.world, false);
-            this.game.app.stage.addChild(entity.sprite);
+            //this.game.app.stage.addChild(entity.sprite);
 
             this.world.spawn(entity);
         }
@@ -127,6 +127,10 @@ export class LobbyScene implements Scene {
         this.world.update(delta);
 
         // TODO change player's skin on keyboard click
+    }
+
+    resize() {
+        this.world.resize();
     }
 
     disable() {

@@ -4,4 +4,6 @@ export interface Scene {
     disable(next?: Scene): void;
 
     update(delta: number): void;
+
+    resize(): void;
 }

@@ -14,6 +14,12 @@ export class SceneManager {
         }
     }
 
+    resize() {
+        if (this.active) {
+            this.active.resize();
+        }
+    }
+
     update(delta: number) {
         if (this.active) {
             this.active.update(delta);

@@ -4,13 +4,12 @@ import * as planck from "planck-js"
 import {EntityRegistry} from "./entity/entityRegistry";
 import {Entity} from "./entity/entity";
 import {GamePacket} from "./protocol";
-import {Player} from "./entity/player";
+
+import {Terrain} from "./world/terrain";
 
 export class World {
     app: PIXI.Application;
-
-    width = 32;
-    height = 18;
+    private terrain: Terrain.Terrain;
 
     entityRegistry = new EntityRegistry(this);
 
@@ -24,25 +23,36 @@ export class World {
     debugRender = true;
     debugGraphics = new PIXI.Graphics();
 
-    constructor(app: PIXI.Application) {
+    constructor(app: PIXI.Application, terrain: Terrain.Terrain) {
         this.app = app;
+        this.terrain = terrain;
     }
 
-    createPlatform(x: number, y: number, width: number, height: number, texture: PIXI.Texture) {
-        const platform = new PIXI.extras.TilingSprite(texture, width * texture.width, height * texture.height);
-        platform.scale.x = 1 / texture.width;
-        platform.scale.y = 1 / texture.height;
+    get width() {
+        return this.terrain.width;
+    }
 
-        platform.x = x;
-        platform.y = this.height - y - height;
+    get height() {
+        return this.terrain.height;
+    }
+
+    createPlatform(platform: Terrain.Platform) {
+        const texture = PIXI.loader.resources[platform.texture].texture;
+
+        const sprite = new PIXI.extras.TilingSprite(texture, platform.width * texture.width, platform.height * texture.height);
+        this.app.stage.addChild(sprite);
+
+        sprite.scale.x = 1 / texture.width;
+        sprite.scale.y = 1 / texture.height;
+
+        sprite.x = platform.x;
+        sprite.y = this.height - platform.y - platform.height;
 
         const body = this.physics.createBody();
         body.createFixture(
-            planck.Box(width / 2, height / 2, planck.Vec2(0, 0), 0)
+            planck.Box(platform.width / 2, platform.height / 2, planck.Vec2(0, 0), 0)
         );
-        body.setPosition(planck.Vec2(x, y));
-
-        this.app.stage.addChild(platform);
+        body.setPosition(planck.Vec2(platform.x, platform.y));
 
         // TODO spawn physic body
 
@@ -55,14 +65,12 @@ export class World {
 
         this.resize();
 
-        const terrain = PIXI.loader.resources["assets/game/urban_terrain.png"].texture;
-        this.createPlatform(0, 0, this.width, 1, terrain);
-        //this.createPlatform(0, 3, 9, 1, terrain);
-        this.createPlatform(this.width - 5, 12, 5, 1, terrain);
-
+        for (const platform of this.terrain.platforms) {
+            this.createPlatform(platform)
+        }
 
         if (this.debugRender) {
-            this.app.stage.addChild(this.debugGraphics)
+            this.app.stage.addChild(this.debugGraphics);
         }
     }
 
@@ -97,7 +105,7 @@ export class World {
                     const verts = s.m_vertices;
 
                     g.beginFill(0xffffff);
-                    let points = verts.map((v) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
+                    let points = verts.map((v: any) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
                     //console.log(points);
                     g.drawPolygon(points);
                     g.endFill();

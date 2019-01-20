@@ -38,7 +38,31 @@ export class LobbyScene implements Scene {
 
         this.overlay = new LobbyOverlay(this);
 
-        this.world = new World(game.app);
+        this.world = new World(game.app, {
+            id: "lobby",
+
+            width: 13,
+            height: 7,
+
+            spawnPoints: [],
+
+            platforms: [
+                {
+                    x: 0,
+                    y: 2,
+                    width: 13,
+                    height: 1,
+                    texture: "assets/game/grass.png"
+                },
+                {
+                    x: 0,
+                    y: 0,
+                    width: 13,
+                    height: 2,
+                    texture: "assets/game/dirt.png"
+                }
+            ]
+        });
         this.changeCharacterKey = new Key("Space");
     }
 

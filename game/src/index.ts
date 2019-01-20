@@ -52,6 +52,8 @@ export class HGame {
         loader
             .add(EntityTypes.getAssets())
             .add("assets/game/urban_terrain.png")
+            .add("assets/game/grass.png")
+            .add("assets/game/dirt.png")
             .load(() => {
                 EntityTypes.onLoad();
 

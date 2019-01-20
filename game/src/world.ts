@@ -50,7 +50,7 @@ export class World {
 
         const body = this.physics.createBody();
         body.createFixture(
-            planck.Box(platform.width / 2, platform.height / 2, planck.Vec2(0, 0), 0)
+            planck.Box(platform.width / 2, platform.height / 2, planck.Vec2(platform.width / 2, platform.height / 2), 0)
         );
         body.setPosition(planck.Vec2(platform.x, platform.y));
 

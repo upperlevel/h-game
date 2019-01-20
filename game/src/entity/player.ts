@@ -55,10 +55,11 @@ export abstract class Player extends Entity {
         let sensorH = 0.1;
         this.addSensor(body.createFixture({
             shape: planck.Box(
-                -sensorW / 2, -sensorH / 2,
-                planck.Vec2(-sensorW / 2, -sensorH / 2),
+                sensorW / 2, sensorH / 2,
+                planck.Vec2(0, -sensorH / 2),
                 0
             ),
+            isSensor: true,
         }));
     }
 
@@ -166,7 +167,7 @@ export abstract class Player extends Entity {
         body.createFixture({
             shape: planck.Box(
                 width / 2, height / 2,
-                planck.Vec2(-width / 2, 0),
+                planck.Vec2(0, height / 2),
                 0
             ),
             density: 1,

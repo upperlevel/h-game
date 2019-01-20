@@ -47,8 +47,8 @@ export abstract class Entity {
     private syncPosition() {
         const position = this.body.getPosition();
 
-        this.sprite.x = position.x;
-        this.sprite.y = this.world.height - position.y;
+        this.sprite.x = position.x - this.type.width/2;
+        this.sprite.y = this.world.height - position.y - this.type.height;
     }
 
     getPosition(): planck.Vec2 {

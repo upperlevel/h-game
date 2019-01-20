@@ -1,112 +1,68 @@
-import {SceneWrapper} from "../sceneWrapper"
-
-import {Keyboard} from "../../actions";
-import {EntityRegistry} from "../../entity/entityRegistry";
-import {EntityTypes} from "../../entity/entities";
-import {GamePacket} from "../../protocol";
-import {GameConnector} from "../../connector/gameConnector";
-import {GameSceneConfig} from "./gameSceneConfig";
 import {Player} from "../../entity/player";
+import {Scene} from "../scene";
+import {HGame} from "../../index";
+import {World} from "../../world";
+import {LobbyPlayer} from "../impl/lobby/lobbyScene";
 
-import {Popup} from "../../entity/popup";
-import {Terrain} from "../../terrain/terrain"
+export interface GameSceneConfig {
+    playerIndex: number,
+    playerCount: number,
+    player: LobbyPlayer,
+}
 
-export class GameScene extends SceneWrapper {
-    // @ts-ignore
-    entityRegistry: EntityRegistry;
-    // @ts-ignore
-    actions: Keyboard;
+export class GameScene implements Scene {
+    game: HGame;
+    world: World;
 
-    // @ts-ignore
-    relay: GameConnector;
+    config: GameSceneConfig;
 
-    terrain?: Terrain;
+    constructor(game: HGame, config: GameSceneConfig) {
+        this.game = game;
+        this.config = config;
 
-    config?: GameSceneConfig;
+        this.world = new World(game.app, {
+            id: "lobby",
 
-    popups = new Set<Popup>();
+            width: 32,
+            height: 18,
 
-    constructor() {
-        super({key: "game"});
-        this.terrain = new Terrain(this);
-    }
+            spawnPoints: [],
 
-    popup(popup: Popup) {
-        this.popups.add(popup);
-    }
-
-    onInit(data: GameSceneConfig) {
-        this.config = data;
-    }
-
-    onPreload() {
-        this.terrain!.load();
-        EntityTypes.preload(this);
-    }
-
-    onPacket(packet: GamePacket) {
-        switch (packet.type) {
-            case "entity_spawn":
-                this.entityRegistry.onSpawn(packet);
-                break;
-            case "behaviour_change":
-                this.entityRegistry.onBehaviourChange(packet);
-                break;
-            case "player_jump":
-                let p = this.entityRegistry.getEntity(packet.entityId);
-                if (p != null && 'jump' in p) {
-                    // @ts-ignore
-                    p.jump();
+            platforms: [
+                {
+                    x: 0,
+                    y: 0,
+                    width: 32,
+                    height: 1,
+                    texture: "assets/game/urban_terrain.png"
                 }
-                break;
-            case "entity_reset":
-                this.entityRegistry.onResetPacket(packet);
-                break;
-            default:
-                console.error(`Unhandled packet type: ${packet.type}`);
-                break;
-        }
+            ]
+        });
     }
 
-    onCreate() {
-        this.terrain!.build();
+    enable() {
+        this.world.socket = this.game.gameConnector!;
+        this.world.entityRegistry.setup(this.config.playerCount, this.config.playerIndex);
 
-        EntityTypes.load(this);
-
-        this.actions = new Keyboard(this);
-
-        this.entityRegistry = new EntityRegistry(this);
-        this.entityRegistry.setup(this.config!.playerCount, this.config!.playerIndex);
-        this.entityRegistry.onEnable();
-
-        this.relay = this.game.gameConnector!;
-        this.relay.subscribe("message", this.onPacket, this);
+        this.world.setup();
 
         // Spawn
-        let santy = this.config!.player.character!.create(this) as Player;
-        santy.name = this.config!.playerName;
-        santy.reloadName();
+        let char = this.config.player.character!.create(this.world, true) as Player;
+        char.name = this.config.player.name;
+        char.reloadName();
 
-        this.entityRegistry.spawn(santy);
+        this.world.spawn(char);
     }
 
-    onUpdate(time: number, delta: number) {
-        this.terrain!.update(delta);
-        this.entityRegistry.onUpdate(delta);
-
-        for (const popup of this.popups) {
-            if (popup.update(delta)) {
-                this.popups.delete(popup);
-            }
-        }
+    update(delta: number): void {
+        this.world.update(delta);
     }
 
-    onShutdown() {
-        this.entityRegistry.onDisable();
-        this.relay.unsubscribe("message", this.onPacket, this, false);
+    resize() {
+        this.world.resize();
     }
 
-    sendPacket(packet: GamePacket) {
-        this.relay.send(packet);
+    disable() {
+        this.world.destroy();
     }
 }

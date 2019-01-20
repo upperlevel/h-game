@@ -7,6 +7,8 @@ import {GameConnector} from "./connector/gameConnector";
 import {ConnectingScene} from "./scene/impl/connectingScene";
 import {LoginScene} from "./scene/impl/loginScene";
 import {EntityTypes} from "./entity/entityTypes";
+import {GameScene} from "./scene/game/gameScene";
+import {EntityType} from "./entity/entityType";
 
 export class HGame {
     app: PIXI.Application;
@@ -57,7 +59,17 @@ export class HGame {
             .load(() => {
                 EntityTypes.onLoad();
 
-                this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
+                this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new GameScene(this, {
+                    playerIndex: 1,
+                    playerCount: 1,
+                    player: {
+                        name: "Ulisse",
+                        character: EntityTypes.SANTY,
+                        ready: true,
+                        admin: true,
+                        me: true,
+                    }
+                })));
                 console.log(`Loading process was completed.`);
             });
 

@@ -36,6 +36,8 @@ export abstract class Behaviour {
 
     onEnable() {}
 
+    onPrePhysics() {}
+
     onUpdate() {
         // Each time checks if there is a hook verified.
         if (this.layer.parent == null || !this.layer.parent.active) return;
@@ -133,8 +135,12 @@ export class BehaviourLayer {
         this.initialized = true;
     }
 
-    update() {
+    onUpdate() {
         this.active!.onUpdate();
+    }
+
+    onPrePhysics() {
+        this.active!.onPrePhysics()
     }
 }
 
@@ -183,9 +189,15 @@ export class BehaviourManager {
         }
     }
 
-    update() {
+    onUpdate() {
         for (let layer of this.layers) {
-            layer.update();
+            layer.onUpdate();
+        }
+    }
+
+    onPrePhysics() {
+        for (let layer of this.layers) {
+            layer.onPrePhysics();
         }
     }
 

@@ -35,6 +35,8 @@ export abstract class Entity {
         this.type = type;
 
         this.sprite = new AnimatedSprite(type.getAnimator("idle")!.frames!);
+        this.sprite.anchor.x = 0.5;
+        this.sprite.anchor.y = 1;
 
         // A sprite size is supposed to be always 48x48, make that more flexible
         this.sprite.scale.x = type.width / 48;
@@ -47,8 +49,8 @@ export abstract class Entity {
     private syncPosition() {
         const position = this.body.getPosition();
 
-        this.sprite.x = position.x - this.type.width/2;
-        this.sprite.y = this.world.height - position.y - this.type.height;
+        this.sprite.x = position.x;// - this.type.width/2;
+        this.sprite.y = this.world.height - position.y;// - this.type.height;
     }
 
     getPosition(): planck.Vec2 {

@@ -6,8 +6,11 @@ import {Entity} from "./entity/entity";
 import {GamePacket} from "./protocol";
 
 import {Terrain} from "./world/terrain";
+import {Connector} from "./connector/connector";
 
 export class World {
+    static TIME_STEP = 1 / 60;
+
     app: PIXI.Application;
     private terrain: Terrain.Terrain;
 
@@ -18,7 +21,7 @@ export class World {
     });
     physicsAccumulator = 0;
 
-    socket?: WebSocket;
+    socket?: Connector;
 
     debugRender = true;
     debugGraphics = new PIXI.Graphics();
@@ -62,6 +65,7 @@ export class World {
     setup() {
         this.physics.on("begin-contact", this.onContactBegin.bind(this));
         this.physics.on("end-contact", this.onContactEnd.bind(this));
+        this.entityRegistry.onEnable();
 
         this.resize();
 
@@ -114,9 +118,9 @@ export class World {
     }
 
     doPhysicsStep(deltaTime: number) {
-        const TIME_STEP = 1 / 60;
         const VELOCITY_ITERATIONS = 6;
         const POSITION_ITERATIONS = 2;
+        const TIME_STEP = World.TIME_STEP;
         // fixed time step
 
         // TODO: we should find a way to avoid spiral of death without limiting the time frame (yeah, networking)
@@ -147,6 +151,30 @@ export class World {
         this.socket.send(JSON.stringify(packet));
     }
 
+    onPacket(packet: GamePacket) {
+        switch (packet.type) {
+            case "entity_spawn":
+                this.entityRegistry.onSpawn(packet);
+                break;
+            case "behaviour_change":
+                this.entityRegistry.onBehaviourChange(packet);
+                break;
+            case "player_jump":
+                let p = this.entityRegistry.getEntity(packet.entityId);
+                if (p != null && 'jump' in p) {
+                    // @ts-ignore
+                    p.jump();
+                }
+                break;
+            case "entity_reset":
+                this.entityRegistry.onResetPacket(packet);
+                break;
+            default:
+                console.error(`Unhandled packet type: ${packet.type}`);
+                break;
+        }
+    }
+
 
     private onContactBegin(contact: planck.Contact) {
         let dataA: any = contact.getFixtureA().getUserData();
@@ -175,5 +203,6 @@ export class World {
     }
 
     destroy() {
+        this.entityRegistry.onDisable();
     }
 }

@@ -18,6 +18,8 @@ export class OverlayScene implements Scene {
     protected onEnable() {
     }
 
+    resize() {}
+
     update(delta: number) {
         this.onUpdate(delta);
     }

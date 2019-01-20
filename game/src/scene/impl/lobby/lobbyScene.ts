@@ -1,19 +1,18 @@
 import {Scene} from "../../scene";
-import {SceneManager} from "../../sceneManager";
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
-import {CurrentLobbyInfoPacket} from "../../../../../common/src/matchmaking/protocol";
+import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
 import {GameConnector} from "../../../connector/gameConnector";
 
 import * as proto from "../../../../../common/src/matchmaking/protocol"
-import {GameSceneConfig} from "../../game/gameSceneConfig";
 
 import {EntityTypes} from "../../../entity/entityTypes";
 import {EntityType} from "../../../entity/entityType";
 import {HGame} from "../../../index";
-import {Key} from "../../../util/key";
+import {Key} from "../../../input/key";
 import {World} from "../../../world";
+import {GameSceneConfig} from "../../game/gameScene";
 
 export interface LobbyPlayer {
     name: string,
@@ -76,9 +75,7 @@ export class LobbyScene implements Scene {
             const entity = EntityTypes.get(player.character!)!.create(this.world, false);
             entity.x = 2;
             entity.y = 10;
-            this.game.app.stage.addChild(entity.sprite);
             this.world.spawn(entity);
-
         }
     }
 
@@ -121,7 +118,6 @@ export class LobbyScene implements Scene {
                 let gameConfig: GameSceneConfig = {
                     playerIndex: packet.playerIndex,
                     playerCount: packet.playerCount,
-                    playerName: this.game.playerName!,
                     player: this.players.get(this.game.playerName!)!
                 };
 
@@ -140,8 +136,6 @@ export class LobbyScene implements Scene {
 
         // The main player will be drawn only after an answer to this packet will be received.
         this.requestInfo();
-
-        this.changeCharacterKey.subscribe();
 
         this.world.setup();
 
@@ -162,7 +156,6 @@ export class LobbyScene implements Scene {
         this.world.destroy();
 
         // this.overlay.hide();
-        this.changeCharacterKey.unsubscribe();
 
         this.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }

@@ -1,5 +1,6 @@
 // @ts-ignore
 import * as planck from "planck-js"
+import * as Actions from "../input/actions";
 
 import {Entity} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
@@ -41,6 +42,14 @@ export abstract class Player extends Entity {
         this.body.getFixtureList()!.setFriction(v);
     }
 
+    get flipX(): boolean {
+        return this.sprite.scale.x < 0;
+    }
+
+    set flipX(flipped: boolean) {
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * (flipped ? -1 : 1);
+    }
+
 
     protected constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
         super(world, body, active, type);
@@ -63,14 +72,19 @@ export abstract class Player extends Entity {
         }));
     }
 
+    onPrePhysics(timeDelta: number) {
+        super.onPrePhysics(timeDelta);
+        this.behaviour.onPrePhysics();
+    }
+
     onUpdate(deltatime: number) {
         super.onUpdate(deltatime);
 
-        this.behaviour.update();
+        this.behaviour.onUpdate();
 
-        // TODO if (this.active && this.scene.actions.JUMP.isDown && this.isTouchingGround) {
-           // this.jump();
-        // }
+        if (this.active && Actions.JUMP.pressed && this.isTouchingGround) {
+            this.jump();
+        }
         this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
 
         //this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);

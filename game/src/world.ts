@@ -4,6 +4,7 @@ import * as planck from "planck-js"
 import {EntityRegistry} from "./entity/entityRegistry";
 import {Entity} from "./entity/entity";
 import {GamePacket} from "./protocol";
+import {Player} from "./entity/player";
 
 export class World {
     app: PIXI.Application;
@@ -20,6 +21,9 @@ export class World {
 
     socket?: WebSocket;
 
+    debugRender = true;
+    debugGraphics = new PIXI.Graphics();
+
     constructor(app: PIXI.Application) {
         this.app = app;
     }
@@ -31,6 +35,12 @@ export class World {
 
         platform.x = x;
         platform.y = this.height - y - height;
+
+        const body = this.physics.createBody();
+        body.createFixture(
+            planck.Box(width / 2, height / 2, planck.Vec2(0, 0), 0)
+        );
+        body.setPosition(planck.Vec2(x, y));
 
         this.app.stage.addChild(platform);
 
@@ -47,8 +57,13 @@ export class World {
 
         const terrain = PIXI.loader.resources["assets/game/urban_terrain.png"].texture;
         this.createPlatform(0, 0, this.width, 1, terrain);
-        this.createPlatform(0, 3, 9, 1, terrain);
+        //this.createPlatform(0, 3, 9, 1, terrain);
         this.createPlatform(this.width - 5, 12, 5, 1, terrain);
+
+
+        if (this.debugRender) {
+            this.app.stage.addChild(this.debugGraphics)
+        }
     }
 
     resize() {
@@ -60,7 +75,35 @@ export class World {
     update(delta: number) {
         this.doPhysicsStep(delta);
 
+        if (this.debugRender) {
+            this.updateDebugRender();
+        }
+
         this.entityRegistry.onUpdate(delta);
+    }
+
+    updateDebugRender() {
+        const g = this.debugGraphics;
+        g.clear();
+        g.beginFill(0xffffff);
+        for (let body = this.physics.getBodyList(); body; body = body.getNext()) {
+            const pos = body.getPosition();
+            for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
+                let type = fixture.getType();
+                let shape: planck.Shape = fixture.getShape();
+
+                if (type == "polygon") {
+                    const s = shape as planck.PolygonShape;
+                    const verts = s.m_vertices;
+
+                    g.beginFill(0xffffff);
+                    let points = verts.map((v) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
+                    //console.log(points);
+                    g.drawPolygon(points);
+                    g.endFill();
+                } else console.warn(type);
+            }
+        }
     }
 
     doPhysicsStep(deltaTime: number) {
@@ -102,11 +145,11 @@ export class World {
         let dataA: any = contact.getFixtureA().getUserData();
         let dataB: any = contact.getFixtureB().getUserData();
 
-        if ("onTouchBegin" in dataA) {
+        if (dataA != null && "onTouchBegin" in dataA) {
             dataA.onTouchBegin(contact.getFixtureB(), contact);
         }
 
-        if ("onTouchBegin" in dataB) {
+        if (dataB != null && "onTouchBegin" in dataB) {
             dataB.onTouchBegin(contact.getFixtureA(), contact);
         }
     }

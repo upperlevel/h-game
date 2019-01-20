@@ -67,9 +67,10 @@ export class Poison extends Entity {
 
         const w = 37;
 
-        let shape = planck.Edge(
+        let shape = planck.Box(
+            w / 2, h / 2,
             planck.Vec2(-w / 2, 0),
-            planck.Vec2(+w / 2, 0.2),
+            0
         );
 
         body.createFixture({

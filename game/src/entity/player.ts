@@ -48,15 +48,16 @@ export abstract class Player extends Entity {
         //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
 
         let x = 0; // (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
-        let y = 800;
+        let y = 2;
         this.body.setPosition(planck.Vec2(x, y));
 
         let sensorW = Player.WIDTH / 2;
         let sensorH = 0.1;
         this.addSensor(body.createFixture({
-            shape: planck.Edge(
+            shape: planck.Box(
+                -sensorW / 2, -sensorH / 2,
                 planck.Vec2(-sensorW / 2, -sensorH / 2),
-                planck.Vec2(sensorW / 2, sensorH / 2)
+                0
             ),
         }));
     }
@@ -163,9 +164,10 @@ export abstract class Player extends Entity {
         const height = 2;
 
         body.createFixture({
-            shape: planck.Edge(
+            shape: planck.Box(
+                width / 2, height / 2,
                 planck.Vec2(-width / 2, 0),
-                planck.Vec2(width / 2, height),
+                0
             ),
             density: 1,
             // Collide with everything BUT players (or anything that is the same category as the player)

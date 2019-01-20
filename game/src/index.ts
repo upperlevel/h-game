@@ -60,8 +60,8 @@ export class HGame {
             });
 
         const ticker = new PIXI.ticker.Ticker();
-        ticker.add((msDelta: number) => {
-            this.sceneManager.update(msDelta / 1000);
+        ticker.add((dt: number) => {
+            this.sceneManager.update(ticker.elapsedMS / 1000);
         });
         ticker.start();
     }

@@ -76,7 +76,7 @@ export class LobbyScene implements Scene {
             const entity = EntityTypes.get(player.character!)!.create(this.world, false);
             entity.x = 2;
             entity.y = 10;
-            this.game.app.stage.addChildAt(entity.sprite, 3);
+            this.game.app.stage.addChild(entity.sprite);
             this.world.spawn(entity);
 
         }

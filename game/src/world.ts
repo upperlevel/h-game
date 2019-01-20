@@ -93,7 +93,6 @@ export class World {
     updateDebugRender() {
         const g = this.debugGraphics;
         g.clear();
-        g.beginFill(0xffffff);
         for (let body = this.physics.getBodyList(); body; body = body.getNext()) {
             const pos = body.getPosition();
             for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
@@ -102,13 +101,13 @@ export class World {
 
                 if (type == "polygon") {
                     const s = shape as planck.PolygonShape;
-                    const verts = s.m_vertices;
+                    const verts: Array<planck.Vec2> = s.m_vertices;
 
-                    g.beginFill(0xffffff);
+                    g.lineStyle(1/48, 0x0000ff);
                     let points = verts.map((v: any) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
+                    points.push(points[0]);
                     //console.log(points);
                     g.drawPolygon(points);
-                    g.endFill();
                 } else console.warn(type);
             }
         }

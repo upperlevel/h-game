@@ -2,7 +2,7 @@ import {EntityTypes} from "../entities";
 import {Player} from "../player";
 import {Poison} from "./poison";
 
-import {World} from "../../world";
+import {World} from "../../world/world";
 
 export class Mixter extends Player {
     static THROW_POWER = 100.0;

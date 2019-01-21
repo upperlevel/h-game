@@ -1,6 +1,6 @@
 import {Behaviour} from "./behaviour";
 import * as Actions from "../input/actions"
-import {World} from "../world";
+import {World} from "../world/world";
 
 // @ts-ignore
 import * as planck from "planck-js";

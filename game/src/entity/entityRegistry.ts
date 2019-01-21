@@ -1,6 +1,6 @@
 import {BehaviourChangePacket, EntityResetPacket, EntitySpawnPacket} from "../protocol";
 import {Entity} from "./entity";
-import {World} from "../world";
+import {World} from "../world/world";
 import {EntityTypes} from "./entityTypes";
 
 export class EntityRegistry {

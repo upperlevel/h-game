@@ -1,5 +1,5 @@
 import {Entity} from "./entity";
-import {World} from "../world";
+import {World} from "../world/world";
 import {Animator} from "../util/animator";
 
 export abstract class EntityType {

@@ -8,19 +8,10 @@ import {GameConnector} from "../../../connector/gameConnector";
 import * as proto from "../../../../../common/src/matchmaking/protocol"
 
 import {EntityTypes} from "../../../entity/entityTypes";
-import {EntityType} from "../../../entity/entityType";
 import {HGame} from "../../../index";
-import {Key} from "../../../input/key";
-import {World} from "../../../world";
+import {World} from "../../../world/world";
+import {LobbyPlayer} from "./lobbyPlayer";
 import {GameSceneConfig} from "../../game/gameScene";
-
-export interface LobbyPlayer {
-    name: string,
-    character: EntityType,
-    ready: boolean,
-    admin: boolean,
-    me: boolean
-}
 
 export class LobbyScene implements Scene {
     game: HGame;
@@ -28,9 +19,6 @@ export class LobbyScene implements Scene {
     overlay: LobbyOverlay;
 
     world: World;
-
-    players = new Map<string, LobbyPlayer>();
-    changeCharacterKey: Key;
 
     constructor(game: HGame) {
         this.game = game;
@@ -48,21 +36,40 @@ export class LobbyScene implements Scene {
             platforms: [
                 {
                     x: 0,
-                    y: 2,
-                    width: 13,
-                    height: 1,
-                    texture: "assets/game/grass.png"
-                },
-                {
-                    x: 0,
                     y: 0,
                     width: 13,
-                    height: 2,
-                    texture: "assets/game/dirt.png"
+                    height: 5,
+                    texture: "assets/game/grass.png"
+                }
+            ],
+
+            texts: [
+                {
+                    text: "Test1",
+                    x: 0,
+                    y: 0,
+                    centered: false,
+                    height: 1,
+                    style: {
+                        fill: 0xff0f00,
+                        fontFamily: "pixeled",
+                        fontSize: 16
+                    }
+                },
+                {
+                    text: "Test2",
+                    x: 0,
+                    y: 3,
+                    centered: false,
+                    height: 0.25,
+                    style: {
+                        fill: 0xff00ff,
+                        fontFamily: "pixeled",
+                        fontSize: 16,
+                    }
                 }
             ]
         });
-        this.changeCharacterKey = new Key("Space");
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
@@ -72,7 +79,7 @@ export class LobbyScene implements Scene {
                 player.character = "santy";
             }
 
-            const entity = EntityTypes.get(player.character!)!.create(this.world, false);
+            const entity = new LobbyPlayer(this.world, false, EntityTypes.get(player.character!)!);
             entity.x = 2;
             entity.y = 10;
             this.world.spawn(entity);

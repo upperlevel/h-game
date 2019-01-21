@@ -1,8 +1,8 @@
 import {Player} from "../../entity/player";
 import {Scene} from "../scene";
 import {HGame} from "../../index";
-import {World} from "../../world";
-import {LobbyPlayer} from "../impl/lobby/lobbyScene";
+import {World} from "../../world/world";
+import {LobbyPlayer} from "../impl/lobby/lobbyPlayer";
 
 export interface GameSceneConfig {
     playerIndex: number,
@@ -36,7 +36,9 @@ export class GameScene implements Scene {
                     height: 1,
                     texture: "assets/game/urban_terrain.png"
                 }
-            ]
+            ],
+
+            texts: []
         });
     }
 

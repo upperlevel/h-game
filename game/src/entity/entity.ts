@@ -2,7 +2,7 @@ import {EntityResetPacket, EntitySpawnMeta} from "../protocol"
 
 import {Position} from "./util";
 import {EntityType} from "./entityType";
-import {World} from "../world";
+import {World} from "../world/world";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export abstract class Entity {

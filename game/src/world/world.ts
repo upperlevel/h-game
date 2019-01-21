@@ -1,17 +1,20 @@
 // @ts-ignore
 import * as planck from "planck-js"
 
-import {EntityRegistry} from "./entity/entityRegistry";
-import {Entity} from "./entity/entity";
-import {GamePacket} from "./protocol";
+import {EntityRegistry} from "../entity/entityRegistry";
+import {Entity} from "../entity/entity";
+import {GamePacket} from "../protocol";
 
-import {Terrain} from "./world/terrain";
-import {Connector} from "./connector/connector";
+import {Terrain} from "./terrain";
+import {Text} from "./text";
+
+import {Connector} from "../connector/connector";
 
 export class World {
     static TIME_STEP = 1 / 60;
 
     app: PIXI.Application;
+
     private terrain: Terrain.Terrain;
 
     entityRegistry = new EntityRegistry(this);
@@ -28,6 +31,7 @@ export class World {
 
     constructor(app: PIXI.Application, terrain: Terrain.Terrain) {
         this.app = app;
+
         this.terrain = terrain;
     }
 
@@ -37,6 +41,10 @@ export class World {
 
     get height() {
         return this.terrain.height;
+    }
+
+    createText(data: Terrain.Text) {
+        return new Text(this, data);
     }
 
     createPlatform(platform: Terrain.Platform) {
@@ -63,14 +71,21 @@ export class World {
     }
 
     setup() {
+        this.app.stage.removeChildren();
+
         this.physics.on("begin-contact", this.onContactBegin.bind(this));
         this.physics.on("end-contact", this.onContactEnd.bind(this));
+
         this.entityRegistry.onEnable();
 
         this.resize();
 
         for (const platform of this.terrain.platforms) {
             this.createPlatform(platform)
+        }
+
+        for (const text of this.terrain.texts) {
+            this.createText(text);
         }
 
         if (this.debugRender) {
@@ -118,9 +133,9 @@ export class World {
     }
 
     doPhysicsStep(deltaTime: number) {
+        const TIME_STEP = World.TIME_STEP;
         const VELOCITY_ITERATIONS = 6;
         const POSITION_ITERATIONS = 2;
-        const TIME_STEP = World.TIME_STEP;
         // fixed time step
 
         // TODO: we should find a way to avoid spiral of death without limiting the time frame (yeah, networking)
@@ -175,7 +190,6 @@ export class World {
         }
     }
 
-
     private onContactBegin(contact: planck.Contact) {
         let dataA: any = contact.getFixtureA().getUserData();
         let dataB: any = contact.getFixtureB().getUserData();
@@ -204,5 +218,6 @@ export class World {
 
     destroy() {
         this.entityRegistry.onDisable();
+        this.app.stage.removeChildren();
     }
 }

@@ -59,17 +59,7 @@ export class HGame {
             .load(() => {
                 EntityTypes.onLoad();
 
-                this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new GameScene(this, {
-                    playerIndex: 1,
-                    playerCount: 1,
-                    player: {
-                        name: "Ulisse",
-                        character: EntityTypes.SANTY,
-                        ready: true,
-                        admin: true,
-                        me: true,
-                    }
-                })));
+                this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
                 console.log(`Loading process was completed.`);
             });
 

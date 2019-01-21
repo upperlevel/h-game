@@ -3,7 +3,7 @@ import {EntityTypes} from "../entities";
 import {Entity} from "../entity";
 
 import {ThrowableEntitySpawnMeta} from "../../protocol";
-import {World} from "../../world";
+import {World} from "../../world/world";
 
 export class Poison extends Entity {
     _thrower?: Player;

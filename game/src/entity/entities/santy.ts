@@ -3,7 +3,7 @@ import {Poison} from "./poison";
 import {EntityType} from "../entityType";
 import {EntityTypes} from "../entityTypes";
 
-import {World} from "../../world";
+import {World} from "../../world/world";
 import {SpritesheetUtil} from "../../util/spritesheet";
 import {Animator} from "../../util/animator";
 

@@ -6,7 +6,7 @@ import {Entity} from "./entity";
 import {createPlayerBehaviour} from "../behaviour/behaviours";
 import {BehaviourManager} from "../behaviour/behaviour";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
-import {World} from "../world";
+import {World} from "../world/world";
 import {EntityType} from "./entityType";
 
 export abstract class Player extends Entity {

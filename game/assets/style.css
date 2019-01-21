@@ -11,6 +11,7 @@
     color: white;
 
     font-family: "pixeled", sans-serif;
+    text-rendering: optimizeSpeed !important;
     -webkit-font-smoothing: none;
 }
 

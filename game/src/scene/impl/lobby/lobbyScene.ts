@@ -39,21 +39,20 @@ export class LobbyScene implements Scene {
                     y: 0,
                     width: 13,
                     height: 5,
-                    texture: "assets/game/grass.png"
+                    texture: "assets/game/debug.png"
                 }
             ],
 
             texts: [
                 {
                     text: "Test1",
-                    x: 0,
-                    y: 0,
-                    centered: false,
+                    x: 3,
+                    y: 3,
+                    centered: true,
                     height: 1,
                     style: {
                         fill: 0xff0f00,
-                        fontFamily: "pixeled",
-                        fontSize: 16
+                        fontFamily: "pixeled"
                     }
                 },
                 {
@@ -64,8 +63,7 @@ export class LobbyScene implements Scene {
                     height: 0.25,
                     style: {
                         fill: 0xff00ff,
-                        fontFamily: "pixeled",
-                        fontSize: 16,
+                        fontFamily: "pixeled"
                     }
                 }
             ]

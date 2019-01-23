@@ -9,16 +9,14 @@ export class Text {
 
     debug?: PIXI.Graphics;
 
+
     constructor(world: World, data: Terrain.Text, debug: boolean = false) {
         this.world = world;
-        this.data = data;
 
-        this.sprite = new PIXI.Text(data.text, Object.assign(
-            data.style,
-            {
-                fontSize: this.data.height * 128,
-            })
-        );
+        this.data = data;
+        this.data.style = Object.assign(data.style, {fontSize: this.data.height * 128});
+
+        this.sprite = new PIXI.Text(data.text, this.data.style);
         this.world.app.stage.addChild(this.sprite);
 
         this.sprite.scale.x = this.sprite.scale.y = 1 / (this.data.height * 128) * this.data.height;
@@ -31,6 +29,16 @@ export class Text {
         this.sync();
     }
 
+    set text(text: string) {
+        this.data.text = text;
+        this.sprite.text = text;
+    }
+
+    set style(style: PIXI.TextStyleOptions) {
+        this.data.style = Object.assign(this.data.style, style);
+        this.sprite.style = new PIXI.TextStyle(this.data.style);
+    }
+
     set x(x: number) {
         this.data.x = x;
         this.sync();
@@ -41,13 +49,12 @@ export class Text {
         this.sync();
     }
 
-    set height(height: number) {
-        this.data.height = height;
-        this.sync();
+    get height(): number {
+        return this.data.height;
     }
 
-    set style(style: PIXI.TextStyleOptions) {
-        this.data.style = style;
+    set height(height: number) {
+        this.data.height = height;
         this.sync();
     }
 

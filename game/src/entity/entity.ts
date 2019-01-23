@@ -91,11 +91,11 @@ export abstract class Entity {
     }
 
     get width() {
-        return this.sprite.width * this.sprite.scale.x;
+        return this.type.width;
     }
 
     get height() {
-        return this.sprite.height * this.sprite.scale.y;
+        return this.type.height;
     }
 
     get isFacingLeft() {

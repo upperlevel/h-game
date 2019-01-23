@@ -1,8 +1,6 @@
 import {Position} from "./position";
 
 export namespace Terrain {
-    import TextStyleOptions = PIXI.TextStyleOptions;
-
     export interface Platform {
         x: number;
         y: number;
@@ -13,14 +11,11 @@ export namespace Terrain {
 
     export interface Text {
         text: string;
-
         x: number;
         y: number;
-
         centered: boolean;
         height: number;
-
-        style: TextStyleOptions;
+        style: PIXI.TextStyleOptions;
     }
 
     export interface Terrain {

@@ -27,43 +27,28 @@ export class LobbyScene implements Scene {
 
         this.world = new World(game.app, {
             id: "lobby",
-
             width: 13,
             height: 7,
-
             spawnPoints: [],
-
             platforms: [
                 {
                     x: 0,
                     y: 0,
                     width: 13,
-                    height: 5,
+                    height: 2,
                     texture: "assets/game/debug.png"
                 }
             ],
-
             texts: [
                 {
-                    text: "Test1",
-                    x: 3,
-                    y: 3,
-                    centered: true,
+                    x: 1,
+                    y: 1,
                     height: 1,
-                    style: {
-                        fill: 0xff0f00,
-                        fontFamily: "pixeled"
-                    }
-                },
-                {
-                    text: "Test2",
-                    x: 0,
-                    y: 3,
+                    text: "Hello world",
                     centered: false,
-                    height: 0.25,
                     style: {
-                        fill: 0xff00ff,
-                        fontFamily: "pixeled"
+                        fontFamily: "pixeled",
+                        fill: 0xff0000
                     }
                 }
             ]

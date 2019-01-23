@@ -49,11 +49,11 @@ export class RequestsOverlay extends OverlayScene {
         }
     }
 
-    onShow() {
+    onEnable() {
         this.lobby.game.matchmakingConnector.subscribe("message",  this.onMessage, this);
     }
 
-    onHide() {
+    onDisable() {
         this.lobby.game.matchmakingConnector.unsubscribe("message", this.onMessage.bind(this), this);
     }
 }

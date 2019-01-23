@@ -123,7 +123,7 @@ export class EntityRegistry {
             return;
         }
         this.entities.delete(entity.id);
-        entity.destroy();
+        entity.remove();
     }
 
     onPrePhysicsStep(timedelta: number) {

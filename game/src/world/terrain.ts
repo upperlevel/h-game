@@ -13,7 +13,7 @@ export namespace Terrain {
         text: string;
         x: number;
         y: number;
-        centered: boolean;
+        isCentered: boolean;
         height: number;
         style: PIXI.TextStyleOptions;
     }

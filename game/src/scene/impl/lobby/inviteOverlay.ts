@@ -29,7 +29,7 @@ export class InviteOverlay extends OverlayScene {
 
         this.cancelButton = document.getElementById("invite-cancel-button") as HTMLButtonElement;
         this.cancelButton.onclick = () => {
-            this.hide();
+            this.disable();
         }
     }
 
@@ -49,13 +49,13 @@ export class InviteOverlay extends OverlayScene {
         }
     }
 
-    onShow() {
+    onEnable() {
         this.reset();
 
         this.lobby.game.matchmakingConnector.subscribe("message", this.onMessage, this);
     }
 
-    onHide() {
+    onDisable() {
         this.lobby.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }
 }

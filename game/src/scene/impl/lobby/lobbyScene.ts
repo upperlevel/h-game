@@ -20,6 +20,8 @@ export class LobbyScene implements Scene {
 
     world: World;
 
+    players = new Map<string, LobbyPlayer>();
+
     constructor(game: HGame) {
         this.game = game;
 
@@ -30,30 +32,40 @@ export class LobbyScene implements Scene {
             width: 13,
             height: 7,
             spawnPoints: [],
-            platforms: [
-                {
-                    x: 0,
-                    y: 0,
-                    width: 13,
-                    height: 2,
-                    texture: "assets/game/debug.png"
-                }
-            ],
+            platforms: [{
+                x: 0,
+                y: 0,
+                width: 13,
+                height: 2,
+                texture: "assets/game/debug.png"
+            }],
             texts: []
         });
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
+        // Despawns old players
+        for (const player of this.players.values()) {
+            player.remove();
+        }
+        this.players.clear();
+
+        // Spawns new players
         const step = this.world.width / (packet.players.length + 1);
         let distance = step;
 
-        for (const player of packet.players) {
-            player.character = player.character || "santy";
+        for (const data of packet.players) {
+            data.character = data.character || "santy";
 
-            const entity = new LobbyPlayer(this.world, false, EntityTypes.get(player.character!)!);
-            entity.x = distance;
-            entity.y = 10;
-            this.world.spawn(entity);
+            const player = new LobbyPlayer(this.world, false, EntityTypes.get(data.character!)!);
+            player.name = data.name;
+            player.x = distance;
+            player.y = 10;
+            player.me = data.name === this.game.playerName;
+            player.leader = data.name === packet.admin;
+            this.world.spawn(player);
+            this.players.set(player.name, player);
+            console.log(`Spawning player: ${player.name}`);
 
             distance += step;
         }
@@ -101,11 +113,14 @@ export class LobbyScene implements Scene {
                     player: this.players.get(this.game.playerName!)!
                 };
 
+                // TODO start game
+                /*
                 this.scene.start("connecting", {
                     connector: this.game.gameConnector,
                     nextScene: "game",
                     nextSceneParams: gameConfig,
                 });
+                */
                 break;
         }
     }
@@ -119,7 +134,7 @@ export class LobbyScene implements Scene {
 
         this.world.setup();
 
-        // this.overlay.show();
+        this.overlay.enable();
     }
 
     update(delta: number): void {
@@ -135,7 +150,7 @@ export class LobbyScene implements Scene {
     disable() {
         this.world.destroy();
 
-        // this.overlay.hide();
+        this.overlay.disable();
 
         this.game.matchmakingConnector.unsubscribe("message", this.onMessage, this);
     }

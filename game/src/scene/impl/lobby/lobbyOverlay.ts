@@ -33,19 +33,19 @@ export class LobbyOverlay extends OverlayScene {
 
         this.inviteButton = document.getElementById("lobby-invite-button") as HTMLButtonElement;
         this.inviteButton.onclick = () => {
-            this.inviteOverlay.show();
+            this.inviteOverlay.enable();
         };
 
         this.inviteOverlay = new InviteOverlay(lobby);
         this.requestsOverlay = new RequestsOverlay(lobby);
     }
 
-    onShow() {
-        this.requestsOverlay.show();
+    onEnable() {
+        this.requestsOverlay.enable();
     }
 
-    onHide() {
-        this.requestsOverlay.hide();
-        this.inviteOverlay.hide();
+    onDisable() {
+        this.requestsOverlay.disable();
+        this.inviteOverlay.disable();
     }
 }

@@ -182,7 +182,8 @@ export abstract class Entity {
         });
     }
 
-    destroy() {
-        this.sprite.destroy(true);
+    remove() {
+        this.sprite.parent.removeChild(this.sprite);
+        this.world.removeBody(this.body);
     }
 }

@@ -29,6 +29,8 @@ export class World {
     debugRender = true;
     debugGraphics = new PIXI.Graphics();
 
+    private destroyedBodies: Body[] = [];
+
     constructor(app: PIXI.Application, terrain: Terrain.Terrain) {
         this.app = app;
 
@@ -110,8 +112,9 @@ export class World {
     }
 
     updateDebugRender() {
-        const g = this.debugGraphics;
-        g.clear();
+        const debug = this.debugGraphics;
+        debug.clear();
+
         for (let body = this.physics.getBodyList(); body; body = body.getNext()) {
             const pos = body.getPosition();
             for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
@@ -122,12 +125,29 @@ export class World {
                     const s = shape as planck.PolygonShape;
                     const verts: Array<planck.Vec2> = s.m_vertices;
 
-                    g.lineStyle(1/48, 0x0000ff);
+                    debug.lineStyle(1/48, 0x0000ff);
                     let points = verts.map((v: any) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
                     points.push(points[0]);
                     //console.log(points);
-                    g.drawPolygon(points);
+                    debug.drawPolygon(points);
                 } else console.warn(type);
+            }
+        }
+
+        debug.lineStyle(1 / 48, 0xffff00);
+        for (const child of this.app.stage.children as PIXI.Sprite[]) {
+            if (child.x && child.y && child.width && child.height && child.anchor) {
+
+                const x = child.x - child.anchor.x * child.width;
+                const y = child.y - child.anchor.y * child.height;
+
+                debug.drawPolygon([
+                    new PIXI.Point(x, y),
+                    new PIXI.Point(x + child.width, y),
+                    new PIXI.Point(x + child.width, y + child.height),
+                    new PIXI.Point(x, y + child.height),
+                    new PIXI.Point(x, y),
+                ]);
             }
         }
     }
@@ -150,7 +170,10 @@ export class World {
             this.physicsAccumulator -= TIME_STEP
         }
 
-        //TODO: entityRegistry.clearDestroyedBodies()
+        for (const body of this.destroyedBodies) {
+            this.physics.destroyBody(body);
+        }
+        this.destroyedBodies = [];
     }
 
     spawn(entity: Entity) {
@@ -159,6 +182,10 @@ export class World {
 
     despawn(entity: Entity) {
         this.entityRegistry.despawn(entity);
+    }
+
+    removeBody(body: planck.Body) {
+        this.destroyedBodies.push(body);
     }
 
     sendPacket(packet: GamePacket) {
@@ -194,11 +221,11 @@ export class World {
         let dataA: any = contact.getFixtureA().getUserData();
         let dataB: any = contact.getFixtureB().getUserData();
 
-        if (dataA != null && "onTouchBegin" in dataA) {
+        if (dataA && typeof dataA.onTouchBegin === "function") {
             dataA.onTouchBegin(contact.getFixtureB(), contact);
         }
 
-        if (dataB != null && "onTouchBegin" in dataB) {
+        if (dataB && typeof dataB.onTouchBegin === "function") {
             dataB.onTouchBegin(contact.getFixtureA(), contact);
         }
     }
@@ -207,12 +234,12 @@ export class World {
         let dataA: any = contact.getFixtureA().getUserData();
         let dataB: any = contact.getFixtureB().getUserData();
 
-        if ("onTouchEnd" in dataA) {
-            dataA.onTouchBegin(contact.getFixtureB(), contact);
+        if (dataA && typeof dataA.onTouchEnd === "function") {
+            dataA.onTouchEnd(contact.getFixtureB(), contact);
         }
 
-        if ("onTouchEnd" in dataB) {
-            dataB.onTouchBegin(contact.getFixtureA(), contact);
+        if (dataB && typeof dataB.onTouchEnd === "function") {
+            dataB.onTouchEnd(contact.getFixtureA(), contact);
         }
     }
 

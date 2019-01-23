@@ -9,8 +9,7 @@ export class Text {
 
     debug?: PIXI.Graphics;
 
-
-    constructor(world: World, data: Terrain.Text, debug: boolean = false) {
+    constructor(world: World, data: Terrain.Text, debug: boolean = true) {
         this.world = world;
 
         this.data = data;
@@ -28,9 +27,17 @@ export class Text {
         }
     }
 
+    get text() {
+        return this.data.text;
+    }
+
     set text(text: string) {
         this.data.text = text;
         this.sprite.text = text;
+    }
+
+    get style(): PIXI.TextStyleOptions {
+        return this.data.style;
     }
 
     set style(style: PIXI.TextStyleOptions) {
@@ -38,9 +45,17 @@ export class Text {
         this.sprite.style = new PIXI.TextStyle(this.data.style);
     }
 
+    get x() {
+        return this.data.x;
+    }
+
     set x(x: number) {
         this.data.x = x;
         this.sync();
+    }
+
+    get y() {
+        return this.data.y;
     }
 
     set y(y: number) {
@@ -48,8 +63,12 @@ export class Text {
         this.sync();
     }
 
-    set centered(centered: boolean) {
-        this.data.centered = centered;
+    get isCentered() {
+        return this.data.isCentered
+    }
+
+    set isCentered(isCentered: boolean) {
+        this.data.isCentered = isCentered;
         this.sync();
     }
 
@@ -65,26 +84,10 @@ export class Text {
     private sync() {
         this.sprite.x = this.data.x;
         this.sprite.y = this.world.height - this.data.y - this.data.height;
-        this.sprite.anchor.x = this.data.centered ? 0.5 : 0;
+        this.sprite.anchor.x = this.data.isCentered ? 0.5 : 0;
+    }
 
-        if (this.debug) {
-            const x = this.sprite.x;
-            const y = this.sprite.y;
-
-            this.debug.clear();
-            this.debug.lineStyle(1 / 48, 0xff00ff);
-            const points = [
-                new PIXI.Point(x, y),
-                new PIXI.Point(x + this.sprite.width, y),
-                new PIXI.Point(x + this.sprite.width, y + this.sprite.height),
-                new PIXI.Point(x, y + this.sprite.height),
-                new PIXI.Point(x, y)
-            ];
-            //console.log(points);
-            this.debug.drawPolygon(points);
-
-            this.debug.beginFill(0xffff00);
-            this.debug.drawCircle(x, y, 0.1);
-        }
+    remove() {
+        this.sprite.parent.removeChild(this.sprite);
     }
 }

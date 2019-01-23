@@ -39,33 +39,23 @@ export class LobbyScene implements Scene {
                     texture: "assets/game/debug.png"
                 }
             ],
-            texts: [
-                {
-                    x: 1,
-                    y: 1,
-                    height: 1,
-                    text: "Hello world",
-                    centered: false,
-                    style: {
-                        fontFamily: "pixeled",
-                        fill: 0xff0000
-                    }
-                }
-            ]
+            texts: []
         });
     }
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
+        const step = this.world.width / (packet.players.length + 1);
+        let distance = step;
+
         for (const player of packet.players) {
-            console.log(`Player: name=${player.name} character=${player.character}`);
-            if (!player.character) {
-                player.character = "santy";
-            }
+            player.character = player.character || "santy";
 
             const entity = new LobbyPlayer(this.world, false, EntityTypes.get(player.character!)!);
-            entity.x = 2;
+            entity.x = distance;
             entity.y = 10;
             this.world.spawn(entity);
+
+            distance += step;
         }
     }
 

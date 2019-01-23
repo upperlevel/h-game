@@ -20,13 +20,12 @@ export class Text {
         this.world.app.stage.addChild(this.sprite);
 
         this.sprite.scale.x = this.sprite.scale.y = 1 / (this.data.height * 128) * this.data.height;
+        this.sync();
 
         if (debug) {
             this.debug = new PIXI.Graphics();
             this.world.app.stage.addChild(this.debug);
         }
-
-        this.sync();
     }
 
     set text(text: string) {
@@ -49,6 +48,11 @@ export class Text {
         this.sync();
     }
 
+    set centered(centered: boolean) {
+        this.data.centered = centered;
+        this.sync();
+    }
+
     get height(): number {
         return this.data.height;
     }
@@ -59,27 +63,28 @@ export class Text {
     }
 
     private sync() {
+        this.sprite.x = this.data.x;
+        this.sprite.y = this.world.height - this.data.y - this.data.height;
         this.sprite.anchor.x = this.data.centered ? 0.5 : 0;
 
-        const pos = this.sprite.position;
-        pos.x = this.data.x;
-        pos.y = this.world.height - this.data.y - this.data.height;
-
         if (this.debug) {
+            const x = this.sprite.x;
+            const y = this.sprite.y;
+
             this.debug.clear();
             this.debug.lineStyle(1 / 48, 0xff00ff);
             const points = [
-                new PIXI.Point(pos.x, pos.y),
-                new PIXI.Point(pos.x + this.sprite.width, pos.y),
-                new PIXI.Point(pos.x + this.sprite.width, pos.y + this.sprite.height),
-                new PIXI.Point(pos.x, pos.y + this.sprite.height),
-                new PIXI.Point(pos.x, pos.y)
+                new PIXI.Point(x, y),
+                new PIXI.Point(x + this.sprite.width, y),
+                new PIXI.Point(x + this.sprite.width, y + this.sprite.height),
+                new PIXI.Point(x, y + this.sprite.height),
+                new PIXI.Point(x, y)
             ];
             //console.log(points);
             this.debug.drawPolygon(points);
 
             this.debug.beginFill(0xffff00);
-            this.debug.drawCircle(pos.x, pos.y, 0.1);
+            this.debug.drawCircle(x, y, 0.1);
         }
     }
 }

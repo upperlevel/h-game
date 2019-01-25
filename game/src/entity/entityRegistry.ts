@@ -6,7 +6,7 @@ import {EntityTypes} from "./entityTypes";
 export class EntityRegistry {
     entities = new Map<number, Entity>();
 
-    private playerCount = 0;
+    private playerCount = 1;
     private localOffset = 0;
 
     private localId = 0;
@@ -123,7 +123,7 @@ export class EntityRegistry {
             return;
         }
         this.entities.delete(entity.id);
-        entity.remove();
+        entity.onDespawn();
     }
 
     onPrePhysicsStep(timedelta: number) {

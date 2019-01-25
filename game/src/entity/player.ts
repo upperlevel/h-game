@@ -169,7 +169,6 @@ export abstract class Player extends Entity {
     }
 
     static createBody(world: World) {
-        //let sprite = scene.physics.add.sprite(x, 800, "santy").setDisplaySize(Player.WIDTH, Player.HEIGHT);;
         let body = world.physics.createBody({
             type: "dynamic",
             fixedRotation: true,

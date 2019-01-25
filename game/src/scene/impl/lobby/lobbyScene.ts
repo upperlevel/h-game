@@ -12,6 +12,7 @@ import {HGame} from "../../../index";
 import {World} from "../../../world/world";
 import {LobbyPlayer} from "./lobbyPlayer";
 import {GameSceneConfig} from "../../game/gameScene";
+import {Player} from "../../../entity/player";
 
 export class LobbyScene implements Scene {
     game: HGame;
@@ -46,7 +47,7 @@ export class LobbyScene implements Scene {
     setPlayers(packet: CurrentLobbyInfoPacket) {
         // Despawns old players
         for (const player of this.players.values()) {
-            player.remove();
+            this.world.despawn(player)
         }
         this.players.clear();
 

@@ -110,8 +110,8 @@ export class LobbyPlayer extends Player {
         this.youTag.y = this.leaderTag.y + this.leaderTag.height;
     }
 
-    remove() {
-        super.remove();
+    onDespawn() {
+        super.onDespawn();
 
         this.youTag.remove();
         this.leaderTag.remove();

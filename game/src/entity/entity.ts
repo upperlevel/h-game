@@ -182,7 +182,7 @@ export abstract class Entity {
         });
     }
 
-    remove() {
+    onDespawn() {
         this.sprite.parent.removeChild(this.sprite);
         this.world.removeBody(this.body);
     }

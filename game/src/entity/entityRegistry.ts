@@ -44,7 +44,7 @@ export class EntityRegistry {
         entity.id = packet.entityId;
         entity.sprite.x = packet.x;
         entity.sprite.y = packet.y;
-        entity.sprite.scale.x = packet.isFacingLeft ? -1 : 1;
+        entity.flipX = packet.isFacingLeft;
         if (packet.meta != null) {
             entity.loadSpawnMeta(packet.meta);
         }

@@ -24,6 +24,14 @@ export abstract class Entity {
 
     private groundContactCount = 0;
 
+    get flipX(): boolean {
+        return this.sprite.scale.x < 0;
+    }
+
+    set flipX(flipped: boolean) {
+        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * (flipped ? -1 : 1);
+    }
+
     get isTouchingGround(): boolean {
         return this.groundContactCount > 0
     }

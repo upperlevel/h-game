@@ -93,6 +93,10 @@ export class World {
         if (this.debugRender) {
             this.app.stage.addChild(this.debugGraphics);
         }
+
+        if (this.socket) {
+            this.socket!.subscribe("message", this.onPacket, this, false)
+        }
     }
 
     resize() {
@@ -190,7 +194,7 @@ export class World {
 
     sendPacket(packet: GamePacket) {
         if (this.socket == null) return;
-        this.socket.send(JSON.stringify(packet));
+        this.socket.send(packet);
     }
 
     onPacket(packet: GamePacket) {

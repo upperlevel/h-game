@@ -42,14 +42,6 @@ export abstract class Player extends Entity {
         this.body.getFixtureList()!.setFriction(v);
     }
 
-    get flipX(): boolean {
-        return this.sprite.scale.x < 0;
-    }
-
-    set flipX(flipped: boolean) {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * (flipped ? -1 : 1);
-    }
-
 
     protected constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
         super(world, body, active, type);

@@ -2,12 +2,13 @@ import {Player} from "../../entity/player";
 import {Scene} from "../scene";
 import {HGame} from "../../index";
 import {World} from "../../world/world";
-import {LobbyPlayer} from "../impl/lobby/lobbyPlayer";
+import {EntityTypes} from "../../entity/entityTypes";
 
 export interface GameSceneConfig {
     playerIndex: number,
     playerCount: number,
-    player: LobbyPlayer,
+    playerName: string,
+    character: string,
 }
 
 export class GameScene implements Scene {
@@ -49,8 +50,8 @@ export class GameScene implements Scene {
         this.world.setup();
 
         // Spawn
-        let char = this.config.player.character!.create(this.world, true) as Player;
-        char.name = this.config.player.name;
+        let char = EntityTypes.get(this.config.character)!.create(this.world, true) as Player;
+        char.name = this.config.playerName;
         char.reloadName();
 
         this.world.spawn(char);

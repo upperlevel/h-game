@@ -27,10 +27,13 @@ export class GameConnector extends Connector {
                 break;
             case "ready":
                 this.handshakeDone = true;
+                console.log("Handshake done!");
 
                 this.events.emit("connect");
                 this.events.removeListener("message", this.onHandshakeAccept, this, false);
                 break;
+            default:
+                console.error("Unknown handshake packet: ", message);
         }
     }
 

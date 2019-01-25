@@ -11,8 +11,9 @@ import {EntityTypes} from "../../../entity/entityTypes";
 import {HGame} from "../../../index";
 import {World} from "../../../world/world";
 import {LobbyPlayer} from "./lobbyPlayer";
-import {GameSceneConfig} from "../../game/gameScene";
+import {GameScene, GameSceneConfig} from "../../game/gameScene";
 import {Player} from "../../../entity/player";
+import {ConnectingScene} from "../connectingScene";
 
 export class LobbyScene implements Scene {
     game: HGame;
@@ -22,6 +23,8 @@ export class LobbyScene implements Scene {
     world: World;
 
     players = new Map<string, LobbyPlayer>();
+
+    chosenCharacter: string = "santy";
 
     constructor(game: HGame) {
         this.game = game;
@@ -68,6 +71,10 @@ export class LobbyScene implements Scene {
             this.players.set(player.name, player);
             console.log(`Spawning player: ${player.name}`);
 
+            if (player.me) {
+                this.chosenCharacter = data.character;
+            }
+
             distance += step;
         }
     }
@@ -108,20 +115,14 @@ export class LobbyScene implements Scene {
             case "match_begin":
                 this.game.gameConnector = new GameConnector(packet.token);
 
-                let gameConfig: GameSceneConfig = {
+                const game = new GameScene(this.game, {
                     playerIndex: packet.playerIndex,
                     playerCount: packet.playerCount,
-                    player: this.players.get(this.game.playerName!)!
-                };
-
-                // TODO start game
-                /*
-                this.scene.start("connecting", {
-                    connector: this.game.gameConnector,
-                    nextScene: "game",
-                    nextSceneParams: gameConfig,
+                    playerName: this.game.playerName!!,
+                    character: this.chosenCharacter,
                 });
-                */
+                this.game.sceneManager.setScene(new ConnectingScene(this.game.sceneManager, this.game.gameConnector, game));
+
                 break;
         }
     }

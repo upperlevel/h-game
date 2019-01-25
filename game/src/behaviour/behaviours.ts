@@ -1,4 +1,4 @@
-import {Player} from "../entity/player";
+import {Player} from "../entity/player/player";
 import * as move from "./move";
 import * as attack from "./attack";
 import {BehaviourLayer, BehaviourManager} from "./behaviour";

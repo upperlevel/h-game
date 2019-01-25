@@ -66,8 +66,7 @@ export class Connector {
 
         // If there is no event listener for messages we queue them.
         if (this.events.listeners("message").length == 0) {
-            console.log(`[Web-socket] [${this.url}] ${raw} QUEUED`);
-            console.log(message);
+            console.log(`[Web-socket] [${this.url}] ${raw} QUEUED: `, message);
 
             this.pending.push(message);
             return;

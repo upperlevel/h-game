@@ -1,4 +1,4 @@
-import {Player} from "../../../entity/player";
+import {Player} from "../../../entity/player/player";
 import {World} from "../../../world/world";
 // @ts-ignore
 import {EntityType} from "../../../entity/entityType";

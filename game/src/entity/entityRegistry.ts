@@ -111,7 +111,7 @@ export class EntityRegistry {
             entityId: entity.id,
             x: entity.x,
             y: entity.y,
-            isFacingLeft: entity.isFacingLeft,
+            isFacingLeft: entity.flipX,
             meta: entity.createSpawnMeta(),
         };
         entity.world.sendPacket(packet);

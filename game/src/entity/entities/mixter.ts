@@ -1,5 +1,5 @@
 import {EntityTypes} from "../entities";
-import {Player} from "../player";
+import {Player} from "../player/player";
 import {Poison} from "./poison";
 
 import {World} from "../../world/world";
@@ -24,7 +24,7 @@ export class Mixter extends Player {
         if (this.active) {
             this.onFrameOnce(7, () => {
                 const poison = EntityTypes.POISON.create() as Poison;
-                poison.x = this.x + Mixter.THROW_POWER * (this.isFacingLeft ? -1 : 1);
+                poison.x = this.x + Mixter.THROW_POWER * (this.flipX ? -1 : 1);
                 poison.y = this.y + this.sprite.height * 0.75;
                 poison.thrower = this;
                 this.world.spawn(poison);

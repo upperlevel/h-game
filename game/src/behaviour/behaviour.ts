@@ -1,4 +1,4 @@
-import {Player} from "../entity/player";
+import {Player} from "../entity/player/player";
 
 export type Trigger = () => boolean
 

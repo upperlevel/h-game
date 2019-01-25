@@ -1,4 +1,4 @@
-import {Player} from "../player";
+import {Player} from "../player/player";
 import {Poison} from "./poison";
 import {EntityType} from "../entityType";
 import {EntityTypes} from "../entityTypes";
@@ -8,6 +8,7 @@ import {SpritesheetUtil} from "../../util/spritesheet";
 import {Animator} from "../../util/animator";
 
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
+import {CloseRangeAttack} from "../player/closeRangeAttack";
 
 export class SantyType extends EntityType {
     id = "santy";
@@ -39,7 +40,7 @@ export class SantyType extends EntityType {
 
         this.addAnimator(new Animator(
             "attack",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 2, 3),
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 2, 2),
             (sprite: AnimatedSprite) => {
                 sprite.animationSpeed = 0.1;
                 sprite.loop = false;
@@ -64,17 +65,20 @@ export class SantyType extends EntityType {
 export class Santy extends Player {
     static THROW_POWER = 2.0;
 
+
+    closeAttack = new CloseRangeAttack(this);
+
     constructor(world: World, active: boolean) {
         super(world, Player.createBody(world), active, EntityTypes.SANTY);
     }
 
     attack(onComplete: () => void) {
         super.attack(onComplete);
-        this.sprite.onFrameChange = (frame: number) => {
-            if (frame == 2) {
-                this.giveCloseAttackDamage();
+        this.onFrameOnce(1, () => {
+            for (const entity of this.closeAttack.getContacts()) {
+                entity.damage(this.attackPower);
             }
-        };
+        });
     }
 
     specialAttack(onComplete: () => void) {
@@ -84,7 +88,7 @@ export class Santy extends Player {
             this.sprite.onFrameChange = (frame: number) => {
                 if (frame == 7) {
                     const poison = EntityTypes.POISON.create(this.world) as Poison;
-                    poison.x = this.x + Santy.THROW_POWER * (this.isFacingLeft ? -1 : 1);
+                    poison.x = this.x + Santy.THROW_POWER * (this.flipX ? -1 : 1);
                     poison.y = this.y + this.sprite.height * 0.75;
                     poison.thrower = this;
                     this.world.spawn(poison);

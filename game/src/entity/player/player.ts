@@ -1,13 +1,13 @@
 // @ts-ignore
 import * as planck from "planck-js"
-import * as Actions from "../input/actions";
+import * as Actions from "../../input/actions";
 
-import {Entity} from "./entity";
-import {createPlayerBehaviour} from "../behaviour/behaviours";
-import {BehaviourManager} from "../behaviour/behaviour";
-import {EntityResetPacket, PlayerEntitySpawnMeta} from "../protocol";
-import {World} from "../world/world";
-import {EntityType} from "./entityType";
+import {Entity} from "../entity";
+import {createPlayerBehaviour} from "../../behaviour/behaviours";
+import {BehaviourManager} from "../../behaviour/behaviour";
+import {EntityResetPacket, PlayerEntitySpawnMeta} from "../../protocol";
+import {World} from "../../world/world";
+import {EntityType} from "../entityType";
 
 export abstract class Player extends Entity {
     static SPRITE_SIZE = 48;
@@ -24,7 +24,7 @@ export abstract class Player extends Entity {
     energyGainPerMs = 0.05 / 1000;
 
     attackPower = 10;
-    jumpForce = 20.0;
+    jumpForce = 40.0;
 
     name = "Ulisse";
 
@@ -51,6 +51,7 @@ export abstract class Player extends Entity {
         let x = 0; // (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
         let y = 2;
         this.body.setPosition(planck.Vec2(x, y));
+        this.body.getFixtureList()!.setUserData(this);
 
         let sensorW = Player.WIDTH / 2;
         let sensorH = 0.1;
@@ -103,7 +104,7 @@ export abstract class Player extends Entity {
     }
 
     jump() {
-        this.body.applyLinearImpulse(planck.Vec2(0, -this.jumpForce), this.body.getWorldCenter(), true);
+        this.body.applyLinearImpulse(planck.Vec2(0, this.jumpForce), this.body.getWorldCenter(), true);
         if (this.active) {
             this.world.sendPacket({
                 type: "player_jump",
@@ -115,18 +116,6 @@ export abstract class Player extends Entity {
     respawn() {
         super.respawn();
         this.energy = 0;
-    }
-
-    giveCloseAttackDamage() {
-        for (const entity of this.world.entityRegistry.entities.values()) {
-            // @ts-ignore
-            if (entity.damageable && this.scene.physics.world.collide(this.sprite, entity.sprite)) {
-                const distance = this.x - entity.x;
-                if (distance == 0 || distance < 0 != this.isFacingLeft) {
-                    entity.damage(this.attackPower);
-                }
-            }
-        }
     }
 
     idle() {

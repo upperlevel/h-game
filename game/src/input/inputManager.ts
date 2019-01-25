@@ -10,7 +10,6 @@ export class InputManager {
     }
 
     static onKeyDown(event: KeyboardEvent) {
-        console.log(event);
         // Avoid multiple JustPressed when the keydown is called multiple time in a long press
         if (!this.pressTime.has(event.key)) {
             this.pressTime.set(event.key, this.updateCount);
@@ -18,7 +17,6 @@ export class InputManager {
     }
 
     static onKeyUp(event: KeyboardEvent) {
-        console.log(event);
         this.pressTime.delete(event.key)
     }
 

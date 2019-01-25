@@ -33,7 +33,7 @@ export abstract class Entity {
     }
 
     get isTouchingGround(): boolean {
-        return this.groundContactCount > 0
+        return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
     }
 
     constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
@@ -104,10 +104,6 @@ export abstract class Entity {
 
     get height() {
         return this.type.height;
-    }
-
-    get isFacingLeft() {
-        return this.sprite.scale.x < -1;
     }
 
     onPrePhysics(timeDelta: number) {
@@ -193,5 +189,13 @@ export abstract class Entity {
     onDespawn() {
         this.sprite.parent.removeChild(this.sprite);
         this.world.removeBody(this.body);
+    }
+
+    onFrameOnce(frame: number, callback: () => void) {
+        this.sprite.onFrameChange = (fr) => {
+            if (fr != frame) return;
+            this.sprite.onFrameChange = () => {};
+            callback()
+        }
     }
 }

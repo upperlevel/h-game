@@ -1,4 +1,4 @@
-import {Player} from "../player";
+import {Player} from "../player/player";
 import {EntityTypes} from "../entities";
 import {Entity} from "../entity";
 

@@ -62,9 +62,10 @@ export class World {
         sprite.y = this.height - platform.y - platform.height;
 
         const body = this.physics.createBody();
-        body.createFixture(
-            planck.Box(platform.width / 2, platform.height / 2, planck.Vec2(platform.width / 2, platform.height / 2), 0)
-        );
+        body.createFixture({
+            shape: planck.Box(platform.width / 2, platform.height / 2, planck.Vec2(platform.width / 2, platform.height / 2), 0),
+            userData: "ground",
+        });
         body.setPosition(planck.Vec2(platform.x, platform.y));
 
         // TODO spawn physic body
@@ -108,11 +109,11 @@ export class World {
     update(delta: number) {
         this.doPhysicsStep(delta);
 
+        this.entityRegistry.onUpdate(delta);
+
         if (this.debugRender) {
             this.updateDebugRender();
         }
-
-        this.entityRegistry.onUpdate(delta);
     }
 
     updateDebugRender() {

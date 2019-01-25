@@ -12,7 +12,7 @@ import {HGame} from "../../../index";
 import {World} from "../../../world/world";
 import {LobbyPlayer} from "./lobbyPlayer";
 import {GameScene, GameSceneConfig} from "../../game/gameScene";
-import {Player} from "../../../entity/player";
+import {Player} from "../../../entity/player/player";
 import {ConnectingScene} from "../connectingScene";
 
 export class LobbyScene implements Scene {

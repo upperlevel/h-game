@@ -1,4 +1,4 @@
-import {Player} from "../../entity/player";
+import {Player} from "../../entity/player/player";
 import {Scene} from "../scene";
 import {HGame} from "../../index";
 import {World} from "../../world/world";

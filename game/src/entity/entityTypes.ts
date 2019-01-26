@@ -1,5 +1,8 @@
 import {EntityType} from "./entityType";
 import {SantyType} from "./entities/santy";
+import {PoisonType} from "./entities/poison";
+// @ts-ignore
+import * as planck from "planck-js";
 
 export namespace EntityTypes {
     const entities = new Map<string, EntityType>();
@@ -27,6 +30,8 @@ export namespace EntityTypes {
     }
 
     export const SANTY = new SantyType();
+    export const POISON = new PoisonType();
 
     register(SANTY);
+    register(POISON);
 }

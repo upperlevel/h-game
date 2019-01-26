@@ -1,9 +1,48 @@
 import {Player} from "../player/player";
-import {EntityTypes} from "../entities";
 import {Entity} from "../entity";
 
 import {ThrowableEntitySpawnMeta} from "../../protocol";
 import {World} from "../../world/world";
+import {EntityType} from "../entityType";
+import {Animator} from "../../util/animator";
+import {SpritesheetUtil} from "../../util/spritesheet";
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
+import {EntityTypes} from "../entityTypes";
+
+import * as planck from "planck-js";
+
+export class PoisonType extends EntityType {
+    id = "poison";
+
+    static frameWidth = 37;
+    static frameHeight = 5;
+
+    static scale = 2 / 48;
+
+    width = PoisonType.frameWidth * PoisonType.scale;
+    height = PoisonType.frameHeight * PoisonType.scale;
+
+    constructor() {
+        super();
+
+        const texture = "assets/game/poison.png";
+
+        this.addAsset(texture);
+
+        this.addAnimator(new Animator(
+            "boil",
+            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], PoisonType.frameWidth, PoisonType.frameHeight, 0, 4),
+            (sprite: AnimatedSprite) => {
+                sprite.animationSpeed = 0.1;
+                sprite.loop = true;
+            }
+        ));
+    }
+
+    create(world: World, active: boolean): Entity {
+        return new Poison(world, active);
+    }
+}
 
 export class Poison extends Entity {
     _thrower?: Player;
@@ -14,7 +53,7 @@ export class Poison extends Entity {
     attackTimeout = 500;
 
     constructor(world: World, active: boolean) {
-        super(world, Poison.createBody(world), active, EntityTypes.POISON);
+        super(world, Poison.createBody(world), active, EntityTypes.POISON, "boil");
         setTimeout(() => this.world.despawn(this), 5000);
         this.setupPlayerSensor();
     }
@@ -65,11 +104,12 @@ export class Poison extends Entity {
             type: "dynamic"
         });
 
-        const w = 37;
+        const w = EntityTypes.POISON.width;
+        const h = EntityTypes.POISON.height;
 
         let shape = planck.Box(
             w / 2, h / 2,
-            planck.Vec2(-w / 2, 0),
+            planck.Vec2(0, h * 3 / 2),
             0
         );
 

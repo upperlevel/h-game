@@ -21,7 +21,7 @@ export abstract class Player extends Entity {
     maxEnergy = 1.0;
     energy = 0.0;
     specialAttackEnergy = 0.8;
-    energyGainPerMs = 0.05 / 1000;
+    energyGainPerSec = 0.05;
 
     attackPower = 10;
     jumpForce = 40.0;
@@ -78,7 +78,7 @@ export abstract class Player extends Entity {
         if (this.active && Actions.JUMP.pressed && this.isTouchingGround) {
             this.jump();
         }
-        this.energy = Math.min(this.energy + this.energyGainPerMs * deltatime, this.maxEnergy);
+        this.energy = Math.min(this.energy + this.energyGainPerSec * deltatime, this.maxEnergy);
 
         //this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
     }

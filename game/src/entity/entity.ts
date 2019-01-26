@@ -36,19 +36,19 @@ export abstract class Entity {
         return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
     }
 
-    constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
+    constructor(world: World, body: planck.Body, active: boolean, type: EntityType, startAnimName: str = "idle") {
         this.world = world;
         this.body = body;
         this.active = active;
         this.type = type;
 
-        this.sprite = new AnimatedSprite(type.getAnimator("idle")!.frames!);
+        this.sprite = new AnimatedSprite(type.getAnimator(startAnimName)!.frames!);
         this.sprite.anchor.x = 0.5;
         this.sprite.anchor.y = 1;
 
         // A sprite size is supposed to be always 48x48, make that more flexible
-        this.sprite.scale.x = type.width / 48;
-        this.sprite.scale.y = type.height / 48;
+        this.sprite.scale.x = type.width / this.sprite.width;
+        this.sprite.scale.y = type.height / this.sprite.height;
 
         this.syncPosition();
     }

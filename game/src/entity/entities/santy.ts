@@ -65,7 +65,6 @@ export class SantyType extends EntityType {
 export class Santy extends Player {
     static THROW_POWER = 2.0;
 
-
     closeAttack = new CloseRangeAttack(this);
 
     constructor(world: World, active: boolean) {
@@ -85,15 +84,13 @@ export class Santy extends Player {
         super.specialAttack(onComplete);
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
-            this.sprite.onFrameChange = (frame: number) => {
-                if (frame == 7) {
-                    const poison = EntityTypes.POISON.create(this.world) as Poison;
-                    poison.x = this.x + Santy.THROW_POWER * (this.flipX ? -1 : 1);
-                    poison.y = this.y + this.sprite.height * 0.75;
-                    poison.thrower = this;
-                    this.world.spawn(poison);
-                }
-            };
+            this.onFrameOnce(6, () => {
+                const poison = EntityTypes.POISON.create(this.world) as Poison;
+                poison.x = this.x + Santy.THROW_POWER * (this.flipX ? -1 : 1);
+                poison.y = this.y + this.sprite.height * 0.75;
+                poison.thrower = this;
+                this.world.spawn(poison);
+            });
         }
     }
 }

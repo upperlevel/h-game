@@ -26,6 +26,14 @@ export namespace Terrain {
         config: any;
     }
 
+    export interface Decoration {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        texture: string;
+    }
+
     export interface Terrain {
         id: string;
 
@@ -37,5 +45,6 @@ export namespace Terrain {
         platforms: Platform[];
         texts: Text[];
         emitters: Emitter[];
+        decorations: Decoration[];
     }
 }

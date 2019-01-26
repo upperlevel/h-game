@@ -57,6 +57,7 @@ export class HGame {
             .add("assets/game/grass.png")
             .add("assets/game/dirt.png")
             .add("assets/game/debug.png")
+            .add("assets/game/tree.png")
             .load(() => {
                 EntityTypes.onLoad();
 

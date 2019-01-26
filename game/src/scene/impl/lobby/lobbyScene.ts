@@ -36,15 +36,40 @@ export class LobbyScene implements Scene {
             width: 13,
             height: 7,
             spawnPoints: [],
-            platforms: [{
-                x: 0,
-                y: 0,
-                width: 13,
-                height: 2,
-                texture: "assets/game/debug.png"
-            }],
+            platforms: [
+                {
+                    x: 0,
+                    y: 0,
+                    width: 13,
+                    height: 1,
+                    texture: "assets/game/dirt.png"
+                },
+                {
+                    x: 0,
+                    y: 1,
+                    width: 13,
+                    height: 1,
+                    texture: "assets/game/grass.png"
+                }
+            ],
             texts: [],
-            emitters: []
+            emitters: [],
+            decorations: [
+                {
+                    x: 0,
+                    y: 2,
+                    width: 3,
+                    height: 3,
+                    texture: "assets/game/tree.png"
+                },
+                {
+                    x: 6,
+                    y: 2,
+                    width: 3,
+                    height: 3,
+                    texture: "assets/game/tree.png"
+                }
+            ]
         });
     }
 

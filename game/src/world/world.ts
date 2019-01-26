@@ -28,7 +28,7 @@ export class World {
 
     socket?: Connector;
 
-    debugRender = true;
+    debugRender = false;
     debugGraphics = new PIXI.Graphics();
 
     emitters: Emitter[] = [];
@@ -83,6 +83,21 @@ export class World {
         return emitter;
     }
 
+    createDecoration(data: Terrain.Decoration) {
+        const texture = PIXI.loader.resources[data.texture].texture;
+
+        const decoration = new PIXI.Sprite(texture);
+        this.app.stage.addChild(decoration);
+
+        decoration.scale.x = data.width / texture.width;
+        decoration.scale.y = data.height / texture.height;
+
+        decoration.x = data.x;
+        decoration.y = this.height - data.y - data.height;
+
+        return decoration;
+    }
+
     setup() {
         this.app.stage.removeChildren();
 
@@ -93,16 +108,28 @@ export class World {
 
         this.resize();
 
-        for (const platform of this.terrain.platforms) {
-            this.createPlatform(platform)
+        if (this.terrain.platforms) {
+            for (const platform of this.terrain.platforms) {
+                this.createPlatform(platform)
+            }
         }
 
-        for (const text of this.terrain.texts) {
-            this.createText(text);
+        if (this.terrain.texts) {
+            for (const text of this.terrain.texts) {
+                this.createText(text);
+            }
         }
 
-        for (const emitter of this.terrain.emitters) {
-            this.createEmitter(emitter);
+        if (this.terrain.emitters) {
+            for (const emitter of this.terrain.emitters) {
+                this.createEmitter(emitter);
+            }
+        }
+
+        if (this.terrain.decorations) {
+            for (const decoration of this.terrain.decorations) {
+                this.createDecoration(decoration);
+            }
         }
 
         if (this.debugRender) {

@@ -43,7 +43,8 @@ export class LobbyScene implements Scene {
                 height: 2,
                 texture: "assets/game/debug.png"
             }],
-            texts: []
+            texts: [],
+            emitters: []
         });
     }
 

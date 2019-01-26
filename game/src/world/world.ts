@@ -9,6 +9,8 @@ import {Terrain} from "./terrain";
 import {Text} from "./text";
 
 import {Connector} from "../connector/connector";
+import {Emitter} from "./emitter";
+import Texture = PIXI.Texture;
 
 export class World {
     static TIME_STEP = 1 / 60;
@@ -28,6 +30,8 @@ export class World {
 
     debugRender = true;
     debugGraphics = new PIXI.Graphics();
+
+    emitters: Emitter[] = [];
 
     private destroyedBodies: Body[] = [];
 
@@ -73,6 +77,12 @@ export class World {
         return platform;
     }
 
+    createEmitter(data: Terrain.Emitter) {
+        const emitter = new Emitter(this, data);
+        this.emitters.push(emitter);
+        return emitter;
+    }
+
     setup() {
         this.app.stage.removeChildren();
 
@@ -89,6 +99,10 @@ export class World {
 
         for (const text of this.terrain.texts) {
             this.createText(text);
+        }
+
+        for (const emitter of this.terrain.emitters) {
+            this.createEmitter(emitter);
         }
 
         if (this.debugRender) {
@@ -114,6 +128,12 @@ export class World {
         if (this.debugRender) {
             this.updateDebugRender();
         }
+
+        this.entityRegistry.onUpdate(delta);
+
+        for (const emitter of this.emitters) {
+            emitter.update(delta);
+        }
     }
 
     updateDebugRender() {
@@ -130,7 +150,7 @@ export class World {
                     const s = shape as planck.PolygonShape;
                     const verts: Array<planck.Vec2> = s.m_vertices;
 
-                    debug.lineStyle(1/48, 0x0000ff);
+                    debug.lineStyle(1 / 48, 0x0000ff);
                     let points = verts.map((v: any) => new PIXI.Point(v.x + pos.x, this.height - (v.y + pos.y)));
                     points.push(points[0]);
                     //console.log(points);

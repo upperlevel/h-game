@@ -18,6 +18,14 @@ export namespace Terrain {
         style: PIXI.TextStyleOptions;
     }
 
+    export interface Emitter {
+        x: number;
+        y: number;
+        scale: number;
+        textures: string[];
+        config: any;
+    }
+
     export interface Terrain {
         id: string;
 
@@ -28,5 +36,6 @@ export namespace Terrain {
 
         platforms: Platform[];
         texts: Text[];
+        emitters: Emitter[];
     }
 }

@@ -60,8 +60,8 @@ export class LobbyWorld extends World {
 
         const hud = player.huds[0] as LobbyPlayerHud;
         hud.ready = info.ready;
-        hud.me = player.name === this.game.playerName;
-        // TODO hud.leader
+        hud.me = info.you;
+        hud.leader = info.admin;
     }
 
     onInfo(packet: CurrentLobbyInfoPacket) {
@@ -72,8 +72,6 @@ export class LobbyWorld extends World {
 
         for (let i = 0; i < packet.players.length; i++) {
             const info = packet.players[i];
-            info.character = info.character || "santy"; // TODO no undefined, to fix server-side
-
             let player = this.players[i];
 
             if (!player) {
@@ -81,7 +79,7 @@ export class LobbyWorld extends World {
                     this,
                     Player.createBody(this),
                     false,
-                    EntityTypes.get(info.character!)!,
+                    EntityTypes.get(info.character || "santy")!,
                     {gameHud: false}
                 );
                 player.huds.push(new LobbyPlayerHud(player));

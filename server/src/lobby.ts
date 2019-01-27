@@ -121,29 +121,25 @@ export class Lobby {
 
     // TODO: onJoin, refreshReady, startGame
 
-    createInfoPacket(): CurrentLobbyInfoPacket {
-        let players: LobbyPlayerInfo[] = [];
-
-        this.players.forEach((player) => {
+    sendInfo(connection: Player) {
+        const players: LobbyPlayerInfo[] = [];
+        for (const player of this.players) {
             players.push({
-                "name": player.name,
-                "character": player.character,
-                "ready": player.ready,
+                name: player.name,
+                character: player.character,
+                ready: player.ready,
+                admin: this.admin.name === player.name,
+                you: connection.name === player.name,
             });
-        });
-
-        return {
-            "type": "lobby_info",
-            "players": players,
-            "admin": this.admin.name,
         }
+        connection.sendPacket({
+            type: "lobby_info",
+            players: players,
+        } as CurrentLobbyInfoPacket);
     }
 
     broadcastLobbyInfo() {
-        const packet = this.createInfoPacket();
-        this.players.forEach((player) => {
-            player.sendPacket(packet)
-        });
+        this.players.forEach(connection => this.sendInfo(connection));
     }
 }
 

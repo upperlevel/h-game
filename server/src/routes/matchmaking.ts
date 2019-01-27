@@ -62,7 +62,7 @@ class ConnectionHandler {
                     break;
                 }
                 this.sendResult();
-                this.sendPacket(this.player.lobby.createInfoPacket());
+                this.player.lobby.sendInfo(this.player);
                 break;
             }
             case "invite": {

@@ -36,20 +36,28 @@ export interface MatchBeginPacket {
     playerIndex: number;
 }
 
+/**
+ * The information about a lobby player.
+ * - name: his name
+ * - character: the choose character (that can be undefined if default)
+ * - ready: is ready?
+ * - admin: is lobby party admin?
+ * - you: is the player the one on which the packet is sent?
+ */
 export interface LobbyPlayerInfo {
     name: string;
     character?: string;
     ready: boolean;
+    admin: boolean;
+    you: boolean;
 }
 
 /**
- * Sends all the info about the current lobby
- * The admin is encoded as the index of the previous list
+ * Sends all the info about the current lobby.
  */
 export interface CurrentLobbyInfoPacket {
     type: "lobby_info";
     players: Array<LobbyPlayerInfo>;
-    admin: string;
 }
 
 export interface OperationResultPacket {

@@ -157,6 +157,15 @@ export class Player extends Entity {
         this.energy = packet.energy;
     }
 
+    onDespawn() {
+        super.onDespawn();
+
+        for (const hud of this.huds) {
+            hud.onDespawn(this);
+        }
+        this.huds = [];
+    }
+
     static createBody(world: World) {
         let body = world.physics.createBody({
             type: "dynamic",

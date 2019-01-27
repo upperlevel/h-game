@@ -1,6 +1,6 @@
-import {OverlayScene} from "../overlayScene";
+import {OverlayScene} from "./overlayScene";
 
-import {HGame} from "../../index";
+import {HGame} from "../index";
 import {LobbyScene} from "./lobby/lobbyScene";
 
 export class LoginScene extends OverlayScene {

@@ -1,4 +1,4 @@
-import {OverlayScene} from "../../overlayScene";
+import {OverlayScene} from "../overlayScene";
 import {LobbyScene} from "./lobbyScene";
 
 export class InviteOverlay extends OverlayScene {

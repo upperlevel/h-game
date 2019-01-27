@@ -1,4 +1,4 @@
-import {OverlayScene} from "../../overlayScene";
+import {OverlayScene} from "../overlayScene";
 import {InviteOverlay} from "./inviteOverlay";
 
 import {RequestsOverlay} from "./requestsOverlay";

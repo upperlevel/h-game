@@ -1,6 +1,6 @@
-import {OverlayScene} from "../overlayScene";
+import {OverlayScene} from "./overlayScene";
 
-import {SceneManager} from "../sceneManager";
+import {SceneManager} from "./sceneManager";
 import {ConnectingScene} from "./connectingScene";
 
 export class DisconnectedScene extends OverlayScene {

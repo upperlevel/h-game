@@ -1,6 +1,6 @@
-import {Player} from "../../../entity/player/player";
-import {Text} from "../../../world/text";
-import {PlayerHud} from "../../../entity/player/playerHud";
+import {Player} from "../../entity/player/player";
+import {Text} from "../../world/text";
+import {PlayerHud} from "../../entity/player/playerHud";
 
 
 export class LobbyPlayerHud implements PlayerHud {

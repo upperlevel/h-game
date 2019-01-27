@@ -1,8 +1,8 @@
-import {OverlayScene} from "../overlayScene";
+import {OverlayScene} from "./overlayScene";
 
-import {Connector} from "../../connector/connector";
-import {SceneManager} from "../sceneManager";
-import {Scene} from "../scene"
+import {Connector} from "../connector/connector";
+import {SceneManager} from "./sceneManager";
+import {Scene} from "./scene"
 
 import {DisconnectedScene} from "./disconnectedScene";
 

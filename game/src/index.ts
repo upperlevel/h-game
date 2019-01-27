@@ -4,8 +4,8 @@ import {SceneManager} from "./scene/sceneManager";
 
 import {MatchmakingConnector} from "./connector/matchmakingConnector";
 import {GameConnector} from "./connector/gameConnector";
-import {ConnectingScene} from "./scene/impl/connectingScene";
-import {LoginScene} from "./scene/impl/loginScene";
+import {ConnectingScene} from "./scene/connectingScene";
+import {LoginScene} from "./scene/loginScene";
 import {EntityTypes} from "./entity/entityTypes";
 import {GameScene} from "./scene/game/gameScene";
 import {EntityType} from "./entity/entityType";

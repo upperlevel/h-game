@@ -1,17 +1,17 @@
-import {Scene} from "../../scene";
+import {Scene} from "../scene";
 
 import {LobbyOverlay} from "./lobbyOverlay";
 
-import {CurrentLobbyInfoPacket} from "@common/matchmaking/protocol";
-import {GameConnector} from "../../../connector/gameConnector";
+import {CurrentLobbyInfoPacket} from "../../../../common/src/matchmaking/protocol";
+import {GameConnector} from "../../connector/gameConnector";
 
-import * as proto from "../../../../../common/src/matchmaking/protocol"
+import * as proto from "../../../../common/src/matchmaking/protocol"
 
-import {EntityTypes} from "../../../entity/entityTypes";
-import {HGame} from "../../../index";
-import {World} from "../../../world/world";
-import {GameScene} from "../../game/gameScene";
-import {Player} from "../../../entity/player/player";
+import {EntityTypes} from "../../entity/entityTypes";
+import {HGame} from "../../index";
+import {World} from "../../world/world";
+import {GameScene} from "../game/gameScene";
+import {Player} from "../../entity/player/player";
 import {ConnectingScene} from "../connectingScene";
 import {LobbyPlayerHud} from "./lobbyPlayerHud";
 

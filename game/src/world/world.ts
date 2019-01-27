@@ -51,6 +51,10 @@ export class World {
         return this.terrain.height;
     }
 
+    get entities() {
+        return this.entityRegistry.entities;
+    }
+
     createText(data: Terrain.Text) {
         return new Text(this, data);
     }

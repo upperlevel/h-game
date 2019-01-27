@@ -37,7 +37,7 @@ export abstract class Entity {
         return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
     }
 
-    constructor(world: World, body: planck.Body, active: boolean, type: EntityType, startAnimName: str = "idle") {
+    constructor(world: World, body: planck.Body, active: boolean, type: EntityType, startAnimName: string = "idle") {
         this.world = world;
         this.body = body;
         this.active = active;
@@ -58,8 +58,8 @@ export abstract class Entity {
     private syncPosition() {
         const position = this.body.getPosition();
 
-        this.sprite.x = position.x;// - this.type.width/2;
-        this.sprite.y = this.world.height - position.y;// - this.type.height;
+        this.sprite.x = position.x;
+        this.sprite.y = this.world.height - position.y
     }
 
     getPosition(): planck.Vec2 {
@@ -105,6 +105,10 @@ export abstract class Entity {
 
     get height() {
         return this.type.height;
+    }
+
+    setType(type: EntityType) {
+        // TODO
     }
 
     onPrePhysics(timeDelta: number) {

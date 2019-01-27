@@ -40,8 +40,6 @@ export namespace Terrain {
         width: number;
         height: number;
 
-        spawnPoints: Position[];
-
         platforms?: Platform[];
         texts?: Text[];
         emitters?: Emitter[];

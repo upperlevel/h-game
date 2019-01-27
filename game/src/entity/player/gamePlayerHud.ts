@@ -99,10 +99,6 @@ export class GamePlayerHud implements PlayerHud {
         );
     }
 
-    setName(name: string) {
-        this.textHud.text = name;
-    }
-
     private translateToTarget(target: Entity) {
         let x = target.x;
         let y = target.sprite.y - target.sprite.height - this.height - GamePlayerHud.hudPlayerDistance;

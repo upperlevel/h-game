@@ -42,8 +42,8 @@ export class EntityRegistry {
 
         let entity = type.create(this.world, false);
         entity.id = packet.entityId;
-        entity.sprite.x = packet.x;
-        entity.sprite.y = packet.y;
+        entity.x = packet.x;
+        entity.y = packet.y;
         entity.flipX = packet.isFacingLeft;
         if (packet.meta != null) {
             entity.loadSpawnMeta(packet.meta);

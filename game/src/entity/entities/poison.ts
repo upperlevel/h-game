@@ -60,18 +60,12 @@ export class Poison extends Entity {
     }
 
     private setupPlayerSensor() {
-        this.body.getFixtureList()!.getNext()!.setUserData({
-            onContactBegin: (f: planck.Fixture) => {
-                let data = f.getUserData();
-                if (data instanceof Player) {
-                    this.onPlayerContactBegin(f.getUserData() as Player);
-                }
+        this.body.getFixtureList()!.setUserData({
+            onTouchBegin: (f: planck.Fixture) => {
+                this.onPlayerContactBegin(f.getUserData() as Player);
             },
-            onContactEnd: (f: planck.Fixture) => {
-                let data = f.getUserData();
-                if (data instanceof Player) {
-                    this.onPlayerContactEnd(data);
-                }
+            onTouchEnd: (f: planck.Fixture) => {
+                this.onPlayerContactEnd(f.getUserData());
             },
         })
     }
@@ -100,7 +94,6 @@ export class Poison extends Entity {
     }
 
     static createBody(world: World): planck.Body {
-        //let sprite = scene.physics.add.sprite(0, 0, "poison").setScale(4);
         let body = world.physics.createBody({
             type: "dynamic"
         });
@@ -151,7 +144,8 @@ export class Poison extends Entity {
         this.contacts.slice(this.contacts.indexOf(entity), 1);
     }
 
-    update(delta: number) {
+    onUpdate(delta: number) {
+        super.onUpdate(delta);
         for (const entity of this.contacts) {
             if (!this.canAttack(entity)) continue;
 

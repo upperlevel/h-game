@@ -55,8 +55,7 @@ export class Connector {
     }
 
     send(message: any) {
-        console.log(`[Web-socket] [${this.url}] SENT`);
-        console.log(message);
+        console.log(`[Web-socket] [${this.url}] SENT`, message);
 
         this.connection!.send(this.serialize(message));
     }

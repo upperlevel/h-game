@@ -4,6 +4,7 @@ import {Position} from "./util";
 import {EntityType} from "./entityType";
 import {World} from "../world/world";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
+import {Popup} from "../world/popup";
 
 export abstract class Entity {
     id = -1;
@@ -128,7 +129,17 @@ export abstract class Entity {
         }
 
         this.life -= amount;
-        //TODO: this.scene.popup(new Popup(this.scene, this.x, this.y, amount.toFixed(2), "red"));
+        this.world.createPopup({
+            x: this.x,
+            y: this.y + this.height / 2,
+            text: amount.toFixed(2),
+            isCentered: true,
+            height: 0.25,
+            style: {
+                fontFamily: "pixeled",
+                fill: 0xff0000
+            }
+        });
 
         if (this.life <= 0) {
             this.respawn();

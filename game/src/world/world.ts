@@ -11,6 +11,7 @@ import {Text} from "./text";
 import {Connector} from "../connector/connector";
 import {Emitter} from "./emitter";
 import Texture = PIXI.Texture;
+import {Popup} from "./popup";
 
 export class World {
     static TIME_STEP = 1 / 60;
@@ -32,6 +33,7 @@ export class World {
     debugGraphics = new PIXI.Graphics();
 
     emitters: Emitter[] = [];
+    popups: Popup[] = [];
 
     private destroyedBodies: Body[] = [];
 
@@ -51,6 +53,12 @@ export class World {
 
     createText(data: Terrain.Text) {
         return new Text(this, data);
+    }
+
+    createPopup(data: Terrain.Text) {
+        const popup = new Popup(this, data);
+        this.popups.push(popup);
+        return popup;
     }
 
     createPlatform(platform: Terrain.Platform) {
@@ -160,6 +168,12 @@ export class World {
 
         for (const emitter of this.emitters) {
             emitter.update(delta);
+        }
+
+        for (let i = this.popups.length - 1; i >= 0; i--) {
+            if (this.popups[i].update(delta)) {
+                this.popups.splice(i, 1);
+            }
         }
     }
 

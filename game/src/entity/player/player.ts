@@ -8,6 +8,7 @@ import {BehaviourManager} from "../../behaviour/behaviour";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../../protocol";
 import {World} from "../../world/world";
 import {EntityType} from "../entityType";
+import {HudRenderer} from "./hudRenderer";
 
 export abstract class Player extends Entity {
     static SPRITE_SIZE = 48;
@@ -32,7 +33,7 @@ export abstract class Player extends Entity {
     damageable = true;
     private behaviour: BehaviourManager;
 
-    //private hudRenderer: HudRenderer;
+    private hudRenderer: HudRenderer;
 
     get friction(): number {
         return this.body.getFixtureList()!.getFriction()
@@ -46,7 +47,7 @@ export abstract class Player extends Entity {
     protected constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
         super(world, body, active, type);
         this.behaviour = createPlayerBehaviour(this);
-        //this.hudRenderer = new HudRenderer(scene, this.name, this.active ? "lime" : "red");
+        this.hudRenderer = new HudRenderer(world, this.name, this.active ? "lime" : "red");
 
         let x = 0; // (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
         let y = 2;
@@ -80,11 +81,11 @@ export abstract class Player extends Entity {
         }
         this.energy = Math.min(this.energy + this.energyGainPerSec * deltatime, this.maxEnergy);
 
-        //this.hudRenderer.update(this.body, this.life / this.maxLife, this.energy / this.maxEnergy);
+        this.hudRenderer.update(this, this.life / this.maxLife, this.energy / this.maxEnergy);
     }
 
     reloadName() {
-        //this.hudRenderer.setName(this.name);
+        this.hudRenderer.setName(this.name);
     }
 
     createSpawnMeta(): PlayerEntitySpawnMeta {

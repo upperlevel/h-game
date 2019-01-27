@@ -42,9 +42,9 @@ export namespace Terrain {
 
         spawnPoints: Position[];
 
-        platforms: Platform[];
-        texts: Text[];
-        emitters: Emitter[];
-        decorations: Decoration[];
+        platforms?: Platform[];
+        texts?: Text[];
+        emitters?: Emitter[];
+        decorations?: Decoration[];
     }
 }

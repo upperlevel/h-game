@@ -1,4 +1,4 @@
-import {Player} from "../player/player";
+import {Player, PlayerConfig} from "../player/player";
 import {Poison} from "./poison";
 import {EntityType} from "../entityType";
 import {EntityTypes} from "../entityTypes";
@@ -57,8 +57,8 @@ export class SantyType extends EntityType {
         ));
     }
 
-    create(world: World, active: boolean) {
-        return new Santy(world, active);
+    create(world: World, active?: boolean, config?: PlayerConfig) {
+        return new Santy(world, active || false, config || {});
     }
 }
 
@@ -67,8 +67,8 @@ export class Santy extends Player {
 
     closeAttack = new CloseRangeAttack(this);
 
-    constructor(world: World, active: boolean) {
-        super(world, Player.createBody(world), active, EntityTypes.SANTY);
+    constructor(world: World, active: boolean, config: PlayerConfig) {
+        super(world, Player.createBody(world), active, EntityTypes.SANTY, config);
     }
 
     attack(onComplete: () => void) {

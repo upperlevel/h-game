@@ -9,6 +9,7 @@ import {SpritesheetUtil} from "../../util/spritesheet";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {EntityTypes} from "../entityTypes";
 
+// @ts-ignore
 import * as planck from "planck-js";
 
 export class PoisonType extends EntityType {
@@ -39,8 +40,8 @@ export class PoisonType extends EntityType {
         ));
     }
 
-    create(world: World, active: boolean): Entity {
-        return new Poison(world, active);
+    create(world: World, active?: boolean): Entity {
+        return new Poison(world, active || false);
     }
 }
 

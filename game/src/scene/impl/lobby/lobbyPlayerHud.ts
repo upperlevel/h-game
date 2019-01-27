@@ -1,11 +1,9 @@
 import {Player} from "../../../entity/player/player";
-import {World} from "../../../world/world";
-// @ts-ignore
-import {EntityType} from "../../../entity/entityType";
 import {Text} from "../../../world/text";
+import {PlayerHud} from "../../../entity/player/playerHud";
 
 
-export class LobbyPlayer extends Player {
+export class LobbyPlayerHud implements PlayerHud {
     private _ready = false;
     private _me = false;
     private _leader = false;
@@ -15,8 +13,8 @@ export class LobbyPlayer extends Player {
     nameTag: Text;
     readyTag: Text;
 
-    constructor(world: World, active: boolean, type: EntityType) {
-        super(world, Player.createBody(world), active, type);
+    constructor(player: Player) {
+        const world = player.world;
 
         this.youTag = world.createText({
             text: "",
@@ -93,26 +91,23 @@ export class LobbyPlayer extends Player {
         this.leaderTag.text = leader ? "(Leader)" : "";
     }
 
-    onUpdate(delta: number) {
-        super.onUpdate(delta);
+    update(player: Player) {
 
-        this.readyTag.x = this.x;
-        this.readyTag.y = this.y + this.height;
+        this.readyTag.x = player.x;
+        this.readyTag.y = player.y + player.height;
 
-        this.nameTag.text = this.name; // TODO change text only when name changes
-        this.nameTag.x = this.x;
+        this.nameTag.text = player.name; // TODO change text only when name changes
+        this.nameTag.x = player.x;
         this.nameTag.y = this.readyTag.y + this.readyTag.height;
 
-        this.leaderTag.x = this.x;
+        this.leaderTag.x = player.x;
         this.leaderTag.y = this.nameTag.y + this.nameTag.height;
 
-        this.youTag.x = this.x;
+        this.youTag.x = player.x;
         this.youTag.y = this.leaderTag.y + this.leaderTag.height;
     }
 
     onDespawn() {
-        super.onDespawn();
-
         this.youTag.remove();
         this.leaderTag.remove();
         this.nameTag.remove();

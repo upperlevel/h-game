@@ -52,7 +52,6 @@ export class GameScene implements Scene {
         // Spawn
         let char = EntityTypes.get(this.config.character)!.create(this.world, true) as Player;
         char.name = this.config.playerName;
-        char.reloadName();
 
         this.world.spawn(char);
     }

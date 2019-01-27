@@ -30,5 +30,5 @@ export abstract class EntityType {
         }
     }
 
-    abstract create(world: World, active: boolean): Entity;
+    abstract create(world: World, active?: boolean, config?: any): Entity;
 }

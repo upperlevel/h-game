@@ -10,10 +10,10 @@ import * as proto from "../../../../../common/src/matchmaking/protocol"
 import {EntityTypes} from "../../../entity/entityTypes";
 import {HGame} from "../../../index";
 import {World} from "../../../world/world";
-import {LobbyPlayer} from "./lobbyPlayer";
-import {GameScene, GameSceneConfig} from "../../game/gameScene";
+import {GameScene} from "../../game/gameScene";
 import {Player} from "../../../entity/player/player";
 import {ConnectingScene} from "../connectingScene";
+import {LobbyPlayerHud} from "./lobbyPlayerHud";
 
 export class LobbyScene implements Scene {
     game: HGame;
@@ -22,7 +22,7 @@ export class LobbyScene implements Scene {
 
     world: World;
 
-    players = new Map<string, LobbyPlayer>();
+    players = new Map<string, [Player, LobbyPlayerHud]>();
 
     chosenCharacter: string = "santy";
 
@@ -75,7 +75,7 @@ export class LobbyScene implements Scene {
 
     setPlayers(packet: CurrentLobbyInfoPacket) {
         // Despawns old players
-        for (const player of this.players.values()) {
+        for (const [player, hud] of this.players.values()) {
             this.world.despawn(player)
         }
         this.players.clear();
@@ -87,17 +87,19 @@ export class LobbyScene implements Scene {
         for (const data of packet.players) {
             data.character = data.character || "santy";
 
-            const player = new LobbyPlayer(this.world, false, EntityTypes.get(data.character!)!);
+            const player = new Player(this.world, Player.createBody(this.world), false, EntityTypes.get(data.character!)!, {gameHud: false});
+            const hud = new LobbyPlayerHud(player);
+            player.huds.push(hud);
             player.name = data.name;
             player.x = distance;
             player.y = 10;
-            player.me = data.name === this.game.playerName;
-            player.leader = data.name === packet.admin;
+            hud.me = data.name === this.game.playerName;
+            hud.leader = data.name === packet.admin;
             this.world.spawn(player);
-            this.players.set(player.name, player);
+            this.players.set(player.name, [player, hud]);
             console.log(`Spawning player: ${player.name}`);
 
-            if (player.me) {
+            if (hud.me) {
                 this.chosenCharacter = data.character;
             }
 

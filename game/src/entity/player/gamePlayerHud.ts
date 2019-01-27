@@ -1,27 +1,26 @@
 // @ts-ignore
-import * as planck from "planck-js";
-
+import {Entity} from "../entity";
+import {Player} from "./player";
 import Graphics = PIXI.Graphics;
 import Sprite = PIXI.Sprite;
 import Text = PIXI.Text;
 import Texture = PIXI.Texture;
-import {World} from "../../world/world";
-import {Entity} from "../entity";
 import Point = PIXI.Point;
 import TextStyle = PIXI.TextStyle;
+import {PlayerHud} from "./playerHud";
 
-export class HudRenderer {
+export class GamePlayerHud implements PlayerHud {
     static scale = 1 / 48;
     static barContainerMargin = 2;
 
     static barWidthPixels = 100;
     static barHeightPixels = 10;
 
-    static barContainerWidth = HudRenderer.barWidthPixels + 2 * HudRenderer.barContainerMargin;
-    static barContainerHeight = HudRenderer.barHeightPixels + 2 * HudRenderer.barContainerMargin;
+    static barContainerWidth = GamePlayerHud.barWidthPixels + 2 * GamePlayerHud.barContainerMargin;
+    static barContainerHeight = GamePlayerHud.barHeightPixels + 2 * GamePlayerHud.barContainerMargin;
 
-    static componentPadding = 2 * HudRenderer.scale;
-    static hudPlayerDistance = -5 * HudRenderer.scale;
+    static componentPadding = 2 * GamePlayerHud.scale;
+    static hudPlayerDistance = -5 * GamePlayerHud.scale;
 
     static containerTex: Texture;
     static lifeBarTex: Texture;
@@ -46,53 +45,52 @@ export class HudRenderer {
     private height: number;
 
 
-    public constructor(world: World, name: string, color: string) {
-        HudRenderer.load();
-        const padding = HudRenderer.componentPadding;
+    public constructor(player: Player) {
+        GamePlayerHud.load();
+        const padding = GamePlayerHud.componentPadding;
         let nextY = 0;
-
-        let scalep = new Point(HudRenderer.scale, HudRenderer.scale);
+        let scalep = new Point(GamePlayerHud.scale, GamePlayerHud.scale);
 
         const style = new TextStyle({
             fontFamily: "pixeled",
-            fill: color,
+            fill: player.active ? "lime" : "red",
         });
         this.textHud = new Text(name, style);
         this.textHud.scale = scalep;
         this.textHud.anchor.set(0.5, 0);
         nextY += this.textHud.height + padding;
 
-        this.lifeContainer = new Sprite(HudRenderer.containerTex);
+        this.lifeContainer = new Sprite(GamePlayerHud.containerTex);
         this.lifeContainer.scale = scalep;
         this.lifeContainer.anchor.set(0.5, 0);
-        this.lifeBar = new Sprite(HudRenderer.lifeBarTex);
+        this.lifeBar = new Sprite(GamePlayerHud.lifeBarTex);
         this.lifeBar.scale = scalep;
         this.lifeBar.anchor.set(0.5, 0);
-        this.lifeMaskShape = HudRenderer.barMaskShapeTex.clone();
+        this.lifeMaskShape = GamePlayerHud.barMaskShapeTex.clone();
         this.lifeMaskShape.scale = scalep;
         //this.lifeMaskShape.anchor.set(0.5, 0);
         this.lifeMaskShape.visible = false;
         this.lifeBar.mask = this.lifeMaskShape;
         this.lifeYOffset = nextY;
-        nextY += HudRenderer.barContainerHeight / 48 + padding;
+        nextY += GamePlayerHud.barContainerHeight / 48 + padding;
 
-        this.energyContainer = new Sprite(HudRenderer.containerTex);
+        this.energyContainer = new Sprite(GamePlayerHud.containerTex);
         this.energyContainer.scale = scalep;
         this.energyContainer.anchor.set(0.5, 0);
-        this.energyBar = new Sprite(HudRenderer.energyBarTex);
+        this.energyBar = new Sprite(GamePlayerHud.energyBarTex);
         this.energyBar.scale = scalep;
         this.energyBar.anchor.set(0.5, 0);
-        this.energyMaskShape = HudRenderer.barMaskShapeTex.clone();
+        this.energyMaskShape = GamePlayerHud.barMaskShapeTex.clone();
         this.energyMaskShape.scale = scalep;
         //this.energyMaskShape.anchor.set(0.5, 0);
         this.energyMaskShape.visible = false;
         this.energyBar.mask = this.energyMaskShape;
         this.energyYOffset = nextY;
-        nextY +=  HudRenderer.barContainerHeight / 48;
+        nextY +=  GamePlayerHud.barContainerHeight / 48;
 
         this.height = nextY;
 
-        world.app.stage.addChild(
+        player.world.app.stage.addChild(
             this.textHud,
             this.lifeContainer, this.lifeBar,
             this.energyContainer, this.energyBar,
@@ -107,8 +105,8 @@ export class HudRenderer {
 
     private translateToTarget(target: Entity) {
         let x = target.x;
-        let y = target.sprite.y - target.sprite.height - this.height - HudRenderer.hudPlayerDistance;
-        let barOffY = HudRenderer.barContainerMargin * HudRenderer.scale;
+        let y = target.sprite.y - target.sprite.height - this.height - GamePlayerHud.hudPlayerDistance;
+        let barOffY = GamePlayerHud.barContainerMargin * GamePlayerHud.scale;
 
         this.textHud.position.set(x, y);
 
@@ -122,14 +120,17 @@ export class HudRenderer {
     }
 
     private updateMaskOffsets(life: number, energy: number) {
-        const midAdjust = (HudRenderer.barContainerWidth / 2) * HudRenderer.scale;
-        this.lifeMaskOffset = -(100 - life * 100) * HudRenderer.scale - midAdjust;
-        this.energyMaskOffset = -(100 - energy * 100) * HudRenderer.scale - midAdjust;
+        const midAdjust = (GamePlayerHud.barContainerWidth / 2) * GamePlayerHud.scale;
+        this.lifeMaskOffset = -(100 - life * 100) * GamePlayerHud.scale - midAdjust;
+        this.energyMaskOffset = -(100 - energy * 100) * GamePlayerHud.scale - midAdjust;
     }
 
-    update(entity: Entity, life: number, energy: number) {
-        this.updateMaskOffsets(life, energy);
-        this.translateToTarget(entity);
+    update(player: Player) {
+        if (player.name != this.textHud.text) {
+            this.textHud.text = player.name;
+        }
+        this.updateMaskOffsets(player.life / player.maxLife, player.energy / player.maxEnergy);
+        this.translateToTarget(player);
     }
 
     private static loaded = false;
@@ -158,8 +159,8 @@ export class HudRenderer {
         bar.drawRoundedRect(
             0,
             0,
-            HudRenderer.barWidthPixels,
-            HudRenderer.barHeightPixels,
+            GamePlayerHud.barWidthPixels,
+            GamePlayerHud.barHeightPixels,
             radius
         );
         bar.endFill();
@@ -170,8 +171,8 @@ export class HudRenderer {
         bar.drawRoundedRect(
             0,
             0,
-            HudRenderer.barWidthPixels,
-            HudRenderer.barHeightPixels,
+            GamePlayerHud.barWidthPixels,
+            GamePlayerHud.barHeightPixels,
             radius
         );
         bar.endFill();
@@ -182,5 +183,8 @@ export class HudRenderer {
         barMaskShape.drawRect(0, 0, this.barContainerWidth, this.barContainerHeight);
         barMaskShape.endFill();
         this.barMaskShapeTex = barMaskShape;
+    }
+
+    onDespawn(pl: Player) {
     }
 }

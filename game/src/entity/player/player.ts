@@ -8,9 +8,15 @@ import {BehaviourManager} from "../../behaviour/behaviour";
 import {EntityResetPacket, PlayerEntitySpawnMeta} from "../../protocol";
 import {World} from "../../world/world";
 import {EntityType} from "../entityType";
-import {HudRenderer} from "./hudRenderer";
+import {GamePlayerHud} from "./gamePlayerHud";
+import {PlayerHud} from "./playerHud";
 
-export abstract class Player extends Entity {
+export interface PlayerConfig {
+    name?: string,
+    gameHud?: boolean,
+}
+
+export class Player extends Entity {
     static SPRITE_SIZE = 48;
 
     static WIDTH  = 2;
@@ -27,13 +33,13 @@ export abstract class Player extends Entity {
     attackPower = 10;
     jumpForce = 40.0;
 
-    name = "Ulisse";
+    name: string;
 
     // override
     damageable = true;
     private behaviour: BehaviourManager;
 
-    private hudRenderer: HudRenderer;
+    huds: PlayerHud[] = [];
 
     get friction(): number {
         return this.body.getFixtureList()!.getFriction()
@@ -44,10 +50,14 @@ export abstract class Player extends Entity {
     }
 
 
-    protected constructor(world: World, body: planck.Body, active: boolean, type: EntityType) {
+    constructor(world: World, body: planck.Body, active: boolean, type: EntityType, config: PlayerConfig) {
         super(world, body, active, type);
         this.behaviour = createPlayerBehaviour(this);
-        this.hudRenderer = new HudRenderer(world, this.name, this.active ? "lime" : "red");
+        this.name = config.name || "Ulisse";
+
+        if (config.gameHud == null || config.gameHud) {
+            this.huds.push(new GamePlayerHud(this));
+        }
 
         let x = 0; // (sceneWidth / (conf.playerCount + 1)) * (conf.playerIndex + 1);
         let y = 2;
@@ -81,11 +91,9 @@ export abstract class Player extends Entity {
         }
         this.energy = Math.min(this.energy + this.energyGainPerSec * deltatime, this.maxEnergy);
 
-        this.hudRenderer.update(this, this.life / this.maxLife, this.energy / this.maxEnergy);
-    }
-
-    reloadName() {
-        this.hudRenderer.setName(this.name);
+        for (const hud of this.huds) {
+            hud.update(this);
+        }
     }
 
     createSpawnMeta(): PlayerEntitySpawnMeta {
@@ -101,7 +109,6 @@ export abstract class Player extends Entity {
             return;
         }
         this.name = meta.name;
-        this.reloadName();
     }
 
     jump() {

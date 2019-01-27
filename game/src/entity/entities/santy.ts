@@ -57,8 +57,8 @@ export class SantyType extends EntityType {
         ));
     }
 
-    create(world: World, active?: boolean, config?: PlayerConfig) {
-        return new Santy(world, active || false, config || {});
+    create(world: World, active: boolean, config?: PlayerConfig) {
+        return new Santy(world, active, config || {});
     }
 }
 
@@ -85,7 +85,7 @@ export class Santy extends Player {
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
             this.onFrameOnce(6, () => {
-                const poison = EntityTypes.POISON.create(this.world) as Poison;
+                const poison = EntityTypes.POISON.create(this.world, true) as Poison;
                 poison.x = this.x + Santy.THROW_POWER * (this.flipX ? -1 : 1);
                 poison.y = this.y + this.sprite.height * 0.75;
                 poison.thrower = this;

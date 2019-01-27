@@ -40,8 +40,8 @@ export class PoisonType extends EntityType {
         ));
     }
 
-    create(world: World, active?: boolean): Entity {
-        return new Poison(world, active || false);
+    create(world: World, active: boolean): Entity {
+        return new Poison(world, active);
     }
 }
 

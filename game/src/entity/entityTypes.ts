@@ -3,6 +3,8 @@ import {SantyType} from "./entities/santy";
 import {PoisonType} from "./entities/poison";
 // @ts-ignore
 import * as planck from "planck-js";
+import {MixterType} from "./entities/mixter";
+import {MikrotikType} from "./entities/mikrotik";
 
 export namespace EntityTypes {
     const entities = new Map<string, EntityType>();
@@ -30,8 +32,12 @@ export namespace EntityTypes {
     }
 
     export const SANTY = new SantyType();
+    export const MIXTER = new MixterType();
     export const POISON = new PoisonType();
+    export const MIKROTIK = new MikrotikType();
 
     register(SANTY);
+    register(MIXTER);
     register(POISON);
+    register(MIKROTIK);
 }

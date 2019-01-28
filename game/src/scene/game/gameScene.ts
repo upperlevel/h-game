@@ -27,8 +27,6 @@ export class GameScene implements Scene {
             width: 32,
             height: 18,
 
-            spawnPoints: [],
-
             platforms: [
                 {
                     x: 0,
@@ -39,7 +37,7 @@ export class GameScene implements Scene {
                 }
             ],
 
-            texts: []
+            texts: [],
         });
     }
 
@@ -51,6 +49,8 @@ export class GameScene implements Scene {
 
         // Spawn
         let char = EntityTypes.get(this.config.character)!.create(this.world, true) as Player;
+        char.x = (this.config.playerIndex + 1) * (this.world.width / (this.config.playerCount + 1));
+        char.left = (this.config.playerIndex % 2) != 0;
         char.name = this.config.playerName;
 
         this.world.spawn(char);

@@ -6,11 +6,10 @@ import {World} from "../../world/world";
 import {EntityType} from "../entityType";
 import {Animator} from "../../util/animator";
 import {SpritesheetUtil} from "../../util/spritesheet";
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {EntityTypes} from "../entityTypes";
-
 // @ts-ignore
 import * as planck from "planck-js";
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export class PoisonType extends EntityType {
     id = "poison";
@@ -48,7 +47,7 @@ export class PoisonType extends EntityType {
 export class Poison extends Entity {
     _thrower?: Player;
     attacked = new Map<Entity, number>();
-    contacts = new Array<Entity>();
+    contacts = new Set<Entity>();
 
     attackForce = 25;
     attackTimeout = 500;
@@ -56,18 +55,39 @@ export class Poison extends Entity {
     constructor(world: World, active: boolean) {
         super(world, Poison.createBody(world), active, EntityTypes.POISON, "boil");
         setTimeout(() => this.world.despawn(this), 5000);
-        this.setupPlayerSensor();
+        this.setupFixtures();
     }
 
-    private setupPlayerSensor() {
-        this.body.getFixtureList()!.setUserData({
-            onTouchBegin: (f: planck.Fixture) => {
-                this.onPlayerContactBegin(f.getUserData() as Player);
+    private setupFixtures() {
+        const w = EntityTypes.POISON.width;
+        const h = EntityTypes.POISON.height;
+
+        let shape = planck.Box(
+            w / 2, h / 2,
+            planck.Vec2(0, h * 3 / 2),
+            0
+        );
+
+        this.body.createFixture({
+            shape: shape,
+            // Ignore player collisions
+            filterCategoryBits: Player.COLLISION_CATEGORY,
+            filterMaskBits: ~Player.COLLISION_CATEGORY,
+        });
+        this.body.createFixture({
+            shape: shape,
+            // Collide ONLY with players
+            filterMaskBits: Player.COLLISION_CATEGORY,
+            isSensor: true,
+            userData: {
+                onTouchBegin: (f: planck.Fixture) => {
+                    this.onPlayerContactBegin(f.getUserData() as Player);
+                },
+                onTouchEnd: (f: planck.Fixture) => {
+                    this.onPlayerContactEnd(f.getUserData());
+                },
             },
-            onTouchEnd: (f: planck.Fixture) => {
-                this.onPlayerContactEnd(f.getUserData());
-            },
-        })
+        });
     }
 
     get thrower(): Player {
@@ -94,33 +114,9 @@ export class Poison extends Entity {
     }
 
     static createBody(world: World): planck.Body {
-        let body = world.physics.createBody({
+        return world.physics.createBody({
             type: "dynamic"
         });
-
-        const w = EntityTypes.POISON.width;
-        const h = EntityTypes.POISON.height;
-
-        let shape = planck.Box(
-            w / 2, h / 2,
-            planck.Vec2(0, h * 3 / 2),
-            0
-        );
-
-        body.createFixture({
-            shape: shape,
-            // Ignore player collisions
-            filterCategoryBits: Player.COLLISION_CATEGORY,
-            filterMaskBits: ~Player.COLLISION_CATEGORY,
-        });
-        body.createFixture({
-           shape: shape,
-            // Collide ONLY with players
-            filterMaskBits: Player.COLLISION_CATEGORY,
-            isSensor: true,
-        });
-
-        return body;
     }
 
     private canAttack(player: Entity) {
@@ -136,12 +132,12 @@ export class Poison extends Entity {
 
     onPlayerContactBegin(entity: Player) {
         if (entity == this.thrower) return;
-        this.contacts.push(entity);
+        this.contacts.add(entity);
     }
 
     onPlayerContactEnd(entity: Player) {
         if (entity == this.thrower) return;
-        this.contacts.slice(this.contacts.indexOf(entity), 1);
+        this.contacts.delete(entity);
     }
 
     onUpdate(delta: number) {

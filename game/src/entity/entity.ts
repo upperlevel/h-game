@@ -47,7 +47,12 @@ export abstract class Entity {
         this.active = active;
         this.type = type;
 
-        this.sprite = new AnimatedSprite(type.getAnimator(startAnimName)!.frames!);
+        const animator = type.getAnimator(startAnimName);
+        this.sprite = new AnimatedSprite(animator.frames!);
+
+        animator.bind(this.sprite);
+        this.sprite.play();
+
         this.sprite.anchor.x = 0.5;
         this.sprite.anchor.y = 1;
 

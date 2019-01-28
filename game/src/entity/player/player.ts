@@ -49,6 +49,14 @@ export class Player extends Entity {
         this.body.getFixtureList()!.setFriction(v);
     }
 
+    get left(): boolean {
+        return this.flipX
+    }
+
+    set left(v: boolean) {
+        this.flipX = v;
+    }
+
 
     constructor(world: World, body: planck.Body, active: boolean, type: EntityType, config: PlayerConfig) {
         super(world, body, active, type);
@@ -85,6 +93,10 @@ export class Player extends Entity {
         super.onUpdate(deltatime);
 
         this.behaviour.onUpdate();
+
+        if (this.y < -10) {
+            this.damage(this.life);
+        }
 
         if (this.active && Actions.JUMP.pressed && this.isTouchingGround) {
             this.jump();

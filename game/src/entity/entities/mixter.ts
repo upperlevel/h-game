@@ -9,6 +9,8 @@ import {CloseRangeAttack} from "../player/closeRangeAttack";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {EntityTypes} from "../entityTypes";
 import {Mikrotik} from "./mikrotik";
+import {toDegrees, toRadians} from "../../util/maths";
+import {Entity} from "../entity";
 
 export class MixterType extends EntityType {
     id = "mixter";
@@ -63,8 +65,7 @@ export class MixterType extends EntityType {
 }
 
 export class Mixter extends Player {
-    static THROW_POWER = 2.0;
-
+    static THROW_POWER = 8.0;
 
     closeAttack = new CloseRangeAttack(this);
 
@@ -81,16 +82,31 @@ export class Mixter extends Player {
         })
     }
 
+    private throw(entity: Entity) {
+        let power = Mixter.THROW_POWER;
+        let angle = toRadians(35);
+
+        // After the entity has been spawned we apply the impulse.
+        let powerX = Math.cos(angle) * power;
+        let powerY = Math.sin(angle) * power;
+        powerX = this.flipX ? -powerX : powerX;
+
+        const vel = this.body.getLinearVelocity();
+        entity.applyImpulse(powerX + vel.x, powerY + vel.y, this.x, this.y + this.height/2, true);
+    }
+
     specialAttack(onComplete: () => void) {
         super.specialAttack(onComplete);
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
             this.onFrameOnce(2, () => {
                 const mikrotik = EntityTypes.MIKROTIK.create(this.world, true) as Mikrotik;
-                mikrotik.x = this.x + Mixter.THROW_POWER * (this.flipX ? -1 : 1);
-                mikrotik.y = this.y + this.sprite.height * 0.75;
+
+                mikrotik.x = this.x + this.width / 4 * (!this.left ? 1 : -1);
+                mikrotik.y = this.y + this.sprite.height * 0.5;
                 mikrotik.thrower = this;
                 this.world.spawn(mikrotik);
+                this.throw(mikrotik);
             });
         }
     }

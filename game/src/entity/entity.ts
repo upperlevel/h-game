@@ -5,6 +5,10 @@ import {EntityType} from "./entityType";
 import {World} from "../world/world";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {Popup} from "../world/popup";
+// @ts-ignore
+import * as planck from "planck-js";
+
+import Vec2 = planck.Vec2;
 
 export abstract class Entity {
     id = -1;
@@ -123,6 +127,7 @@ export abstract class Entity {
 
         if (this.active) {
             this.position = this.world.getSpawnLocation();
+            this.body.setLinearVelocity(planck.Vec2(0, 0));
             this.sendReset();// Broadcast the position
         }
     }
@@ -155,8 +160,6 @@ export abstract class Entity {
         setTimeout(() => this.sprite.tint = 0xffffff, 250);
     }
 
-    // TODO: throw
-
     createSpawnMeta(): EntitySpawnMeta | undefined {
         return undefined;
     }
@@ -167,12 +170,16 @@ export abstract class Entity {
     fillResetPacket(packet: EntityResetPacket) {
         packet.x = this.x;
         packet.y = this.y;
+        let vel = this.body.getLinearVelocity();
+        packet.velX = vel.x;
+        packet.velY = vel.y;
         packet.life = this.life;
     }
 
     onReset(packet: EntityResetPacket) {
         this.x = packet.x;
         this.y = packet.y;
+        this.body.setLinearVelocity(planck.Vec2(packet.velX, packet.velY));
         this.life = packet.life;
     }
 
@@ -211,6 +218,20 @@ export abstract class Entity {
             if (fr != frame) return;
             this.sprite.onFrameChange = () => {};
             callback()
+        }
+    }
+
+    applyImpulse(powerX: number, powerY: number, centerX: number, centerY: number, sendUpdate: boolean=false) {
+        this.body.applyLinearImpulse(planck.Vec2(powerX, powerY), planck.Vec2(centerX, centerY));
+        if (sendUpdate) {
+            this.world.sendPacket({
+                type: "entity_impulse",
+                entityId: this.id,
+                powerX: powerX,
+                powerY: powerY,
+                pointX: centerX,
+                pointY: centerY,
+            });
         }
     }
 }

@@ -23,7 +23,8 @@ export class World {
     entityRegistry = new EntityRegistry(this);
 
     physics = new planck.World({
-        gravity: planck.Vec2(0, -10)
+        gravity: planck.Vec2(0, -10),
+        allowSleep: false,
     });
     physicsAccumulator = 0;
 
@@ -281,8 +282,12 @@ export class World {
             case "entity_reset":
                 this.entityRegistry.onResetPacket(packet);
                 break;
+            case "entity_impulse":
+                this.entityRegistry.getEntity(packet.entityId)!.applyImpulse(packet.powerX, packet.powerY, packet.pointX, packet.pointY);
+                break;
             default:
-                console.error(`Unhandled packet type: ${packet.type}`);
+                // @ts-ignore
+                console.error(`Unhandled packet type: ${packet.type}`, packet);
                 break;
         }
     }
@@ -316,5 +321,12 @@ export class World {
     destroy() {
         this.entityRegistry.onDisable();
         this.app.stage.removeChildren();
+    }
+
+    getSpawnLocation() {
+        return {
+            x: Math.random() * this.width,
+            y: this.height / 2,
+        };
     }
 }

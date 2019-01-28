@@ -12,6 +12,7 @@ import {EntityTypes} from "../entityTypes";
 // @ts-ignore
 //import * as planck from "planck-js";
 import {Emitter} from "../../world/emitter";
+// @ts-ignore
 import * as planck from "planck-js";
 
 export class MikrotikType extends EntityType {
@@ -73,17 +74,23 @@ export class Mikrotik extends Entity {
         this.world.despawn(this);
 
         const mikLoc = this.body.getWorldCenter();
-        const mikX = mikLoc.x;
-        const mikY = mikLoc.y;
         const maxDist = Mikrotik.MAX_EXPLOSION_DISTANCE;
         for (const [id, entity] of this.world.entities) {
             if (!entity.damageable) continue;
-            const entLoc = entity.body.getWorldCenter();
-            const dist = Math.sqrt((mikX - entLoc.x) ** 2 + (mikY - entLoc.y) ** 2);
+            const entLoc = entity.body.getWorldCenter().clone();
+            const blastDir = entLoc.sub(mikLoc);
+            const dist = blastDir.normalize();
 
             if (dist > maxDist) continue;
 
-            entity.damage((maxDist - dist) / maxDist * Mikrotik.MAX_EXPLOSION_DAMAGE);
+            const power = (maxDist - dist) / maxDist;
+            entity.body.applyLinearImpulse(
+                // In reaitiy it should be "force / (distance ** 2)"
+                blastDir.mul(100 / dist),
+                entity.body.getWorldCenter()
+            );
+
+            if (entity != this.thrower) entity.damage(power * Mikrotik.MAX_EXPLOSION_DAMAGE);
         }
 
         const conf = {

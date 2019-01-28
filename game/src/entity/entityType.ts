@@ -24,11 +24,5 @@ export abstract class EntityType {
         return this.animators.get(id)!;
     }
 
-    onLoad() {
-        for (const animator of this.animators.values()) {
-            animator.onLoad();
-        }
-    }
-
     abstract create(world: World, active?: boolean, config?: any): Entity;
 }

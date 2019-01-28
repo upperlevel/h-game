@@ -5,11 +5,9 @@ import {ThrowableEntitySpawnMeta} from "../../protocol";
 import {World} from "../../world/world";
 import {EntityType} from "../entityType";
 import {Animator} from "../../util/animator";
-import {SpritesheetUtil} from "../../util/spritesheet";
 import {EntityTypes} from "../entityTypes";
 // @ts-ignore
 import * as planck from "planck-js";
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export class PoisonType extends EntityType {
     id = "poison";
@@ -29,14 +27,22 @@ export class PoisonType extends EntityType {
 
         this.addAsset(texture);
 
-        this.addAnimator(new Animator(
-            "boil",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], PoisonType.frameWidth, PoisonType.frameHeight, 0, 4),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = true;
-            }
-        ));
+        this.addAnimator(new Animator("boil", texture)
+            .grid({
+                speed: 0.1,
+                repeat: true,
+                frames: {
+                    width: PoisonType.frameWidth,
+                    height: PoisonType.frameHeight,
+                    list: [
+                        {x: 0, y: 0},
+                        {x: 0, y: 1},
+                        {x: 0, y: 2},
+                        {x: 0, y: 3},
+                    ]
+                }
+            })
+        );
     }
 
     create(world: World, active: boolean): Entity {

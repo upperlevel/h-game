@@ -59,8 +59,6 @@ export class HGame {
             .add("assets/game/debug.png")
             .add("assets/game/tree.png")
             .load(() => {
-                EntityTypes.onLoad();
-
                 this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
                 console.log(`Loading process was completed.`);
             });

@@ -82,8 +82,7 @@ abstract class WalkBehaviour extends Behaviour {
 
     onAnimationEnable() {
         super.onAnimationEnable();
-        this.player.type.getAnimator("walk").bind(this.player.sprite);
-        this.player.sprite.play();
+        this.player.type.getAnimator("walk").play(this.player.sprite);
     }
 
     onAnimationDisable() {

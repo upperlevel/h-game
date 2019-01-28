@@ -1,15 +1,12 @@
 import {Player, PlayerConfig} from "../player/player";
-import {Poison} from "./poison";
 
 import {World} from "../../world/world";
 import {EntityType} from "../entityType";
 import {Animator} from "../../util/animator";
-import {SpritesheetUtil} from "../../util/spritesheet";
 import {CloseRangeAttack} from "../player/closeRangeAttack";
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {EntityTypes} from "../entityTypes";
 import {Mikrotik} from "./mikrotik";
-import {toDegrees, toRadians} from "../../util/maths";
+import {toRadians} from "../../util/maths";
 import {Entity} from "../entity";
 
 export class MixterType extends EntityType {
@@ -22,41 +19,68 @@ export class MixterType extends EntityType {
 
         this.addAsset(texture);
 
-        this.addAnimator(new Animator(
-            "idle",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 0, 2),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = true;
-            }
-        ));
+        this.addAnimator(new Animator("idle", texture)
+            .grid({
+                speed: 0.1,
+                repeat: true,
+                frames: {
+                    width: 48,
+                    height: 48,
+                    list: [
+                        {x: 0, y: 0},
+                        {x: 1, y: 0},
+                    ]
+                }
+            })
+        );
 
-        this.addAnimator(new Animator(
-            "walk",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 1, 3),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = true;
-            }
-        ));
+        this.addAnimator(new Animator("walk", texture)
+            .grid({
+                speed: 0.1,
+                repeat: true,
+                frames: {
+                    width: 48,
+                    height: 48,
+                    list: [
+                        {x: 0, y: 1},
+                        {x: 1, y: 1},
+                        {x: 2, y: 1},
+                    ]
+                }
+            })
+        );
 
-        this.addAnimator(new Animator(
-            "attack",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 2, 3),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = false;
-            }
-        ));
+        this.addAnimator(new Animator("attack", texture)
+            .grid({
+                speed: 0.1,
+                repeat: false,
+                frames: {
+                    width: 48,
+                    height: 48,
+                    list: [
+                        {x: 0, y: 2},
+                        {x: 1, y: 2},
+                        {x: 2, y: 2},
+                    ]
+                }
+            })
+        );
 
-        this.addAnimator(new Animator(
-            "specialAttack",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], 48, 48, 3, 3),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = false;
-            }
-        ));
+        this.addAnimator(new Animator("specialAttack", texture)
+            .grid({
+                speed: 0.1,
+                repeat: false,
+                frames: {
+                    width: 48,
+                    height: 48,
+                    list: [
+                        {x: 0, y: 3},
+                        {x: 1, y: 3},
+                        {x: 2, y: 3},
+                    ]
+                }
+            })
+        );
     }
 
     create(world: World, active: boolean, config?: PlayerConfig) {

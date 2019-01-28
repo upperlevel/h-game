@@ -139,13 +139,11 @@ export class Player extends Entity {
     }
 
     idle() {
-        this.type.getAnimator("idle").bind(this.sprite);
-        this.sprite.play();
+        this.type.getAnimator("idle").play(this.sprite);
     }
 
     attack(onComplete: () => void) {
-        this.type.getAnimator("attack").bind(this.sprite);
-        this.sprite.play();
+        this.type.getAnimator("attack").play(this.sprite);
         this.sprite.onComplete = onComplete;
     }
 
@@ -154,8 +152,7 @@ export class Player extends Entity {
     }
 
     specialAttack(onComplete: () => void) {
-        this.type.getAnimator("specialAttack").bind(this.sprite);
-        this.sprite.play();
+        this.type.getAnimator("specialAttack").play(this.sprite);
         this.sprite.onComplete = onComplete;
     }
 

@@ -34,14 +34,22 @@ export class MikrotikType extends EntityType {
         this.addAsset(texture);
         this.addAsset("assets/game/particle.png");
 
-        this.addAnimator(new Animator(
-            "blink",
-            () => SpritesheetUtil.horizontal(PIXI.utils.TextureCache[texture], MikrotikType.frameWidth, MikrotikType.frameHeight, 0, 4),
-            (sprite: AnimatedSprite) => {
-                sprite.animationSpeed = 0.1;
-                sprite.loop = true;
-            }
-        ));
+        this.addAnimator(new Animator("blink", texture)
+            .grid({
+                speed: 0.1,
+                repeat: true,
+                frames: {
+                    width: MikrotikType.frameWidth,
+                    height: MikrotikType.frameHeight,
+                    list: [
+                        {x: 0, y: 0},
+                        {x: 1, y: 0},
+                        {x: 2, y: 0},
+                        {x: 3, y: 0},
+                    ]
+                }
+            })
+        );
     }
 
     create(world: World, active: boolean): Entity {

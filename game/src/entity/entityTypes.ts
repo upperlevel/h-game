@@ -32,6 +32,10 @@ export namespace EntityTypes {
     export const MIKROTIK = new MikrotikType();
     export const JAVA = new JavaType();
 
+
+    export const defaultCharacter = SANTY;
+    export const playableCharacters: EntityType[] = [SANTY, MIXTER, JAVA];
+
     register(SANTY);
     register(MIXTER);
     register(POISON);

@@ -28,7 +28,8 @@ export class LobbyOverlay extends OverlayScene {
                 this.readyButton.className = "red-button";
             }
 
-            this.lobby.setPlayerInfo(undefined, notReady);
+            // Note: undefined means "keep the old value"
+            this.lobby.updatePlayerInfo(undefined, notReady);
         };
 
         this.inviteButton = document.getElementById("lobby-invite-button") as HTMLButtonElement;

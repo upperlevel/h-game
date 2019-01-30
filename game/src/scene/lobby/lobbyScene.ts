@@ -8,6 +8,9 @@ import {HGame} from "../../index";
 import {GameScene} from "../game/gameScene";
 import {ConnectingScene} from "../connectingScene";
 import {LobbyWorld} from "./lobbyWorld";
+import {Key} from "../../input/key";
+import {EntityTypes} from "../../entity/entityTypes";
+import {EntityType} from "../../entity/entityType";
 
 export class LobbyScene implements Scene {
     game: HGame;
@@ -15,7 +18,10 @@ export class LobbyScene implements Scene {
     world: LobbyWorld;
     overlay: LobbyOverlay;
 
-    chosenCharacter: string = "santy";
+    chosenCharacter: EntityType = EntityTypes.defaultCharacter;
+    ready = false;
+
+    changeScreenKey = new Key(" ");
 
     constructor(game: HGame) {
         this.game = game;
@@ -44,12 +50,22 @@ export class LobbyScene implements Scene {
         });
     }
 
-    setPlayerInfo(character: string = "santy", ready: boolean = false) {
+    broadcastPlayerInfo(character: string, ready: boolean) {
         this.game.matchmakingConnector.send({
             type: "lobby_update",
             character: character,
             ready: ready
         });
+    }
+
+    updatePlayerInfo(character?: EntityType, ready?:boolean) {
+        if (character != null) {
+            this.chosenCharacter = character;
+        }
+        if (ready != null) {
+            this.ready = ready;
+        }
+        this.broadcastPlayerInfo(this.chosenCharacter.id, this.ready);
     }
 
     onMessage(packet: proto.MatchmakingPacket) {
@@ -64,7 +80,7 @@ export class LobbyScene implements Scene {
                     playerIndex: packet.playerIndex,
                     playerCount: packet.playerCount,
                     playerName: this.game.playerName!!,
-                    character: this.chosenCharacter,
+                    character: this.chosenCharacter.id,
                 });
                 this.game.sceneManager.setScene(new ConnectingScene(this.game.sceneManager, this.game.gameConnector, game));
 
@@ -83,10 +99,19 @@ export class LobbyScene implements Scene {
         this.overlay.enable();
     }
 
+    useNextCharacter() {
+        const chars = EntityTypes.playableCharacters;
+        let charIndex = chars.indexOf(this.chosenCharacter);
+        this.chosenCharacter = chars[(charIndex + 1) % chars.length];
+        this.updatePlayerInfo(this.chosenCharacter, undefined);
+    }
+
     update(delta: number): void {
         this.world.update(delta);
 
-        // TODO change player's skin on keyboard click
+        if (this.changeScreenKey.justPressed) {
+            this.useNextCharacter();
+        }
     }
 
     resize() {

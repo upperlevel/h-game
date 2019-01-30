@@ -74,18 +74,24 @@ export class LobbyWorld extends World {
             const info = packet.players[i];
             let player = this.players[i];
 
-            if (!player) {
+            if (!player || player.type.id != info.character) {
+                const oldPlayer = player;
                 player = new Player(
                     this,
                     Player.createBody(this),
                     false,
-                    EntityTypes.get(info.character || "santy")!,
+                    info.character != null ? EntityTypes.get(info.character)! : EntityTypes.defaultCharacter,
                     {gameHud: false}
                 );
                 player.huds.push(new LobbyPlayerHud(player));
 
+                if (oldPlayer == null) {
+                    this.players.push(player);
+                } else {
+                    this.players[i] = player;
+                    this.despawn(oldPlayer);
+                }
                 this.spawn(player);
-                this.players.push(player);
             }
 
             this.applyPlayerInfo(player, info);

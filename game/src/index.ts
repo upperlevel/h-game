@@ -9,6 +9,7 @@ import {LoginScene} from "./scene/loginScene";
 import {EntityTypes} from "./entity/entityTypes";
 import {GameScene} from "./scene/game/gameScene";
 import {EntityType} from "./entity/entityType";
+import {InputManager} from "./input/inputManager";
 
 export class HGame {
     app: PIXI.Application;
@@ -66,6 +67,7 @@ export class HGame {
         const ticker = new PIXI.ticker.Ticker();
         ticker.add((dt: number) => {
             this.sceneManager.update(ticker.elapsedMS / 1000);
+            InputManager.onPostUpdate();
         });
         ticker.start();
     }

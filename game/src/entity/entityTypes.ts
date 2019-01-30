@@ -3,7 +3,7 @@ import {SantyType} from "./entities/santy";
 import {PoisonType} from "./entities/poison";
 // @ts-ignore
 import * as planck from "planck-js";
-import {MixterType} from "./entities/mixter";
+import {MestoliType} from "./entities/mestoli";
 import {MikrotikType} from "./entities/mikrotik";
 import {JavaType} from "./entities/java";
 
@@ -27,17 +27,17 @@ export namespace EntityTypes {
     }
 
     export const SANTY = new SantyType();
-    export const MIXTER = new MixterType();
+    export const MESTOLI = new MestoliType();
     export const POISON = new PoisonType();
     export const MIKROTIK = new MikrotikType();
     export const JAVA = new JavaType();
 
 
     export const defaultCharacter = SANTY;
-    export const playableCharacters: EntityType[] = [SANTY, MIXTER, JAVA];
+    export const playableCharacters: EntityType[] = [SANTY, MESTOLI, JAVA];
 
     register(SANTY);
-    register(MIXTER);
+    register(MESTOLI);
     register(POISON);
     register(MIKROTIK);
     register(JAVA);

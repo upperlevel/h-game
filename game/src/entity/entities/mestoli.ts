@@ -9,13 +9,13 @@ import {Mikrotik} from "./mikrotik";
 import {toRadians} from "../../util/maths";
 import {Entity} from "../entity";
 
-export class MixterType extends EntityType {
-    id = "mixter";
+export class MestoliType extends EntityType {
+    id = "mestoli";
 
     constructor() {
         super();
 
-        const texture = "assets/game/mixter.png";
+        const texture = "assets/game/mestoli.png";
 
         this.addAsset(texture);
 
@@ -84,17 +84,17 @@ export class MixterType extends EntityType {
     }
 
     create(world: World, active: boolean, config?: PlayerConfig) {
-        return new Mixter(world, active, config || {});
+        return new Mestoli(world, active, config || {});
     }
 }
 
-export class Mixter extends Player {
+export class Mestoli extends Player {
     static THROW_POWER = 8.0;
 
     closeAttack = new CloseRangeAttack(this);
 
     constructor(world: World, active: boolean, config: PlayerConfig) {
-        super(world, Player.createBody(world), active, EntityTypes.MIXTER, config);
+        super(world, Player.createBody(world), active, EntityTypes.MESTOLI, config);
     }
 
     attack(callBack: any) {
@@ -107,7 +107,7 @@ export class Mixter extends Player {
     }
 
     private throw(entity: Entity) {
-        let power = Mixter.THROW_POWER;
+        let power = Mestoli.THROW_POWER;
         let angle = toRadians(35);
 
         // After the entity has been spawned we apply the impulse.

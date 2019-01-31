@@ -64,11 +64,13 @@ export class ComicPopup implements Popup {
             text: data.text,
             style: data.style,
         });
+        this.text.sprite.visible = false;
 
         this.line = new Sprite(ComicPopup.curve);
 
         this.line.anchor.set(0, 1);
         this.text.sprite.anchor.set(this.left ? 1 : 0, 1);
+        this.line.visible = false;
 
         this.line.position.set(this.x, world.height - this.y);
 
@@ -84,6 +86,7 @@ export class ComicPopup implements Popup {
         const lineFade = Math.min(fadePerc * 2, 1);
         const textFade = Math.max(fadePerc - 0.5, 0) * 2;
 
+        this.line.visible = true;
         this.line.rotation = linearInterpol(lineFade, toRadians(-180), 0);
         const lineScale = linearInterpol(lineFade, 0.1, 1) * scale * 0.2;
         this.line.scale.set(lineScale * (this.left ? -1 : 1), lineScale);

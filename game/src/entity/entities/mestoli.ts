@@ -6,7 +6,7 @@ import {Animator} from "../../util/animator";
 import {CloseRangeAttack} from "../player/closeRangeAttack";
 import {EntityTypes} from "../entityTypes";
 import {Mikrotik} from "./mikrotik";
-import {toRadians} from "../../util/maths";
+import {randomInArray, toRadians} from "../../util/maths";
 import {Entity} from "../entity";
 
 export class MestoliType extends EntityType {
@@ -123,6 +123,10 @@ export class Mestoli extends Player {
         super.specialAttack(onComplete);
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
+            this.shoutComic(randomInArray([
+                "Cookies!",
+                "Porca miseria!",
+            ]));
             this.onFrameOnce(2, () => {
                 const mikrotik = EntityTypes.MIKROTIK.create(this.world, true) as Mikrotik;
 

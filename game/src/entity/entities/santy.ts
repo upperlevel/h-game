@@ -9,6 +9,7 @@ import {Animator} from "../../util/animator";
 
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {CloseRangeAttack} from "../player/closeRangeAttack";
+import {randomInArray} from "../../util/maths";
 
 export class SantyType extends EntityType {
     id = "santy";
@@ -116,6 +117,11 @@ export class Santy extends Player {
         super.specialAttack(onComplete);
         this.energy -= this.specialAttackEnergy;
         if (this.active) {
+            this.shoutComic(randomInArray([
+                "Sacripante!",
+                "Calderone\nRibollente!",
+                "La pancia del\nCalcolatore!",
+            ]));
             this.onFrameOnce(6, () => {
                 const poison = EntityTypes.POISON.create(this.world, true) as Poison;
                 poison.x = this.x + Santy.THROW_POWER * (this.flipX ? -1 : 1);

@@ -57,6 +57,14 @@ export class Player extends Entity {
         this.flipX = v;
     }
 
+    get mouthX(): number {
+        return this.x + 0.2 * (this.left ? -1 : 1);
+    }
+
+    get mouthY(): number {
+        return this.y + this.height * 0.65;
+    }
+
 
     constructor(world: World, body: planck.Body, active: boolean, type: EntityType, config: PlayerConfig) {
         super(world, body, active, type);
@@ -140,6 +148,29 @@ export class Player extends Entity {
 
     idle() {
         this.type.getAnimator("idle").play(this.sprite);
+    }
+
+    shoutComic(text: string) {
+        this.world.createComicPopup({
+            x: this.mouthX,
+            y: this.mouthY,
+            left: this.left,
+            fadeIn: 0.3,
+            stay: 5,
+            text: text,
+            style: {
+                align: "center",
+                fontFamily: "pixeled",
+                fill: 0xffffff,
+            }
+        });
+        if (this.active) {
+            this.world.sendPacket({
+                type: "player_shout",
+                entityId: this.id,
+                text: text,
+            })
+        }
     }
 
     attack(onComplete: () => void) {

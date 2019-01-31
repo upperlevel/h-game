@@ -4,7 +4,7 @@ import {Position} from "./util";
 import {EntityType} from "./entityType";
 import {World} from "../world/world";
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
-import {Popup} from "../world/popup";
+import {DamagePopup} from "../popups/popup";
 // @ts-ignore
 import * as planck from "planck-js";
 
@@ -141,7 +141,7 @@ export abstract class Entity {
         }
 
         this.life -= amount;
-        this.world.createPopup({
+        this.world.createDamagePopup({
             x: this.x,
             y: this.y + this.height / 2,
             text: amount.toFixed(2),

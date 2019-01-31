@@ -10,8 +10,10 @@ import {Text} from "./text";
 
 import {Connector} from "../connector/connector";
 import {Emitter} from "./emitter";
-import Texture = PIXI.Texture;
-import {Popup} from "./popup";
+import {Popup} from "../popups/popup";
+import {Player} from "../entity/player/player";
+import {DamagePopup} from "../popups/damegePopup";
+import {ComicPopup, ComicPopupConfig} from "../popups/comicPopup";
 
 export class World {
     static TIME_STEP = 1 / 60;
@@ -60,8 +62,14 @@ export class World {
         return new Text(this, data);
     }
 
-    createPopup(data: Terrain.Text) {
-        const popup = new Popup(this, data);
+    createDamagePopup(data: Terrain.Text): DamagePopup {
+        const popup = new DamagePopup(this, data);
+        this.popups.push(popup);
+        return popup;
+    }
+
+    createComicPopup(data: ComicPopupConfig): ComicPopup {
+        const popup = new ComicPopup(this, data);
         this.popups.push(popup);
         return popup;
     }
@@ -278,6 +286,9 @@ export class World {
                     // @ts-ignore
                     p.jump();
                 }
+                break;
+            case "player_shout":
+                (this.entityRegistry.getEntity(packet.entityId) as Player).shoutComic(packet.text);
                 break;
             case "entity_reset":
                 this.entityRegistry.onResetPacket(packet);

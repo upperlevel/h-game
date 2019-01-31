@@ -43,10 +43,7 @@ export class LaserPopup implements Popup {
             this.emitter.remove();
             return true;
         }
-
-        this.emitter.update(delta);
         this.emitter.container.x += this.data.speed * delta;
-
         return false;
     }
 

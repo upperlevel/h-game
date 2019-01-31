@@ -107,6 +107,7 @@ export class World {
     }
 
     createEmitter(data: Terrain.Emitter) {
+        data.y = this.height - data.y;
         const emitter = new Emitter(this, data);
         this.emitters.push(emitter);
         this.app.stage.addChild(emitter.container);

@@ -3,11 +3,13 @@ import {ComicPopup} from "./comicPopup";
 import {PopupSpawnPacket} from "../protocol";
 import {Popup} from "./popup";
 import {World} from "../world/world";
+import {LaserPopup} from "./laserPopup";
 
 export namespace Popups {
     const TYPES = {
-      "damage": DamagePopup,
-      "comic": ComicPopup,
+        "damage": DamagePopup,
+        "comic": ComicPopup,
+        "laser": LaserPopup,
     };
 
     export function fromPacket(world: World, packet: PopupSpawnPacket): Popup {

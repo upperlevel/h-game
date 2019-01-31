@@ -5,6 +5,8 @@ import {EntityTypes} from "../entityTypes";
 import {World} from "../../world/world";
 import {Animator} from "../../util/animator";
 import {Entity} from "../entity";
+import {LaserPopup} from "../../popups/laserPopup";
+import {randomInArray} from "../../util/maths";
 
 export class JavaType extends EntityType {
     id = "java";
@@ -65,7 +67,7 @@ export class JavaType extends EntityType {
                                     y: 22 / 48 * entity.height,
                                     scale: 0.25,
                                     textures: ["assets/game/particle.png"],
-                                    config: PIXI.loader.resources["assets/game/laser.json"].data,
+                                    config: PIXI.loader.resources["assets/game/laser_preparation.json"].data,
                                 })
                             }
                         },
@@ -73,6 +75,12 @@ export class JavaType extends EntityType {
                             x: 2,
                             y: 2,
                             on(entity: Entity) {
+                                (entity as Player).shoutComic(randomInArray([
+                                    "Spinster, shut your mouth!",
+                                    "Respect the deadlines!",
+                                    "Don't piss me off!",
+                                ]));
+
                                 entity.getEmitter("laser").container.position.set(
                                     39 / 48 * entity.width,
                                     20 / 48 * entity.height
@@ -93,6 +101,18 @@ export class JavaType extends EntityType {
                             x: 4,
                             y: 2,
                             on(entity: Entity) {
+                                const flip = entity.flipX ? -1 : 1;
+                                entity.world.createPopup(new LaserPopup(
+                                    entity.world,
+                                    this,
+                                    {
+                                        x: entity.x + (22 / 48 * entity.width * flip),
+                                        y: entity.world.height - (entity.y + 23 / 48 * entity.height),
+                                        speed: 10 * flip,
+                                        distance: 100,
+                                        scale: 0.25,
+                                    },
+                                ));
                                 entity.removeEmitter("laser");
                             }
                         },

@@ -65,6 +65,11 @@ export class World {
         return new Text(this, data);
     }
 
+    createPopup(popup: Popup): Popup {
+        this.popups.push(popup);
+        return popup;
+    }
+
     createDamagePopup(data: Terrain.Text): DamagePopup {
         const popup = new DamagePopup(this, data);
         this.popups.push(popup);

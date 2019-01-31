@@ -5,6 +5,8 @@ import {EntityType} from "./entityType";
 import {World} from "../world/world";
 // @ts-ignore
 import * as planck from "planck-js";
+import {Emitter} from "../world/emitter";
+import {Terrain} from "../world/terrain";
 
 export abstract class Entity {
     id = -1;
@@ -26,6 +28,8 @@ export abstract class Entity {
 
     private groundContactCount = 0;
 
+    private emitters = new Map<string, Emitter>();
+
     constructor(world: World, body: planck.Body, active: boolean, type: EntityType, startAnimName: string = "idle") {
         this.world = world;
         this.body = body;
@@ -34,7 +38,7 @@ export abstract class Entity {
 
         const animator = type.getAnimator(startAnimName);
         this.sprite = new PIXI.extras.AnimatedSprite(animator.generateFrames());
-        animator.play(this.sprite);
+        animator.play(this);
 
         this.container = new PIXI.Container();
         this.container.pivot.set(
@@ -117,11 +121,34 @@ export abstract class Entity {
         return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
     }
 
+    createEmitter(id: string, data: Terrain.Emitter): Emitter {
+        const emitter = new Emitter(this.world, data);
+        this.emitters.set(id, emitter);
+        this.container.addChild(emitter.container);
+        return emitter;
+    }
+
+    getEmitter(id: string) {
+        return this.emitters.get(id)!;
+    }
+
+    removeEmitter(id: string) {
+        const emitter = this.emitters.get(id);
+        if (emitter) {
+            this.emitters.delete(id);
+            this.container.removeChild(emitter.container);
+        }
+    }
+
     onPrePhysics(timeDelta: number) {
     }
 
     onUpdate(delta: number) {
         this.syncPosition();
+
+        for (const emitter of this.emitters.values()) {
+            emitter.update(delta);
+        }
     }
 
     respawn() {

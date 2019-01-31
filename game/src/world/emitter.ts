@@ -20,15 +20,13 @@ export class Emitter {
 
         this.container = new PIXI.Container();
         this.container.x = data.x;
-        this.container.y = world.height - data.y;
+        this.container.y = data.y;
 
         // Scales the container based on the first textures' sizes
         const scale = this.container.scale;
         scale.x = scale.y = data.scale / textures[0].width;
 
         this.emitter = new particles.Emitter(this.container, textures, data.config);
-
-        this.world.app.stage.addChild(this.container);
     }
 
     update(delta: number) {

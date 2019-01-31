@@ -101,7 +101,7 @@ export class GamePlayerHud implements PlayerHud {
 
     private translateToTarget(target: Entity) {
         let x = target.x;
-        let y = target.container.y - target.container.height - this.height - GamePlayerHud.hudPlayerDistance;
+        let y = target.container.y - target.height - this.height - GamePlayerHud.hudPlayerDistance;
         let barOffY = GamePlayerHud.barContainerMargin * GamePlayerHud.scale;
 
         this.textHud.position.set(x, y);

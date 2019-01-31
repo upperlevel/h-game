@@ -1,4 +1,5 @@
 import Texture = PIXI.Texture;
+import {Entity} from "../entity/entity";
 
 export interface Step {
     delay?: number;
@@ -9,7 +10,7 @@ export interface Step {
         width: number;
         height: number;
     };
-    on?(): void;
+    on?(entity: Entity): void;
 }
 
 export interface Grid {
@@ -18,9 +19,12 @@ export interface Grid {
     frames: {
         width: number;
         height: number;
-        list: {x: number, y: number}[]
+        list: {
+            x: number;
+            y: number;
+            on?(entity: Entity): void;
+        }[]
     }
-    on?(frame: number): void;
 }
 
 export class Animator {
@@ -69,9 +73,9 @@ export class Animator {
                     width: grid.frames.width,
                     height: grid.frames.height,
                 },
-                on() {
-                    if (grid.on) {
-                        grid.on(i);
+                on(entity: Entity) {
+                    if (frame.on) {
+                        frame.on(entity);
                     }
                 }
             })
@@ -84,7 +88,8 @@ export class Animator {
         sprite.loop = step.repeat || false;
     }
 
-    play(sprite: PIXI.extras.AnimatedSprite) {
+    play(entity: Entity) {
+        const sprite = entity.sprite;
         sprite.stop();
 
         if (this.steps.length == 0) {
@@ -98,7 +103,7 @@ export class Animator {
         sprite.onFrameChange = frame => {
             const current = this.steps[frame];
             if (current.on) {
-                current.on();
+                current.on(entity);
             }
             this.setStep(this.steps[(frame + 1) % this.steps.length], sprite);
         };

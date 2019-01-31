@@ -147,7 +147,7 @@ export class Player extends Entity {
     }
 
     idle() {
-        this.type.getAnimator("idle").play(this.sprite);
+        this.type.getAnimator("idle").play(this);
     }
 
     shoutComic(text: string, sendPacket=true) {
@@ -168,7 +168,7 @@ export class Player extends Entity {
     }
 
     attack(onComplete: () => void) {
-        this.type.getAnimator("attack").play(this.sprite);
+        this.type.getAnimator("attack").play(this);
         this.sprite.onComplete = onComplete;
     }
 
@@ -177,7 +177,7 @@ export class Player extends Entity {
     }
 
     specialAttack(onComplete: () => void) {
-        this.type.getAnimator("specialAttack").play(this.sprite);
+        this.type.getAnimator("specialAttack").play(this);
         this.sprite.onComplete = onComplete;
     }
 

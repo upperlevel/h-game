@@ -1,14 +1,10 @@
 import {Player, PlayerConfig} from "../player/player";
-import {Poison} from "./poison";
 import {EntityType} from "../entityType";
 import {EntityTypes} from "../entityTypes";
 
 import {World} from "../../world/world";
-import {SpritesheetUtil} from "../../util/spritesheet";
-import {Animator, Step} from "../../util/animator";
-
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
-import {CloseRangeAttack} from "../player/closeRangeAttack";
+import {Animator} from "../../util/animator";
+import {Entity} from "../entity";
 
 export class JavaType extends EntityType {
     id = "java";
@@ -54,16 +50,52 @@ export class JavaType extends EntityType {
         this.addAnimator(new Animator("attack", texture)
             .grid({
                 speed: 0.1,
-                repeat: true,
+                repeat: false,
                 frames: {
                     width: 48,
                     height: 48,
                     list: [
                         {x: 0, y: 2},
-                        {x: 1, y: 2},
-                        {x: 2, y: 2},
-                        {x: 3, y: 2},
-                        {x: 4, y: 2},
+                        {
+                            x: 1,
+                            y: 2,
+                            on(entity: Entity) {
+                                entity.createEmitter("laser", {
+                                    x: 34 / 48 * entity.width,
+                                    y: 22 / 48 * entity.height,
+                                    scale: 0.25,
+                                    textures: ["assets/game/particle.png"],
+                                    config: PIXI.loader.resources["assets/game/laser.json"].data,
+                                })
+                            }
+                        },
+                        {
+                            x: 2,
+                            y: 2,
+                            on(entity: Entity) {
+                                entity.getEmitter("laser").container.position.set(
+                                    39 / 48 * entity.width,
+                                    20 / 48 * entity.height
+                                );
+                            }
+                        },
+                        {
+                            x: 3,
+                            y: 2,
+                            on(entity: Entity) {
+                                entity.getEmitter("laser").container.position.set(
+                                    46 / 48 * entity.width,
+                                    25 / 48 * entity.height
+                                );
+                            }
+                        },
+                        {
+                            x: 4,
+                            y: 2,
+                            on(entity: Entity) {
+                                entity.removeEmitter("laser");
+                            }
+                        },
                     ]
                 }
             })
@@ -72,7 +104,7 @@ export class JavaType extends EntityType {
         this.addAnimator(new Animator("specialAttack", texture)
             .grid({
                 speed: 0.1,
-                repeat: true,
+                repeat: false,
                 frames: {
                     width: 48,
                     height: 48,

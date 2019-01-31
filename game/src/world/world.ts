@@ -12,8 +12,9 @@ import {Connector} from "../connector/connector";
 import {Emitter} from "./emitter";
 import {Popup} from "../popups/popup";
 import {Player} from "../entity/player/player";
-import {DamagePopup} from "../popups/damegePopup";
+import {DamagePopup} from "../popups/damagePopup";
 import {ComicPopup, ComicPopupConfig} from "../popups/comicPopup";
+import {Popups} from "../popups/popups";
 
 export class World {
     static TIME_STEP = 1 / 60;
@@ -37,6 +38,8 @@ export class World {
 
     emitters: Emitter[] = [];
     popups: Popup[] = [];
+
+    syncEvents: (() => void)[] = [];
 
     private destroyedBodies: Body[] = [];
 
@@ -169,6 +172,14 @@ export class World {
     }
 
     update(delta: number) {
+        if (this.syncEvents) {
+            let syncEvents = this.syncEvents;
+            this.syncEvents = [];
+            for (const e of syncEvents) {
+                e();
+            }
+        }
+
         this.doPhysicsStep(delta);
 
         this.entityRegistry.onUpdate(delta);
@@ -272,6 +283,10 @@ export class World {
         this.socket.send(packet);
     }
 
+    callSync(cb: () => void) {
+        this.syncEvents.push(cb);
+    }
+
     onPacket(packet: GamePacket) {
         switch (packet.type) {
             case "entity_spawn":
@@ -287,8 +302,8 @@ export class World {
                     p.jump();
                 }
                 break;
-            case "player_shout":
-                (this.entityRegistry.getEntity(packet.entityId) as Player).shoutComic(packet.text);
+            case "spawn_popup":
+                this.callSync(() => (this.popups.push(Popups.fromPacket(this, packet))));
                 break;
             case "entity_reset":
                 this.entityRegistry.onResetPacket(packet);

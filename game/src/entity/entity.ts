@@ -3,12 +3,9 @@ import {EntityResetPacket, EntitySpawnMeta} from "../protocol"
 import {Position} from "./util";
 import {EntityType} from "./entityType";
 import {World} from "../world/world";
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
-import {DamagePopup} from "../popups/popup";
 // @ts-ignore
 import * as planck from "planck-js";
-
-import Vec2 = planck.Vec2;
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export abstract class Entity {
     id = -1;

@@ -84,10 +84,11 @@ export interface PlayerJumpPacket {
     entityId: number;
 }
 
-export interface PlayerShoutComicPacket {
-    type: "player_shout";
-    entityId: number;
-    text: string;
+export interface PopupSpawnPacket {
+    type: "spawn_popup";
+    popupType: string;
+    // Additional info
+    [key: string]: any;
 }
 
 export type GamePacket =
@@ -96,6 +97,6 @@ export type GamePacket =
     | EntityResetPacket
     | BehaviourChangePacket
     | PlayerJumpPacket
-    | PlayerShoutComicPacket;
+    | PopupSpawnPacket;
 
 

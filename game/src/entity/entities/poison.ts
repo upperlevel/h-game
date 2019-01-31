@@ -137,7 +137,7 @@ export class Poison extends Entity {
     }
 
     onPlayerContactBegin(entity: Player) {
-        if (entity == this.thrower) return;
+        if (entity == null || entity == this.thrower || !entity.damageable) return;
         this.contacts.add(entity);
     }
 

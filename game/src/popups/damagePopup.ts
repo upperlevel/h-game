@@ -2,6 +2,7 @@ import {Text} from "../world/text";
 import {World} from "../world/world";
 import {Terrain} from "../world/terrain";
 import {Popup} from "./popup";
+import {PopupSpawnPacket} from "../protocol";
 
 export class DamagePopup implements Popup {
     static VELOCITY = 1;
@@ -34,5 +35,17 @@ export class DamagePopup implements Popup {
 
 
         return false;
+    }
+
+    toPacket(): PopupSpawnPacket {
+        return {
+            type: "spawn_popup",
+            popupType: "damage",
+            data: this.text.data,
+        }
+    }
+
+    static fromPacket(world: World, packet: PopupSpawnPacket): DamagePopup {
+        return new DamagePopup(world, packet.data);
     }
 }

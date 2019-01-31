@@ -150,8 +150,8 @@ export class Player extends Entity {
         this.type.getAnimator("idle").play(this.sprite);
     }
 
-    shoutComic(text: string) {
-        this.world.createComicPopup({
+    shoutComic(text: string, sendPacket=true) {
+        const popup = this.world.createComicPopup({
             x: this.mouthX,
             y: this.mouthY,
             left: this.left,
@@ -164,13 +164,7 @@ export class Player extends Entity {
                 fill: 0xffffff,
             }
         });
-        if (this.active) {
-            this.world.sendPacket({
-                type: "player_shout",
-                entityId: this.id,
-                text: text,
-            })
-        }
+        if (sendPacket) this.world.sendPacket(popup.toPacket());
     }
 
     attack(onComplete: () => void) {

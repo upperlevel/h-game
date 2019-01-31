@@ -5,6 +5,7 @@ import {Popup} from "./popup";
 import Sprite = PIXI.Sprite;
 import Texture = PIXI.Texture;
 import Graphics = PIXI.Graphics;
+import {PopupSpawnPacket} from "../protocol";
 
 export interface ComicPopupConfig {
     text: string;
@@ -106,6 +107,26 @@ export class ComicPopup implements Popup {
         return false;
     }
 
+    toPacket(): PopupSpawnPacket {
+        return {
+            type: "spawn_popup",
+            popupType: "comic",
+
+            x: this.x,
+            y: this.y,
+            left: this.left,
+            fadeIn: this.fadeIn,
+            stay: this.stay,
+
+            angle: this.angle,
+            xOffset: this.xOffset,
+            yOffset: this.yOffset,
+
+            text: this.text.text,
+            style: this.text.style,
+        }
+    }
+
 
     private static loaded = false;
     private static curve: Texture;
@@ -119,5 +140,25 @@ export class ComicPopup implements Popup {
         g.moveTo(0, 100);
         g.quadraticCurveTo(130, 100, 200, 20);
         this.curve = g.generateCanvasTexture();
+    }
+
+    static fromPacket(world: World, packet: PopupSpawnPacket): ComicPopup {
+        return new ComicPopup(world, {
+            x: packet.x,
+            y: packet.y,
+            left: packet.left,
+            fadeIn: packet.fadeIn,
+            stay: packet.stay,
+
+            minAngle: packet.angle,
+            maxAngle: packet.angle,
+            minXOffset: packet.xOffset,
+            maxXOffset: packet.xOffset,
+            minYOffset: packet.yOffset,
+            maxYOffset: packet.yOffset,
+
+            text: packet.text,
+            style: packet.style,
+        })
     }
 }

@@ -97,7 +97,7 @@ export class EntityRegistry {
             entity.id = this.localId++ * this.playerCount + this.localOffset;
         }
 
-        this.world.app.stage.addChild(entity.sprite);
+        this.world.app.stage.addChild(entity.container);
         this.entities.set(entity.id, entity);
     }
 

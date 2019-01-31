@@ -5,7 +5,6 @@ import {EntityType} from "./entityType";
 import {World} from "../world/world";
 // @ts-ignore
 import * as planck from "planck-js";
-import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 export abstract class Entity {
     id = -1;
@@ -14,7 +13,8 @@ export abstract class Entity {
     world: World;
     body: planck.Body;
 
-    sprite: AnimatedSprite;
+    container: PIXI.Container;
+    sprite: PIXI.extras.AnimatedSprite;
 
     maxLife = 100;
     life = this.maxLife;
@@ -26,18 +26,6 @@ export abstract class Entity {
 
     private groundContactCount = 0;
 
-    get flipX(): boolean {
-        return this.sprite.scale.x < 0;
-    }
-
-    set flipX(flipped: boolean) {
-        this.sprite.scale.x = Math.abs(this.sprite.scale.x) * (flipped ? -1 : 1);
-    }
-
-    get isTouchingGround(): boolean {
-        return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
-    }
-
     constructor(world: World, body: planck.Body, active: boolean, type: EntityType, startAnimName: string = "idle") {
         this.world = world;
         this.body = body;
@@ -45,11 +33,15 @@ export abstract class Entity {
         this.type = type;
 
         const animator = type.getAnimator(startAnimName);
-        this.sprite = new AnimatedSprite(animator.generateFrames());
+        this.sprite = new PIXI.extras.AnimatedSprite(animator.generateFrames());
         animator.play(this.sprite);
 
-        this.sprite.anchor.x = 0.5;
-        this.sprite.anchor.y = 1;
+        this.container = new PIXI.Container();
+        this.container.pivot.set(
+            0.5 * this.width,
+            this.height
+        );
+        this.container.addChild(this.sprite);
 
         // A sprite size is supposed to be always 48x48, make that more flexible
         this.sprite.scale.x = type.width / this.sprite.width;
@@ -60,10 +52,12 @@ export abstract class Entity {
 
     /** Synchronizes the sprite position with the body's one. */
     private syncPosition() {
-        const position = this.body.getPosition();
+        const body = this.body.getPosition();
 
-        this.sprite.x = position.x;
-        this.sprite.y = this.world.height - position.y
+        this.container.position.set(
+            body.x,
+            this.world.height - body.y
+        );
     }
 
     getPosition(): planck.Vec2 {
@@ -111,8 +105,16 @@ export abstract class Entity {
         return this.type.height;
     }
 
-    setType(type: EntityType) {
-        // TODO
+    get flipX(): boolean {
+        return this.container.scale.x < 0;
+    }
+
+    set flipX(flipped: boolean) {
+        this.container.scale.x = Math.abs(this.container.scale.x) * (flipped ? -1 : 1);
+    }
+
+    get isTouchingGround(): boolean {
+        return this.groundContactCount > 0 && this.body.getLinearVelocity().y == 0
     }
 
     onPrePhysics(timeDelta: number) {

@@ -156,10 +156,6 @@ export class World {
             }
         }
 
-        if (this.debugRender) {
-            this.app.stage.addChild(this.debugGraphics);
-        }
-
         if (this.socket) {
             this.socket!.subscribe("message", this.onPacket, this, false)
         }
@@ -221,23 +217,6 @@ export class World {
                     //console.log(points);
                     debug.drawPolygon(points);
                 } else console.warn(type);
-            }
-        }
-
-        debug.lineStyle(1 / 48, 0xffff00);
-        for (const child of this.app.stage.children as PIXI.Sprite[]) {
-            if (child.x && child.y && child.width && child.height && child.anchor) {
-
-                const x = child.x - child.anchor.x * child.width;
-                const y = child.y - child.anchor.y * child.height;
-
-                debug.drawPolygon([
-                    new PIXI.Point(x, y),
-                    new PIXI.Point(x + child.width, y),
-                    new PIXI.Point(x + child.width, y + child.height),
-                    new PIXI.Point(x, y + child.height),
-                    new PIXI.Point(x, y),
-                ]);
             }
         }
     }

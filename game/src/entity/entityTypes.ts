@@ -6,6 +6,7 @@ import * as planck from "planck-js";
 import {MestoliType} from "./entities/mestoli";
 import {MikrotikType} from "./entities/mikrotik";
 import {JavaType} from "./entities/java";
+import {BusType} from "./entities/bus";
 
 export namespace EntityTypes {
     const entities = new Map<string, EntityType>();
@@ -31,6 +32,7 @@ export namespace EntityTypes {
     export const POISON = new PoisonType();
     export const MIKROTIK = new MikrotikType();
     export const JAVA = new JavaType();
+    export const BUS = new BusType();
 
 
     export const defaultCharacter = SANTY;
@@ -41,4 +43,5 @@ export namespace EntityTypes {
     register(POISON);
     register(MIKROTIK);
     register(JAVA);
+    register(BUS);
 }

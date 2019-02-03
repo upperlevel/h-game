@@ -75,14 +75,6 @@ export class JavaType extends EntityType {
                             x: 2,
                             y: 2,
                             on(entity: Entity) {
-                                if (entity.active) {
-                                    (entity as Player).shoutComic(randomInArray([
-                                        "Spinster, shut your mouth!",
-                                        "Respect the deadlines!",
-                                        "Don't piss me off!",
-                                    ]));
-                                }
-
                                 entity.getEmitter("laser").container.position.set(
                                     39 / 48 * entity.width,
                                     20 / 48 * entity.height
@@ -140,7 +132,18 @@ export class JavaType extends EntityType {
                         {x: 0, y: 3},
                         {x: 1, y: 3},
                         {x: 2, y: 3},
-                        {x: 2, y: 3},
+                        {
+                            x: 2,
+                            y: 3,
+                            on(entity: Entity) {
+                                if (entity.active) {
+                                    const bus = EntityTypes.BUS.create(entity.world, true);
+                                    bus.x = entity.x;
+                                    bus.y = entity.y;
+                                    entity.world.spawn(bus);
+                                }
+                            }
+                        },
                     ]
                 }
             })

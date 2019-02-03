@@ -90,7 +90,7 @@ export class GamePlayerHud implements PlayerHud {
 
         this.height = nextY;
 
-        player.world.app.stage.addChild(
+        player.world.mainCamera.addChild(
             this.textHud,
             this.lifeContainer, this.lifeBar,
             this.energyContainer, this.energyBar,

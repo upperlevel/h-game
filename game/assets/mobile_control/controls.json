@@ -1,0 +1,22 @@
+{
+  "frames": {
+    "left": {
+      "frame": {"x": 0, "y": 0, "w": 5, "h": 5}
+    },
+    "right": {
+      "frame": {"x": 5, "y": 0, "w": 5, "h": 5}
+    },
+    "jump": {
+      "frame": {"x": 10, "y": 0, "w": 5, "h": 5}
+    },
+    "attack": {
+      "frame": {"x": 15, "y": 0, "w": 5, "h": 5}
+    },
+    "special_attack": {
+      "frame": {"x": 20, "y": 0, "w": 5, "h": 5}
+    }
+  },
+  "meta": {
+    "image": "controls.png"
+  }
+}

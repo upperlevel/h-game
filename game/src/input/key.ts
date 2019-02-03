@@ -14,4 +14,16 @@ export class Key {
     get justPressed(): boolean {
         return InputManager.isJustPressed(this.value);
     }
+
+    forceDown() {
+        InputManager.onKeyDown({
+            key: this.value,
+        } as KeyboardEvent);
+    }
+
+    forceUp() {
+        InputManager.onKeyUp({
+            key: this.value,
+        } as KeyboardEvent);
+    }
 }

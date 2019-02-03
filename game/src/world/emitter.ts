@@ -34,6 +34,6 @@ export class Emitter {
     }
 
     remove() {
-        this.world.app.stage.removeChild(this.container);
+        this.world.mainCamera.removeChild(this.container);
     }
 }

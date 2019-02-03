@@ -74,7 +74,7 @@ export class ComicPopup implements Popup {
 
         this.line.position.set(this.x, world.height - this.y);
 
-        world.app.stage.addChild(this.line);
+        world.mainCamera.addChild(this.line);
     }
 
     update(delta: number): boolean {

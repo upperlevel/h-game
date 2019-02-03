@@ -2,6 +2,7 @@ import {OverlayScene} from "./overlayScene";
 
 import {HGame} from "../index";
 import {LobbyScene} from "./lobby/lobbyScene";
+import {MobileController} from "../mobileController";
 
 export class LoginScene extends OverlayScene {
     game: HGame;
@@ -30,6 +31,9 @@ export class LoginScene extends OverlayScene {
             type: "login",
             name: name
         });
+        if (MobileController.isEnabled()) {
+            document.documentElement.requestFullscreen();
+        }
     }
 
     onResult(packet: any) {

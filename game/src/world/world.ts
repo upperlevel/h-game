@@ -15,11 +15,15 @@ import {Player} from "../entity/player/player";
 import {DamagePopup} from "../popups/damagePopup";
 import {ComicPopup, ComicPopupConfig} from "../popups/comicPopup";
 import {Popups} from "../popups/popups";
+import Container = PIXI.Container;
+import {MobileController} from "../mobileController";
 
 export class World {
     static TIME_STEP = 1 / 60;
 
     app: PIXI.Application;
+    // @ts-ignore
+    mainCamera: PIXI.Container;
 
     private terrain: Terrain.Terrain;
 
@@ -86,7 +90,7 @@ export class World {
         const texture = PIXI.loader.resources[platform.texture].texture;
 
         const sprite = new PIXI.extras.TilingSprite(texture, platform.width * texture.width, platform.height * texture.height);
-        this.app.stage.addChild(sprite);
+        this.mainCamera.addChild(sprite);
 
         sprite.scale.x = 1 / texture.width;
         sprite.scale.y = 1 / texture.height;
@@ -110,7 +114,7 @@ export class World {
         data.y = this.height - data.y;
         const emitter = new Emitter(this, data);
         this.emitters.push(emitter);
-        this.app.stage.addChild(emitter.container);
+        this.mainCamera.addChild(emitter.container);
         return emitter;
     }
 
@@ -118,7 +122,7 @@ export class World {
         const texture = PIXI.loader.resources[data.texture].texture;
 
         const decoration = new PIXI.Sprite(texture);
-        this.app.stage.addChild(decoration);
+        this.mainCamera.addChild(decoration);
 
         decoration.scale.x = data.width / texture.width;
         decoration.scale.y = data.height / texture.height;
@@ -131,6 +135,10 @@ export class World {
 
     setup() {
         this.app.stage.removeChildren();
+
+
+        this.mainCamera = new Container();
+        this.app.stage.addChild(this.mainCamera);
 
         this.physics.on("begin-contact", this.onContactBegin.bind(this));
         this.physics.on("end-contact", this.onContactEnd.bind(this));
@@ -169,7 +177,7 @@ export class World {
     }
 
     resize() {
-        const stage = this.app.stage;
+        const stage = this.mainCamera;
         stage.scale.x = stage.scale.y = window.innerWidth / this.width;
         stage.y = window.innerHeight - this.height * stage.scale.y;
     }

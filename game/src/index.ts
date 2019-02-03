@@ -7,9 +7,8 @@ import {GameConnector} from "./connector/gameConnector";
 import {ConnectingScene} from "./scene/connectingScene";
 import {LoginScene} from "./scene/loginScene";
 import {EntityTypes} from "./entity/entityTypes";
-import {GameScene} from "./scene/game/gameScene";
-import {EntityType} from "./entity/entityType";
 import {InputManager} from "./input/inputManager";
+import {MobileController} from "./mobileController";
 
 export class HGame {
     app: PIXI.Application;
@@ -61,6 +60,7 @@ export class HGame {
             .add("assets/game/tree.png")
             .add("assets/game/laser_preparation.json")
             .add("assets/game/laser.json")
+            .add(MobileController.getAssets())
             .load(() => {
                 this.sceneManager.setScene(new ConnectingScene(this.sceneManager, this.matchmakingConnector, new LoginScene(this)));
                 console.log(`Loading process was completed.`);

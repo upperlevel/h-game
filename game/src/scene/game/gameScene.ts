@@ -3,6 +3,7 @@ import {Scene} from "../scene";
 import {HGame} from "../../index";
 import {World} from "../../world/world";
 import {EntityTypes} from "../../entity/entityTypes";
+import {MobileController} from "../../mobileController";
 
 export interface GameSceneConfig {
     playerIndex: number,
@@ -16,6 +17,8 @@ export class GameScene implements Scene {
     world: World;
 
     config: GameSceneConfig;
+
+    mobileController?: MobileController;
 
     constructor(game: HGame, config: GameSceneConfig) {
         this.game = game;
@@ -54,6 +57,10 @@ export class GameScene implements Scene {
         char.name = this.config.playerName;
 
         this.world.spawn(char);
+
+        if (MobileController.isEnabled()) {
+            this.mobileController = new MobileController(this.world.app.stage);
+        }
     }
 
     update(delta: number): void {
@@ -62,6 +69,9 @@ export class GameScene implements Scene {
 
     resize() {
         this.world.resize();
+        if (this.mobileController != null) {
+            this.mobileController.onResize();
+        }
     }
 
     disable() {

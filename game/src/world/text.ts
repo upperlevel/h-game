@@ -16,14 +16,14 @@ export class Text {
         this.data.style = Object.assign(data.style, {fontSize: this.data.height * 128});
 
         this.sprite = new PIXI.Text(data.text, this.data.style);
-        this.world.app.stage.addChild(this.sprite);
+        this.world.mainCamera.addChild(this.sprite);
 
         this.sprite.scale.x = this.sprite.scale.y = 1 / (this.data.height * 128) * this.data.height;
         this.sync();
 
         if (debug) {
             this.debug = new PIXI.Graphics();
-            this.world.app.stage.addChild(this.debug);
+            this.world.mainCamera.addChild(this.debug);
         }
     }
 
